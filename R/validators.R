@@ -1,0 +1,35 @@
+# Helper function to validate ID fields
+validate_id <- function(value, allow_na = TRUE) {
+  if (length(value) != 1) {
+    return("must have exactly one value")
+  }
+  if (is.na(value)) {
+    if (!allow_na) {
+      return("cannot be NA")
+    }
+  } else {
+    if (value <= 0) {
+      return("must be a positive number")
+    }
+    if (value != floor(value)) {
+      return("must be a whole number")
+    }
+  }
+  return(NULL)
+}
+
+
+validate_natural_number_list <- function(value) {
+  if (length(value) > 0) {
+    # Check if all elements are numeric
+    if (!all(sapply(value, is.numeric))) {
+      return("all elements must be numeric")
+    }
+
+    # Check if all elements are natural numbers
+    non_natural <- sapply(value, function(x) !is.na(x) && (x < 1 || x != floor(x)))
+    if (any(non_natural)) {
+      return("all elements must be positive integers")
+    }
+  }
+}
