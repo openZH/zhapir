@@ -2,64 +2,66 @@
 % Please edit documentation in R/create_dataset.R
 \name{create_dataset}
 \alias{create_dataset}
-\title{Create a new dataset in the catalog}
+\title{Create a new dataset via API}
 \usage{
 create_dataset(
-  auth_info,
   title,
-  description,
-  contact_id,
-  publisher_id,
-  status_id,
-  issued = format(Sys.time(), "\%Y-\%m-\%dT\%H:\%M:\%SZ"),
-  keyword_ids = list(),
-  theme_ids = list(),
-  use_dev = TRUE,
-  ...
+  organisation_id,
+  description = NULL,
+  contact_email = NULL,
+  landing_page = NULL,
+  issued = NULL,
+  start_date = NULL,
+  end_date = NULL,
+  modified = NULL,
+  modified_next = NULL,
+  keyword_ids = NULL,
+  zh_web_catalog_ids = NULL,
+  relation_ids = NULL,
+  theme_ids = NULL,
+  periodicity_id = NULL,
+  see_also_ids = NULL,
+  api_key = NULL,
+  use_dev = TRUE
 )
 }
 \arguments{
-\item{auth_info}{Authentication information from login_to_api()}
+\item{title}{Title of the dataset (required, <= 1000 chars)}
 
-\item{title}{Title of the dataset}
+\item{organisation_id}{Organisation ID (required integer)}
 
-\item{description}{Description of the dataset}
+\item{description}{Optional description string}
 
-\item{contact_id}{ID of the contact person}
+\item{contact_email}{Optional contact email}
 
-\item{publisher_id}{ID of the publishing organization}
+\item{landing_page}{Optional landing page URL}
 
-\item{status_id}{Status ID for the dataset}
+\item{issued}{Optional ISO datetime string or POSIXct}
 
-\item{issued}{Date of publication (default: current time)}
+\item{start_date}{Optional ISO datetime string or POSIXct}
 
-\item{keyword_ids}{List of keyword IDs}
+\item{end_date}{Optional ISO datetime string or POSIXct}
 
-\item{theme_ids}{List of theme IDs}
+\item{modified}{Optional ISO datetime string or POSIXct}
 
-\item{use_dev}{Whether to use the development environment (default: TRUE)}
+\item{modified_next}{Optional ISO datetime string or POSIXct}
 
-\item{...}{Additional dataset properties}
-}
-\value{
-The created dataset information as returned by the API
+\item{keyword_ids}{Optional integer vector}
+
+\item{zh_web_catalog_ids}{Optional integer vector}
+
+\item{relation_ids}{Optional integer vector}
+
+\item{theme_ids}{Optional integer vector}
+
+\item{periodicity_id}{Optional integer}
+
+\item{see_also_ids}{Optional integer vector}
+
+\item{api_key}{API key (optional; falls back to env var)}
+
+\item{use_dev}{Logical; use development base URL}
 }
 \description{
-Creates a new dataset in the data catalog with the specified properties.
-}
-\examples{
-\dontrun{
-# First login
-auth_info <- login_to_api("admin@example.com", "admin")
-
-# Create a dataset with required fields
-create_dataset(
-  auth_info,
-  title = "Air Quality Measurements 2023",
-  description = "Hourly air quality measurements for Canton Zurich",
-  contact_id = 1,
-  publisher_id = 1,
-  status_id = 1
-)
-}
+Create a new dataset via API
 }
