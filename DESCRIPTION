@@ -16,4 +16,5 @@ Imports:
     jsonlite,
     askpass,
     rlang (>= 1.0.0),
-    purrr
+    purrr,
+    cli
