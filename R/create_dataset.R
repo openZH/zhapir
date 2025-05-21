@@ -39,6 +39,8 @@ create_dataset <- function(
     api_key            = NULL,
     use_dev            = TRUE
 ) {
+
+  print("Here")
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
 

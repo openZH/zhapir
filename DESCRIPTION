@@ -18,3 +18,12 @@ Imports:
     rlang (>= 1.0.0),
     purrr,
     cli
+Collate:
+    'helpers.R'
+    'validators.R'
+    'properties.R'
+    'dataset.R'
+    'generics.R'
+    'create.R'
+    'create_dataset.R'
+    'zzz.R'
