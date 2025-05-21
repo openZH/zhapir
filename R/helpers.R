@@ -12,146 +12,123 @@ get_base_url <- function(use_dev = FALSE) {
 }
 
 
-
-#' Get a list of datasets from the catalog
-#'
-#' @description
-#' Retrieves all datasets available in the data catalog that the user has access to.
-#'
-#' @param auth_info Authentication information from login_to_api()
-#' @param use_dev Whether to use the development environment (default: TRUE)
-#'
-#' @return A list of datasets as returned by the API
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # First login
-#' auth_info <- login_to_api("admin@example.com", "admin")
-#'
-#' # Get all datasets
-#' datasets <- get_datasets(auth_info)
-#' }
-get_datasets <- function(auth_info, use_dev = TRUE) {
-  base_url <- if(use_dev) "https://mdv-dev.nebula.statzh.ch" else "https://mdv.nebula.statzh.ch"
-
-  response <- httr2::request(paste0(base_url, "/api/v1/datasets")) |>
-    httr2::req_headers(
-      "Accept" = "application/json, application/problem+json",
-      "Cookie" = auth_info$cookie
-    ) |>
-    httr2::req_method("GET") |>
-    httr2::req_perform()
-
-  if (httr2::resp_status(response) >= 200 && httr2::resp_status(response) < 300) {
-    resp_data <- httr2::resp_body_json(response)
-    return(resp_data)
+# Helper function to validate ID fields
+validate_id <- function(value, allow_na = TRUE) {
+  if (length(value) != 1) {
+    return("must have exactly one value")
+  }
+  if (is.na(value)) {
+    if (!allow_na) {
+      return("cannot be NA")
+    }
   } else {
-    stop("API request failed with status ", httr2::resp_status(response),
-         ": ", httr2::resp_body_string(response))
+    if (value <= 0) {
+      return("must be a positive number")
+    }
+    if (value != floor(value)) {
+      return("must be a whole number")
+    }
+  }
+  return(NULL)
+}
+
+
+validate_natural_number_list <- function(value) {
+  if (length(value) > 0) {
+    # Check if all elements are numeric
+    if (!all(sapply(value, is.numeric))) {
+      return("all elements must be numeric")
+    }
+
+    # Check if all elements are natural numbers
+    non_natural <- sapply(value, function(x) !is.na(x) && (x < 1 || x != floor(x)))
+    if (any(non_natural)) {
+      return("all elements must be positive integers")
+    }
   }
 }
 
 
 
-#' Get a single dataset from the catalog
+#' Retrieve MDV API key
 #'
-#' @description
-#' Retrieves a single dataset by its ID.
+#' Attempts to fetch the API key from (in order):
+#' 1. Provided argument
+#' 2. Environment variable `MDV_API_KEY`
+#' 3. Interactive prompt (RStudio or askpass)
 #'
-#' @param dataset_id ID of the dataset to retrieve
-#' @param auth_info Authentication information from login_to_api()
-#' @param use_dev Whether to use the development environment (default: TRUE)
-#'
-#' @return The dataset information as returned by the API
+#' @param key Optional plain API key.
+#' @return API key string.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # First login
-#' auth_info <- login_to_api("admin@example.com", "admin")
-#'
-#' # Get a dataset
-#' dataset <- get_dataset(123, auth_info)
-#' }
-get_dataset <- function(dataset_id, auth_info, use_dev = TRUE) {
-  base_url <- get_base_url(use_dev)
-
-  response <- httr2::request(paste0(base_url, "/api/v1/datasets/", dataset_id)) |>
-    httr2::req_headers(
-      "Accept" = "application/json, application/problem+json",
-      "Cookie" = auth_info$cookie
-    ) |>
-    httr2::req_method("GET") |>
-    httr2::req_perform()
-
-  if (httr2::resp_status(response) >= 200 && httr2::resp_status(response) < 300) {
-    resp_data <- httr2::resp_body_json(response)
-    return(resp_data)
-  } else {
-    stop("API request failed with status ", httr2::resp_status(response),
-         ": ", httr2::resp_body_string(response))
+get_api_key <- function(key = NULL) {
+  # 1. Direct argument
+  if (!is.null(key) && nzchar(key)) {
+    return(key)
   }
+
+  # 2. Environment variable
+  env_key <- Sys.getenv("ZHAPIR_API_KEY")
+  if (nzchar(env_key)) {
+    return(env_key)
+  }
+
+  # 3. Interactive prompt (last resort)
+  if (interactive()) {
+      prompt_key <- askpass::askpass("Please enter your MDV API key")
+    }
+    if (nzchar(prompt_key)) {
+      return(prompt_key)
+    }
+
+  stop(
+    "No API key found. Supply via argument or set MDV_API_KEY environment variable.",
+    call. = FALSE
+  )
 }
 
-#' Get available formats for distributions
-#'
-#' @description
-#' Retrieves all available formats that can be used for distributions.
-#'
-#' @param auth_info Authentication information from login_to_api()
-#' @param use_dev Whether to use the development environment (default: TRUE)
-#'
-#' @return A list of available formats
-#' @export
-get_formats <- function(auth_info, use_dev = TRUE) {
-  base_url <- get_base_url(use_dev)
 
-  response <- httr2::request(paste0(base_url, "/api/v1/formats")) |>
-    httr2::req_headers(
-      "Accept" = "application/json, application/problem+json",
-      "Cookie" = auth_info$cookie
-    ) |>
-    httr2::req_method("GET") |>
-    httr2::req_perform()
 
-  if (httr2::resp_status(response) >= 200 && httr2::resp_status(response) < 300) {
-    resp_data <- httr2::resp_body_json(response)
-    return(resp_data)
-  } else {
-    stop("API request failed with status ", httr2::resp_status(response),
-         ": ", httr2::resp_body_string(response))
-  }
-}
-
-#' Get available media types for distributions
+#' Convert an S7 object into a JSON-ready payload list
 #'
-#' @description
-#' Retrieves all available media types that can be used for distributions.
+#' This helper extracts all properties, formats dates, flattens simple lists,
+#' and removes empty or missing values.
 #'
-#' @param auth_info Authentication information from login_to_api()
-#' @param use_dev Whether to use the development environment (default: TRUE)
-#'
-#' @return A list of available media types
-#' @export
-get_media_types <- function(auth_info, use_dev = TRUE) {
-  base_url <- get_base_url(use_dev)
+#' @param object An S7 object (e.g., Dataset or Distribution)
+#' @return A named list suitable for httr2::req_body_json()
+#' @keywords internal
+object_to_payload <- function(object) {
+  # 1. Extract raw properties
+  p <- S7::props(object)
 
-  response <- httr2::request(paste0(base_url, "/api/v1/media-types")) |>
-    httr2::req_headers(
-      "Accept" = "application/json, application/problem+json",
-      "Cookie" = auth_info$cookie
-    ) |>
-    httr2::req_method("GET") |>
-    httr2::req_perform()
+  # Helper for ISO-8601
+  fmt <- function(dt) format(dt, "%Y-%m-%dT%H:%M:%SZ")
 
-  if (httr2::resp_status(response) >= 200 && httr2::resp_status(response) < 300) {
-    resp_data <- httr2::resp_body_json(response)
-    return(resp_data)
-  } else {
-    stop("API request failed with status ", httr2::resp_status(response),
-         ": ", httr2::resp_body_string(response))
-  }
+  # 2. Transform properties:
+  #   - POSIXct -> ISO strings
+  #   - simple lists of scalars -> atomic vectors
+  p <- purrr::map(p, function(x) {
+    if (inherits(x, "POSIXct")) {
+      if (!is.na(x)) return(fmt(x))
+      return(NA_character_)
+    }
+    if (is.list(x) && length(x) > 0L &&
+        all(purrr::map_lgl(x, ~ is.atomic(.) && length(.) == 1L))) {
+      return(unlist(x, use.names = FALSE))
+    }
+    x
+  })
+
+  # 3. Remove empty or missing values:
+  #    - NULL
+  #    - length-1 NA
+  #    - empty lists
+  p <- purrr::keep(p, function(x) {
+    !(is.null(x) ||
+        (is.atomic(x) && length(x) == 1L && is.na(x)) ||
+        (is.list(x) && length(x) == 0L))
+  })
+
+  p
 }
 
 
