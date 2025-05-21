@@ -97,33 +97,38 @@ object_to_payload <- function(object) {
 }
 
 
-#' Helper to create a new dataset or distribution object via API call
-#' @noRd
-post_to_api <- function(object, endpoint, api_key, use_dev = TRUE, object_label = NULL) {
+#' Helper for API calls
+api_request <- function(
+    method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
+    endpoint,
+    payload = NULL,
+    api_key,
+    use_dev = TRUE
+) {
+  method <- match.arg(method)
   base_url <- get_base_url(use_dev)
-  payload <- object_to_payload(object)
 
-  resp <- httr2::request(paste0(base_url, endpoint)) |>
-    httr2::req_method("POST") |>
+  req <- httr2::request(paste0(base_url, endpoint)) |>
+    httr2::req_method(method) |>
     httr2::req_headers(
       `Content-Type` = "application/json",
       Accept         = "application/json, application/problem+json",
       `x-api-key`    = api_key
-    ) |>
-    httr2::req_body_json(payload, null = "null") |>
-    httr2::req_perform()
+    )
 
+  if (!is.null(payload)) {
+    req <- req |> httr2::req_body_json(payload, null = "null")
+  }
+
+  resp <- req |> httr2::req_perform()
   status <- httr2::resp_status(resp)
+
   if (status < 300) {
-    result <- httr2::resp_body_json(resp)
-    label <- if (is.null(object_label)) class(object)[[1]] else object_label
-    cli::cli_alert_success("{.strong {label}} {.val {result$title}} created with ID {.val {result$id}}.")
-    return(invisible(result))
+    return(httr2::resp_body_json(resp))
   }
 
   stop(
-    sprintf("%s creation failed [%s]: %s",
-            class(object)[[1]], status, httr2::resp_body_string(resp)),
+    sprintf("API %s failed [%s]: %s", method, status, httr2::resp_body_string(resp)),
     call. = FALSE
   )
 }
