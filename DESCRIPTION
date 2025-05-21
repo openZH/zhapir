@@ -13,4 +13,7 @@ RoxygenNote: 7.2.3
 Imports: 
     S7,
     httr2,
-    jsonlite
+    jsonlite,
+    askpass,
+    rlang (>= 1.0.0),
+    purrr
