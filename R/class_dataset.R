@@ -1,52 +1,123 @@
-#' Dataset class for DCAT API
-#'
-#' @description
-#' An S7 class representing a DCAT dataset in the data catalog.
-#' Used for creating and updating datasets via the API.
-#'
-#' @details
-#' This class implements the DCAT AP CH V2 standard for dataset metadata.
-#' Each instance represents a single dataset in the catalog.
-#'
-#' @keywords internal
+# Definition einer Dataset-Klasse nach DCAT-Standard mit zusätzlichen Feldern
 Dataset <- S7::new_class(
   "Dataset",
   package = "zhapir",
   properties = list(
-    title = S7::new_property(class = S7::class_character),
-    description = S7::new_property(class = S7::class_character),
-    contact_id = S7::new_property(class = S7::class_integer),
-    publisher_id = S7::new_property(class = S7::class_integer),
-    status_id = S7::new_property(class = S7::class_integer),
-    issued = S7::new_property(class = S7::class_character, default = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ")),
-    keyword_ids = S7::new_property(class = S7::class_list, default = list()),
-    theme_ids = S7::new_property(class = S7::class_list, default = list()),
-    landing_page = S7::new_property(class = S7::class_character, default = NA_character_),
-    modified_next = S7::new_property(class = S7::class_character, default = NA_character_),
-    relation_id = S7::new_property(class = S7::class_integer, default = NA_integer_),
-    see_also_ids = S7::new_property(class = S7::class_list, default = list()),
-    status = S7::new_property(class = S7::class_list, default = list()),
-    temporal = S7::new_property(class = S7::class_list, default = list()),
-    zhweb_catalog_ids = S7::new_property(class = S7::class_list, default = list())
-  ),
-  validator = function(self) {
-    # Validate required fields
-    if (length(self@title) != 1 || nchar(self@title) == 0) {
-      return("Dataset must have a non-empty title")
-    }
-    if (length(self@description) != 1 || nchar(self@description) == 0) {
-      return("Dataset must have a non-empty description")
-    }
-    if (is.na(self@contact_id)) {
-      return("Dataset must have a contact_id")
-    }
-    if (is.na(self@publisher_id)) {
-      return("Dataset must have a publisher_id")
-    }
-    if (is.na(self@status_id)) {
-      return("Dataset must have a status_id")
-    }
+    # ID des Datasets (wird serverseitig generiert)
+    id = S7::new_property(
+      class   = S7::class_numeric,
+      default = NA_real_,
+      validator = function(value) validate_id(value, allow_na = TRUE)
+    ),
 
-    # Additional validations could be added here
+    # Titel optional (wird nur bei Erstellung geprüft)
+    title = S7::new_property(
+      class   = S7::class_character,
+      default = NA_character_,
+      validator = function(value) {
+        if (!is.na(value) && nzchar(value)) {
+          if (length(value) != 1L) {
+            return("title muss eine nicht-leere Zeichenkette sein.")
+          }
+          if (nchar(value) > 1000L) {
+            return("title darf maximal 1000 Zeichen lang sein.")
+          }
+        }
+      }
+    ),
+
+    # Organisation ID (required)
+    organisation_id = S7::new_property(
+      class     = S7::class_numeric,
+      validator = function(value) validate_id(value, allow_na = FALSE)
+    ),
+
+    # Optionale Beschreibung und Kontakt
+    description = S7::new_property(
+      class   = S7::class_character,
+      default = NA_character_
+    ),
+    contact_email = S7::new_property(
+      class   = S7::class_character,
+      default = NA_character_,
+      validator = function(value) {
+        if (!is.na(value) && nzchar(value)) {
+          if (!grepl("^[^@]+@[^@]+\\.[^@]+$", value)) {
+            return("contact_email muss eine gültige E-Mail-Adresse sein.")
+          }
+        }
+      }
+    ),
+
+    # Weblink
+    landing_page = S7::new_property(
+      class   = S7::class_character,
+      default = NA_character_,
+      validator = function(value) {
+        if (!is.na(value) && nzchar(value)) {
+          if (!grepl(
+            "^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:].-]*)*$",
+            value
+          )) {
+            return("landing_page muss mit http:// oder https:// beginnen und eine gültige Domain haben")
+          }
+        }
+      }
+    ),
+
+    # Zeitpunkte (optional)
+    issued        = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+    start_date    = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+    end_date      = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+    modified      = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+    modified_next = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+
+    # Relations- und Katalog-IDs
+    keyword_ids        = S7::new_property(
+      class   = S7::class_list,
+      default = list(),
+      validator = function(value) validate_natural_number_list(value)
+    ),
+    zh_web_catalog_ids = S7::new_property(
+      class   = S7::class_list,
+      default = list(),
+      validator = function(value) validate_natural_number_list(value)
+    ),
+    relation_ids = S7::new_property(
+      class   = S7::class_list,
+      default = list(),
+      validator = function(value) validate_natural_number_list(value)
+    ),
+    see_also_ids = S7::new_property(
+      class   = S7::class_list,
+      default = list(),
+      validator = function(value) validate_natural_number_list(value)
+    ),
+    theme_ids = S7::new_property(
+      class   = S7::class_list,
+      default = list(),
+      validator = function(value) validate_natural_number_list(value)
+    ),
+
+    # Periodizität
+    periodicity_id = S7::new_property(
+      class   = S7::class_numeric,
+      default = NA_real_,
+      validator = function(value) validate_id(value, allow_na = TRUE)
+    )
+  ),
+  # Klasseneigene Validierung für Datum-Logik
+  validator = function(self) {
+    sd <- self@start_date
+    ed <- self@end_date
+    if (!is.na(sd) && !is.na(ed)) {
+      if (as.Date(sd) > as.Date(ed)) {
+        return(sprintf(
+          "end_date (%s) muss gleich oder nach start_date (%s) sein",
+          as.Date(ed),
+          as.Date(sd)
+        ))
+      }
+    }
   }
 )
