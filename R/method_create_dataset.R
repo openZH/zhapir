@@ -1,22 +1,24 @@
-#' Create a Dataset via the MDV API
+#' Create a new Dataset via the MDV API
 #'
-#' This S7 method takes an in-memory `Dataset` object, converts it to a JSON payload,
-#' and issues a POST to `/api/v1/datasets`. It handles serialization of dates,
-#' omission of empty fields, and error checking.
+#' S7 method for creating Dataset objects. This function serializes the
+#' Dataset to JSON, posts it to the API, and reports success via a CLI message.
 #'
-#' @param object   An S7 `Dataset` object (usually built by `create_dataset()`).
-#' @param api_key  A valid MDV API key, e.g. from `get_api_key()` or the `MDV_API_KEY` environment variable.
+#' @param object  An S7 Dataset object (built by `create_dataset()`).
+#' @param api_key MDV API key (character).
+#' @param use_dev Logical; if TRUE, uses the development API endpoint.
 #'
-#' @param use_dev  Logical; when `TRUE`, uses the development API endpoint.
-#'
+#' @return Invisibly returns the parsed API response (a named list) on success.
+#' @name create.Dataset
+#' @rdname create.Dataset
 #' @keywords internal
 S7::method(create, Dataset) <- function(object, api_key, use_dev = TRUE) {
-
   # Determine base URL
   base_url <- get_base_url(use_dev)
 
-  payload  <- object_to_payload(object)
+  # Convert object to JSON-ready list
+  payload <- object_to_payload(object)
 
+  # Perform API request
   resp <- httr2::request(paste0(base_url, "/api/v1/datasets")) |>
     httr2::req_method("POST") |>
     httr2::req_headers(
@@ -27,9 +29,22 @@ S7::method(create, Dataset) <- function(object, api_key, use_dev = TRUE) {
     httr2::req_body_json(payload, null = "null") |>
     httr2::req_perform()
 
-  if (httr2::resp_status(resp) < 300) {
-    httr2::resp_body_json(resp)
-  } else {
-    stop("API request failed: ", httr2::resp_body_string(resp), call. = FALSE)
+  status <- httr2::resp_status(resp)
+  if (status < 300) {
+    result <- httr2::resp_body_json(resp)
+    # Inform user
+    cli::cli_alert_success("Dataset {.val {result$title}} created with ID {.val {result$id}}.")
+    return(invisible(result))
   }
+
+  # On failure, raise an error
+  stop(
+    sprintf(
+      "Dataset creation failed [%s]: %s",
+      status,
+      httr2::resp_body_string(resp)
+    ),
+    call. = FALSE
+  )
 }
+
