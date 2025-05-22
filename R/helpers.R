@@ -97,3 +97,38 @@ object_to_payload <- function(object) {
 }
 
 
+#' Helper for API calls
+api_request <- function(
+    method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
+    endpoint,
+    payload = NULL,
+    api_key,
+    use_dev = TRUE
+) {
+  method <- match.arg(method)
+  base_url <- get_base_url(use_dev)
+
+  req <- httr2::request(paste0(base_url, endpoint)) |>
+    httr2::req_method(method) |>
+    httr2::req_headers(
+      `Content-Type` = "application/json",
+      Accept         = "application/json, application/problem+json",
+      `x-api-key`    = api_key
+    )
+
+  if (!is.null(payload)) {
+    req <- req |> httr2::req_body_json(payload, null = "null")
+  }
+
+  resp <- req |> httr2::req_perform()
+  status <- httr2::resp_status(resp)
+
+  if (status < 300) {
+    return(httr2::resp_body_json(resp))
+  }
+
+  stop(
+    sprintf("API %s failed [%s]: %s", method, status, httr2::resp_body_string(resp)),
+    call. = FALSE
+  )
+}
