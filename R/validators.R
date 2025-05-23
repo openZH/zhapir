@@ -33,3 +33,21 @@ validate_natural_number_list <- function(value) {
     }
   }
 }
+
+
+validate_optional_text <- function(value, max = 1000, field = "Feld") {
+  if (!is.na(value) && nzchar(value) && nchar(value) > max) {
+    return(paste(field, "darf maximal", max, "Zeichen lang sein."))
+  }
+  return(NULL)
+}
+
+
+validate_url <- function(value, field = "URL") {
+  if (!is.na(value) && nzchar(value)) {
+    if (!grepl("^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:]._~%-]*)*$", value)) {
+      return(paste(field, "muss mit http:// oder https:// beginnen und eine gültige Domain haben"))
+    }
+  }
+  return(NULL)
+}
