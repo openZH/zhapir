@@ -108,6 +108,7 @@ api_request <- function(
   method <- match.arg(method)
   base_url <- get_base_url(use_dev)
 
+
   req <- httr2::request(paste0(base_url, endpoint)) |>
     httr2::req_method(method) |>
     httr2::req_headers(
