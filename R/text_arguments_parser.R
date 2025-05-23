@@ -9,9 +9,9 @@
 #' @export
 #'
 #' @examples
-#' df_organisation <- get_all_organisation_info()
+#' df_organisation <- get_organisations()
 #' head(df_organisation)
-get_all_organisation_info <- function() {
+get_organisations <- function() {
   req <- api_request(
     method = "GET",
     endpoint = "/api/v1/organisations",
