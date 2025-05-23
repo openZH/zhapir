@@ -13,7 +13,7 @@
 #' @param right             Optional rights statement
 #' @param issued            Optional ISO datetime string or POSIXct
 #' @param byte_size         Optional numeric byte size (positive integer)
-#' @param status_id         Optional status ID (default: 1)
+#' @param status_id         Optional status ID (default: 1 == "Entwurf")
 #' @param license_id        Optional license ID
 #' @param format_id         Optional format ID
 #' @param media_type_id     Optional media type ID
