@@ -26,6 +26,8 @@ Collate:
     'distribution.R'
     'generics.R'
     'create.R'
+    'update.R'
     'create_dataset.R'
     'create_distribution.R'
+    'update_dataset.R'
     'zzz.R'
