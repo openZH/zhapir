@@ -133,3 +133,41 @@ api_request <- function(
     call. = FALSE
   )
 }
+
+
+
+#' Retrieve a dataset by ID from the MDV API
+#'
+#' @param id Numeric; the dataset ID to fetch.
+#' @param api_key MDV API key (optional; falls back to env var).
+#' @param use_dev Logical; if TRUE, uses the development API endpoint.
+#' @return A named list parsed from the JSON response.
+#' @export
+get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
+
+  if(is.null(api_key)){
+    api_key <- get_api_key(api_key)
+  }
+
+
+  url <- paste0(get_base_url(use_dev), "/api/v1/datasets/", id)
+
+  resp <- httr2::request(url) |>
+    httr2::req_headers(
+      Accept      = "application/json",
+      `x-api-key` = api_key
+    ) |>
+    httr2::req_method("GET") |>
+    httr2::req_perform()
+
+  status <- httr2::resp_status(resp)
+  if (status < 300) {
+    httr2::resp_body_json(resp)
+  } else {
+    stop(
+      sprintf("Failed to fetch dataset [%s]: %s", status,
+              httr2::resp_body_string(resp)),
+      call. = FALSE
+    )
+  }
+}
