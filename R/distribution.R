@@ -11,11 +11,9 @@
 #' @param description       character; distribution description (optional, <=4000 characters)
 #' @param modified          POSIXct or ISO datetime string; timestamp of last modification (optional)
 #' @param access_url        character; URL to access the distribution (optional, must start with http:// or https://)
-#' @param identifier        character; optional string identifier for the distribution
 #' @param right             character; optional textual statement of usage rights
 #' @param issued            POSIXct or ISO datetime string; publication date of the distribution (optional)
 #' @param byte_size         numeric; size in bytes (optional, must be a positive integer)
-#' @param status_id         numeric; status ID (optional, default is 1)
 #' @param license_id        numeric; license ID (optional)
 #' @param format_id         numeric; file format ID (optional)
 #' @param media_type_id     numeric; media type ID (optional)
@@ -83,12 +81,6 @@ Distribution <- S7::new_class(
       validator = function(value) validate_url(value, field = "access_url")
     ),
 
-    # Identifier (optional)
-    identifier = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_
-    ),
-
     # Right (optional)
     right = S7::new_property(
       class = S7::class_character,
@@ -107,12 +99,6 @@ Distribution <- S7::new_class(
       default = NA_real_,
     ),
 
-    # Status ID (optional)
-    status_id = S7::new_property(
-      class = S7::class_numeric,
-      default = 1,
-      validator = function(value) validate_id(value, allow_na = TRUE)
-    ),
 
     # License ID (optional)
     license_id = S7::new_property(

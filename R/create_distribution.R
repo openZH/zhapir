@@ -9,11 +9,9 @@
 #' @param description       Optional description string
 #' @param modified          Optional ISO datetime string or POSIXct
 #' @param access_url        Optional access URL (must start with http:// or https://)
-#' @param identifier        Optional string identifier
 #' @param right             Optional rights statement
 #' @param issued            Optional ISO datetime string or POSIXct
 #' @param byte_size         Optional numeric byte size (positive integer)
-#' @param status_id         Optional status ID (default: 1 == "Entwurf")
 #' @param license_id        Optional license ID
 #' @param format_id         Optional format ID
 #' @param media_type_id     Optional media type ID
@@ -34,11 +32,9 @@ create_distribution <- function(
     description      = NULL,
     modified         = NULL,
     access_url       = NULL,
-    identifier       = NULL,
     right            = NULL,
     issued           = NULL,
     byte_size        = NULL,
-    status_id        = 1,
     license_id       = NULL,
     format_id        = NULL,
     media_type_id    = NULL,
@@ -66,11 +62,9 @@ create_distribution <- function(
     description       = if (is.null(description)) NA_character_ else description,
     modified          = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
     access_url        = if (is.null(access_url)) NA_character_ else access_url,
-    identifier        = if (is.null(identifier)) NA_character_ else identifier,
     right             = if (is.null(right)) NA_character_ else right,
     issued            = if (!is.null(issued)) as.POSIXct(issued, tz = "UTC") else as.POSIXct(NA),
     byte_size         = if (is.null(byte_size)) NA_real_ else byte_size,
-    status_id         = if (is.null(status_id)) NA_real_ else status_id,
     license_id        = if (is.null(license_id)) NA_real_ else license_id,
     format_id         = if (is.null(format_id)) NA_real_ else format_id,
     media_type_id     = if (is.null(media_type_id)) NA_real_ else media_type_id,
