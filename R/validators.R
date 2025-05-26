@@ -8,7 +8,7 @@ validate_id <- function(value, allow_na = TRUE) {
       return("cannot be NA")
     }
   } else {
-    if (value <= 0) {
+    if (value < 0) {
       return("must be a positive number")
     }
     if (value != floor(value)) {
