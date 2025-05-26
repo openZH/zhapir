@@ -51,6 +51,11 @@ create_distribution <- function(
     stop("`title` ist erforderlich, um eine neue Distribution zu erstellen.", call. = FALSE)
   }
 
+  # Dataset is required
+  if (is.null(dataset_id) || is.na(dataset_id)) {
+    stop("`dataset_id` ist erforderlich für das Erstellen einer Distribution.", call. = FALSE)
+  }
+
   # Construct Distribution object
   dist <- Distribution(
     title             = title,

@@ -30,4 +30,5 @@ Collate:
     'create_dataset.R'
     'create_distribution.R'
     'update_dataset.R'
+    'update_distribution.R'
     'zzz.R'

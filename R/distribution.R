@@ -2,6 +2,7 @@
 #'
 #' Create a new Distribution object for the KOSMOS data catalog (DCAT standard).
 #'
+#' @param id                numeric; ID der Distribution (required for update)
 #' @param title             character; distribution title (required on create, <=1000 characters)
 #' @param dataset_id        numeric; ID of the related dataset (required)
 #' @param stat_server_flag  logical; visibility flag for statistical server (optional)
@@ -27,17 +28,25 @@ Distribution <- S7::new_class(
   package = "zhapir",
   properties = list(
 
-    # Title (required)
+    # Distribution ID (required for PATCH)
+    id = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_,
+      validator = function(value) validate_id(value, allow_na = TRUE)
+    ),
+
+    # Title (required for POST)
     title = S7::new_property(
       class = S7::class_character,
       default = NA_character_,
       validator = function(value) validate_optional_text(value, max = 1000, field = "title")
     ),
 
-    # Dataset ID (required)
+    # Dataset ID (required for PATCH)
     dataset_id = S7::new_property(
       class = S7::class_numeric,
-      validator = function(value) validate_id(value, allow_na = FALSE)
+      default = NA_real_,
+      validator = function(value) validate_id(value, allow_na = TRUE)
     ),
 
     # Flags (optional)
