@@ -4,6 +4,9 @@
 #' associated IDs. This function is typically used to look up valid organisation
 #' options for other functions.
 #'
+#' @param show_organisation_units If `TRUE`, organisation units are returned in
+#' addition to the organisations
+#'
 #' @return A data frame with two columns: one for organisation names and one for
 #' their corresponding IDs.
 #' @export
@@ -11,7 +14,7 @@
 #' @examples
 #' df_organisation <- get_organisations()
 #' head(df_organisation)
-get_organisations <- function() {
+get_organisations <- function(show_organisation_units = TRUE) {
   req <- api_request(
     method = "GET",
     endpoint = "/api/v1/organisations",
@@ -20,26 +23,26 @@ get_organisations <- function() {
 
   # create data frame with all organisation information
   df_organisation_info <- purrr::map_df(req, ~ {
-    organisation <- .x
+    x <- .x
 
     # retrieve organisation information
-    organisation_id <- organisation$id
-    organisation <- organisation$name
+    organisation_id <- x$id
+    organisation <- x$name
 
     # FIXME: potentially use below chunk to retrieve organisation units
-    # # retrieve organisation unit information within an additional list of a
-    # # given organisation
-    # if (length(organisation$organisation_units) != 0) {
-    #   df_organisation_unit <- purrr::map_df(organisation$organisation_units, ~ {
-    #     orga_unit_id <- .x$id
-    #     orga_unit <- .x$label
-    #
-    #     data.frame(orga_unit_id = orga_unit_id, orga_unit = orga_unit)
-    #   })
-    # }
+    # retrieve organisation unit information within an additional list of a
+    # given organisation
+    if (length(x$organisation_units) != 0) {
+      df_organisation_unit <- purrr::map_df(x$organisation_units, ~ {
+        orga_unit_id <- .x$id
+        orga_unit <- .x$label
+
+        data.frame(organisation_unit_id = orga_unit_id, organisation_unit = orga_unit)
+      })
+    }
 
     # Combine organisation and organisation unit information to a data frame
-    if (exists("df_organisation_unit")) {
+    if (exists("df_organisation_unit") & show_organisation_units == TRUE) {
       df <- data.frame(
         organisation_id = organisation_id,
         organisation = organisation,
@@ -74,8 +77,9 @@ get_organisations <- function() {
 #' get_keywords_id("abfall")
 get_keywords_id <- function(name) {
   df_keywords <- get_keywords()
-
   id <- get_id(name, df_keywords)
+
+  return(id)
 }
 
 
@@ -94,6 +98,7 @@ get_keywords_id <- function(name) {
 #' head(df_keywords)
 get_keywords <- function() {
   df_keywords <- req_to_df("keywords")
+
   return(df_keywords)
 }
 
@@ -116,8 +121,9 @@ get_keywords <- function() {
 #' get_zh_web_catalog_id("Bevölkerung")
 get_zh_web_catalog_id <- function(name) {
   df_zh_web_catalog <- get_zh_web_catalog()
-
   id <- get_id(name, df_zh_web_catalog)
+
+  return(id)
 }
 
 
@@ -136,6 +142,7 @@ get_zh_web_catalog_id <- function(name) {
 #' head(df_zh_web_catalog)
 get_zh_web_catalog <- function() {
   df_zh_web_catalog <- req_to_df("zhweb-datenkataloge")
+
   return(df_zh_web_catalog)
 }
 
@@ -157,8 +164,9 @@ get_zh_web_catalog <- function() {
 #' get_zh_web_catalog_id("Bevölkerung")
 get_themes_id <- function(name) {
   df_theme <- get_themes()
-
   id <- get_id(name, df_theme)
+
+  return(id)
 }
 
 
@@ -179,6 +187,7 @@ get_themes_id <- function(name) {
 #' head(df_themes)
 get_themes <- function() {
   df_themes <- req_to_df("themes")
+
   return(df_themes)
 }
 
@@ -200,10 +209,11 @@ get_themes <- function() {
 #'
 #' @examples
 #' get_periodicity_id("Jährlich")
-get_periodicity_id <- function(name) {
+get_periodicities_id <- function(name) {
   df_periodicity <- get_periodicity()
-
   id <- get_id(name, df_periodicity)
+
+  return(id)
 }
 
 
@@ -222,8 +232,9 @@ get_periodicity_id <- function(name) {
 #' @examples
 #' df_periocidity <- get_periodicity()
 #' head(df_periocidity)
-get_periodicity <- function() {
+get_periodicities <- function() {
   df_periocidity <- req_to_df("periodicities")
+
   return(df_periocidity)
 }
 
@@ -247,8 +258,9 @@ get_periodicity <- function() {
 #' get_statuses_id("Entwurf")
 get_statuses_id <- function(name) {
   df_status <- get_statuses()
-
   id <- get_id(name, df_status)
+
+  return(id)
 }
 
 
@@ -269,6 +281,7 @@ get_statuses_id <- function(name) {
 #' head(df_status)
 get_statuses <- function() {
   df_status <- req_to_df("statuses")
+
   return(df_status)
 }
 
@@ -289,8 +302,9 @@ get_statuses <- function() {
 #' get_licenses_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
 get_licenses_id <- function(name) {
   df_license <- get_licenses()
-
   id <- get_id(name, df_license)
+
+  return(id)
 }
 
 
@@ -310,6 +324,7 @@ get_licenses_id <- function(name) {
 #' head(df_license)
 get_licenses <- function() {
   df_license <- req_to_df("licenses")
+
   return(df_license)
 }
 
@@ -331,8 +346,9 @@ get_licenses <- function() {
 #' get_formats_id("CSV")
 get_formats_id <- function(name) {
   df_format <- get_formats()
-
   id <- get_id(name, df_format)
+
+  return(id)
 }
 
 
@@ -353,6 +369,7 @@ get_formats_id <- function(name) {
 #' head(df_format)
 get_formats <- function() {
   df_format <- req_to_df("formats")
+
   return(df_format)
 }
 
@@ -427,14 +444,16 @@ req_to_df <- function(endpoint) {
 get_id <- function(name, df) {
 
   filter_col <- rlang::sym(names(df)[names(df) != "id"])
+  name <- tolower(name)
 
   ids <- c()
+  browser()
 
   for (i in name) {
     switch(as.character(filter_col),
-      "keyword" = {
+      "keywords" = {
         error_noun <- "keyword"
-        fun_name_suffix <- "keywords"
+        fun_name <- "get_keywords()"
       },
       "zh_web_catalog_keyword" = {
         error_noun <- "zh_web_catalog"
@@ -445,8 +464,8 @@ get_id <- function(name, df) {
         fun_name <- "get_themes()"
       },
       "periodicities" = {
-        error_noun <- "periodicity"
-        fun_name <- "get_periodicity()"
+        error_noun <- "periodicities"
+        fun_name <- "get_periodicities()"
       },
       "statuses" = {
         error_noun <- "status"
@@ -464,10 +483,11 @@ get_id <- function(name, df) {
     )
 
     df_filtered <- df |>
-      dplyr::filter(grepl(i, !!filter_col))
+      dplyr::mutate(filter_col_lower = tolower(!!filter_col)) |>
+      dplyr::filter(grepl(i, filter_col_lower))
 
     exact_match <- df_filtered |>
-      dplyr::filter(!!filter_col == i)
+      dplyr::filter(filter_col_lower == i)
 
     if (nrow(exact_match == 1)) {
       single_id <- exact_match |>
@@ -477,6 +497,9 @@ get_id <- function(name, df) {
         dplyr::pull(!!filter_col)
 
       ids <- c(ids, single_id)
+      print(ids)
+      return(ids)
+
     } else if (nrow(df_filtered) == 0) {
       stop(paste0(
         "'", i, "' is not a valid ", error_noun, ".",
@@ -493,16 +516,6 @@ get_id <- function(name, df) {
           paste0("\nTo explore all '", error_noun, "' run '", fun_name, "'.")
         )
       )
-    } else {
-      single_id <- df_filtered |>
-        dplyr::pull(id)
-
-      names(single_id) <- df_filtered |>
-        dplyr::pull(!!filter_col)
-
-      ids <- c(ids, single_id)
     }
   }
-  print(ids)
-  return(ids)
 }
