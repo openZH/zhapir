@@ -27,106 +27,70 @@ Dataset <- S7::new_class(
   package = "zhapir",
   properties = list(
     # ID des Datasets (wird serverseitig generiert)
-    id = S7::new_property(
-      class   = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # Titel optional (wird nur bei Erstellung geprüft)
-    title = S7::new_property(
-      class   = S7::class_character,
-      default = NA_character_,
-      validator = function(value) {
-        if (!is.na(value) && nzchar(value)) {
-          if (length(value) != 1L) {
-            return("title muss eine nicht-leere Zeichenkette sein.")
-          }
-          if (nchar(value) > 1000L) {
-            return("title darf maximal 1000 Zeichen lang sein.")
-          }
-        }
-      }
+    title = prop_string(
+      validator = validate_text,
+      field = "title"
     ),
 
     # Organisation ID (required)
-    organisation_id = S7::new_property(
-      class     = S7::class_numeric,
-      validator = function(value) validate_id(value, allow_na = FALSE)
+    organisation_id = prop_numeric(
+      validator = validate_id,
+      allow_na = FALSE
     ),
 
     # Optionale Beschreibung und Kontakt
-    description = S7::new_property(
-      class   = S7::class_character,
-      default = NA_character_
+    description = prop_string(
+      validator = validate_text,
+      max_length = 10000L,
+      field = "description"
     ),
-    contact_email = S7::new_property(
-      class   = S7::class_character,
-      default = NA_character_,
-      validator = function(value) {
-        if (!is.na(value) && nzchar(value)) {
-          if (!grepl("^[^@]+@[^@]+\\.[^@]+$", value)) {
-            return("contact_email muss eine gültige E-Mail-Adresse sein.")
-          }
-        }
-      }
+
+    contact_email = prop_string(
+      validator = validate_email
     ),
 
     # Weblink
-    landing_page = S7::new_property(
-      class   = S7::class_character,
-      default = NA_character_,
-      validator = function(value) {
-        if (!is.na(value) && nzchar(value)) {
-          if (!grepl(
-            "^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:].-]*)*$",
-            value
-          )) {
-            return("landing_page muss mit http:// oder https:// beginnen und eine gültige Domain haben")
-          }
-        }
-      }
+    landing_page = prop_string(
+      validator = validate_url,
+      field = "landing_page"
     ),
 
     # Zeitpunkte (optional)
-    issued        = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
-    start_date    = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
-    end_date      = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
-    modified      = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
-    modified_next = S7::new_property(class = S7::class_POSIXct, default = as.POSIXct(NA)),
+    issued        = prop_posixct(
+      default = as.POSIXct(NA)
+    ),
+    start_date    = prop_posixct(),
+    end_date      = prop_posixct(),
+    modified      = prop_posixct(),
+    modified_next = prop_posixct(),
 
     # Relations- und Katalog-IDs
-    keyword_ids        = S7::new_property(
-      class   = S7::class_list,
-      default = list(),
-      validator = function(value) validate_natural_number_list(value)
+    keyword_ids = prop_list(
+      validator = validate_natural_number_list
     ),
-    zh_web_catalog_ids = S7::new_property(
-      class   = S7::class_list,
-      default = list(),
-      validator = function(value) validate_natural_number_list(value)
+    zh_web_catalog_ids = prop_list(
+      validator = validate_natural_number_list
     ),
-    relation_ids = S7::new_property(
-      class   = S7::class_list,
-      default = list(),
-      validator = function(value) validate_natural_number_list(value)
+    relation_ids = prop_list(
+      validator = validate_natural_number_list
     ),
-    see_also_ids = S7::new_property(
-      class   = S7::class_list,
-      default = list(),
-      validator = function(value) validate_natural_number_list(value)
+    see_also_ids = prop_list(
+      validator = validate_natural_number_list
     ),
-    theme_ids = S7::new_property(
-      class   = S7::class_list,
-      default = list(),
-      validator = function(value) validate_natural_number_list(value)
+    theme_ids = prop_list(
+      validator = validate_natural_number_list
     ),
 
     # Periodizität
-    periodicity_id = S7::new_property(
-      class   = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    periodicity_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     )
   ),
   # Klasseneigene Validierung für Datum-Logik
