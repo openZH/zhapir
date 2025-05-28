@@ -10,11 +10,10 @@
 #' @param ogd_flag          logical; visibility flag for Open Government Data (optional)
 #' @param sort_order        numeric; optional sort index for ordering multiple distributions
 #' @param description       character; distribution description (optional, <=4000 characters)
-#' @param modified          POSIXct or ISO datetime string; timestamp of last modification (optional)
 #' @param access_url        character; URL to access the distribution (optional, must start with http:// or https://)
 #' @param right             character; optional textual statement of usage rights
-#' @param issued            POSIXct or ISO datetime string; publication date of the distribution (optional)
 #' @param byte_size         numeric; size in bytes (optional, must be a positive integer)
+#' @param status_id         numeric; status ID (optional)
 #' @param license_id        numeric; license ID (optional)
 #' @param format_id         numeric; file format ID (optional)
 #' @param media_type_id     numeric; media type ID (optional)
@@ -22,7 +21,6 @@
 #' @param file_upload_id    character; ID of the uploaded file (optional)
 #'
 #' @return An S7 `Distribution` object.
-#' @export
 Distribution <- S7::new_class(
   "Distribution",
   package = "zhapir",
@@ -77,11 +75,13 @@ Distribution <- S7::new_class(
       validator = function(value) validate_optional_text(value, max = 10000, field = "description") # TODO max?
     ),
 
-    # Modified (optional)
-    modified = S7::new_property(
-      class = S7::class_POSIXct,
-      default = as.POSIXct(NA)
+    # Status ID (optional)
+    status_id = S7::new_property(
+      class = S7::class_numeric,
+      default = NA_real_,
+      validator = function(value) validate_id(value, allow_na = TRUE)
     ),
+
 
     # Access URL (optional)
     access_url = S7::new_property(
@@ -96,18 +96,11 @@ Distribution <- S7::new_class(
       default = NA_character_
     ),
 
-    # Issued (optional)
-    issued = S7::new_property(
-      class = S7::class_POSIXct,
-      default = as.POSIXct(NA)
-    ),
-
     # Byte size (optional)
     byte_size = S7::new_property(
       class = S7::class_numeric,
-      default = NA_real_,
+      default = NA_real_
     ),
-
 
     # License ID (optional)
     license_id = S7::new_property(

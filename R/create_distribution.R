@@ -7,11 +7,10 @@
 #' @param ogd_flag          Logical; publish to Open Government Data portal (optional)
 #' @param sort_order        Numeric; optional sorting index
 #' @param description       Optional description string
-#' @param modified          Optional ISO datetime string or POSIXct
 #' @param access_url        Optional access URL (must start with http:// or https://)
 #' @param right             Optional rights statement
-#' @param issued            Optional ISO datetime string or POSIXct
 #' @param byte_size         Optional numeric byte size (positive integer)
+#' @param status_id         Optional status ID (will be set via follow-up PATCH)
 #' @param license_id        Optional license ID
 #' @param format_id         Optional format ID
 #' @param media_type_id     Optional media type ID
@@ -19,6 +18,8 @@
 #' @param file_upload_id    Optional file upload ID (string)
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
+#'
+#' @details If `status_id` is provided, it will be applied via a follow-up API PATCH request after creation.
 #'
 #' @return Invisibly returns the parsed API response
 #' @export
@@ -30,11 +31,10 @@ create_distribution <- function(
     ogd_flag         = NULL,
     sort_order       = NULL,
     description      = NULL,
-    modified         = NULL,
     access_url       = NULL,
     right            = NULL,
-    issued           = NULL,
     byte_size        = NULL,
+    status_id        = NULL,
     license_id       = NULL,
     format_id        = NULL,
     media_type_id    = NULL,
@@ -65,10 +65,8 @@ create_distribution <- function(
     ogd_flag          = if (is.null(ogd_flag)) NA else ogd_flag,
     sort_order        = if (is.null(sort_order)) NA_real_ else sort_order,
     description       = if (is.null(description)) NA_character_ else description,
-    modified          = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
     access_url        = if (is.null(access_url)) NA_character_ else access_url,
     right             = if (is.null(right)) NA_character_ else right,
-    issued            = if (!is.null(issued)) as.POSIXct(issued, tz = "UTC") else as.POSIXct(NA),
     byte_size         = if (is.null(byte_size)) NA_real_ else byte_size,
     license_id        = if (is.null(license_id)) NA_real_ else license_id,
     format_id         = if (is.null(format_id)) NA_real_ else format_id,
@@ -78,5 +76,17 @@ create_distribution <- function(
   )
 
   # Dispatch to API
-  create(dist, api_key, use_dev)
+  result <- create(dist, api_key, use_dev)
+
+  # If a status_id is provided, update it via PATCH
+  # (status defaults to status_id = 1 on creation and cannot be set via PATCH)
+  if (!is.null(result) && !is.null(status_id)) {
+    update(
+      Distribution(id = result$id, status_id = status_id),
+      api_key = api_key,
+      use_dev = use_dev
+    )
+  }
+
+  invisible(result)
 }
