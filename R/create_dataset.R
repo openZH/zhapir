@@ -40,7 +40,6 @@ create_dataset <- function(
     use_dev            = TRUE
 ) {
 
-  print("Here")
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
 
@@ -64,11 +63,11 @@ create_dataset <- function(
     modified = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
     modified_next = if (!is.null(modified_next)) as.POSIXct(modified_next, tz = "UTC") else as.POSIXct(NA),
     keyword_ids = if (is.null(keyword_ids)) list() else as.list(keyword_ids),
-    zh_web_catalog_ids = if (is.null(zh_web_catalog_ids)) list() else zh_web_catalog_ids,
-    relation_ids = if (is.null(relation_ids)) list() else relation_ids,
-    theme_ids = if (is.null(theme_ids)) list() else theme_ids,
+    zh_web_catalog_ids = if (is.null(zh_web_catalog_ids)) list() else as.list(zh_web_catalog_ids),
+    relation_ids = if (is.null(relation_ids)) list() else as.list(relation_ids),
+    theme_ids = if (is.null(theme_ids)) list() else as.list(theme_ids),
     periodicity_id = if (is.null(periodicity_id)) NA_real_ else periodicity_id,
-    see_also_ids = if (is.null(see_also_ids)) list() else see_also_ids
+    see_also_ids = if (is.null(see_also_ids)) list() else as.list(see_also_ids)
   )
 
   # Dispatch create method
