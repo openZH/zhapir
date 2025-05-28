@@ -63,7 +63,7 @@ create_dataset <- function(
     end_date = if (!is.null(end_date)) as.POSIXct(end_date, tz = "UTC") else as.POSIXct(NA),
     modified = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
     modified_next = if (!is.null(modified_next)) as.POSIXct(modified_next, tz = "UTC") else as.POSIXct(NA),
-    keyword_ids = if (is.null(keyword_ids)) list() else keyword_ids,
+    keyword_ids = if (is.null(keyword_ids)) list() else as.list(keyword_ids),
     zh_web_catalog_ids = if (is.null(zh_web_catalog_ids)) list() else zh_web_catalog_ids,
     relation_ids = if (is.null(relation_ids)) list() else relation_ids,
     theme_ids = if (is.null(theme_ids)) list() else theme_ids,
