@@ -8,7 +8,7 @@ get_organisations(show_organisation_units = TRUE)
 }
 \arguments{
 \item{show_organisation_units}{If \code{TRUE}, organisation units are returned in
-addition to the organisations}
+addition to the organisations.}
 }
 \value{
 A data frame with two columns: one for organisation names and one for

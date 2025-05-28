@@ -5,7 +5,7 @@
 #' options for other functions.
 #'
 #' @param show_organisation_units If `TRUE`, organisation units are returned in
-#' addition to the organisations
+#' addition to the organisations.
 #'
 #' @return A data frame with two columns: one for organisation names and one for
 #' their corresponding IDs.
@@ -79,7 +79,7 @@ get_keywords_id <- function(name) {
   df_keywords <- get_keywords()
   id <- get_id(name, df_keywords)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -123,7 +123,7 @@ get_zh_web_catalog_id <- function(name) {
   df_zh_web_catalog <- get_zh_web_catalog()
   id <- get_id(name, df_zh_web_catalog)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -161,12 +161,12 @@ get_zh_web_catalog <- function() {
 #' @export
 #'
 #' @examples
-#' get_zh_web_catalog_id("Bevölkerung")
+#' get_themes_id("Wirtschaft und Finanzen")
 get_themes_id <- function(name) {
   df_theme <- get_themes()
   id <- get_id(name, df_theme)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -210,10 +210,10 @@ get_themes <- function() {
 #' @examples
 #' get_periodicity_id("Jährlich")
 get_periodicities_id <- function(name) {
-  df_periodicity <- get_periodicity()
+  df_periodicity <- get_periodicities()
   id <- get_id(name, df_periodicity)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -260,7 +260,7 @@ get_statuses_id <- function(name) {
   df_status <- get_statuses()
   id <- get_id(name, df_status)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -304,7 +304,7 @@ get_licenses_id <- function(name) {
   df_license <- get_licenses()
   id <- get_id(name, df_license)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -348,7 +348,7 @@ get_formats_id <- function(name) {
   df_format <- get_formats()
   id <- get_id(name, df_format)
 
-  return(id)
+  return(invisible(id))
 }
 
 
@@ -447,7 +447,6 @@ get_id <- function(name, df) {
   name <- tolower(name)
 
   ids <- c()
-  browser()
 
   for (i in name) {
     switch(as.character(filter_col),
@@ -455,7 +454,7 @@ get_id <- function(name, df) {
         error_noun <- "keyword"
         fun_name <- "get_keywords()"
       },
-      "zh_web_catalog_keyword" = {
+      "zhweb-datenkataloge" = {
         error_noun <- "zh_web_catalog"
         fun_name <- "get_zh_web_catalog()"
       },
@@ -497,8 +496,6 @@ get_id <- function(name, df) {
         dplyr::pull(!!filter_col)
 
       ids <- c(ids, single_id)
-      print(ids)
-      return(ids)
 
     } else if (nrow(df_filtered) == 0) {
       stop(paste0(
@@ -518,4 +515,7 @@ get_id <- function(name, df) {
       )
     }
   }
+
+print(ids)
+return(ids)
 }
