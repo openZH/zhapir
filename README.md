@@ -29,12 +29,9 @@ create_dataset("Hello Dataset 1", organisation_id = 14, description = "Such insi
 Example:
 ```
 create_dataset("Hello Dataset 1",
-               organisation_id = 14,  # note that for organisation_id you have to specify the actual ID
+               organisation_id = 14,
                description = "Such insights, much wow!",
-               keyword_ids  = list(get_keywords_id("abfall"),
-                                   get_keywords_id("abgase"),
-                                   get_keywords_id("luftqualitaet")
-                                   )
+               keyword_ids  = get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
                )
 ```
 
