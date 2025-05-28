@@ -29,3 +29,7 @@ Collate:
     'create_dataset.R'
     'create_distribution.R'
     'zzz.R'
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
