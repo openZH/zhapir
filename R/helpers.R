@@ -124,14 +124,7 @@ api_request <- function(
   resp <- req |> httr2::req_perform()
   status <- httr2::resp_status(resp)
 
-  if (status < 300) {
-    return(httr2::resp_body_json(resp))
-  }
-
-  stop(
-    sprintf("API %s failed [%s]: %s", method, status, httr2::resp_body_string(resp)),
-    call. = FALSE
-  )
+  httr2::resp_body_json(resp)
 }
 
 
