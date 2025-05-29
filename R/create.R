@@ -1,50 +1,31 @@
-#' Create a new Dataset via the MDV API
-#'
-#' S7 method for creating Dataset objects. This function serializes the
-#' Dataset to JSON, posts it to the API, and reports success via a CLI message.
-#'
-#' @param object  An S7 Dataset object (built by `create_dataset()`).
-#' @param api_key MDV API key (character).
-#' @param use_dev Logical; if TRUE, uses the development API endpoint.
-#'
-#' @return Invisibly returns the parsed API response (a named list) on success.
-#' @name create.Dataset
-#' @rdname create.Dataset
-#' @keywords internal
+#' @describeIn create a new Dataset via API call
 S7::method(create, Dataset) <- function(object, api_key, use_dev = TRUE) {
-  # Determine base URL
-  base_url <- get_base_url(use_dev)
-
-  # Convert object to JSON-ready list
-  payload <- object_to_payload(object)
-
-  # Perform API request
-  resp <- httr2::request(paste0(base_url, "/api/v1/datasets")) |>
-    httr2::req_method("POST") |>
-    httr2::req_headers(
-      `Content-Type` = "application/json",
-      Accept         = "application/json, application/problem+json",
-      `x-api-key`    = api_key
-    ) |>
-    httr2::req_body_json(payload, null = "null") |>
-    httr2::req_perform()
-
-  status <- httr2::resp_status(resp)
-  if (status < 300) {
-    result <- httr2::resp_body_json(resp)
-    # Inform user
-    cli::cli_alert_success("Dataset {.val {result$title}} created with ID {.val {result$id}}.")
-    return(invisible(result))
-  }
-
-  # On failure, raise an error
-  stop(
-    sprintf(
-      "Dataset creation failed [%s]: %s",
-      status,
-      httr2::resp_body_string(resp)
-    ),
-    call. = FALSE
-  )
+  post_request(object, "/api/v1/datasets", api_key, use_dev, object_label = "Dataset")
 }
 
+#' @describeIn create a new Distribution via API call
+S7::method(create, Distribution) <- function(object, api_key, use_dev = TRUE) {
+  post_request(object, "/api/v1/distributions", api_key, use_dev, object_label = "Distribution")
+}
+
+# Helper to POST an object to the API and print a CLI message
+post_request <- function(object, endpoint, api_key, use_dev = TRUE, object_label) {
+  payload <- object_to_payload(object)
+  result  <- api_request("POST", endpoint, payload, api_key, use_dev)
+
+
+  if (identical(endpoint, "/api/v1/distributions")) {
+    # For distributions, include parent dataset ID
+    parent_id <- result$dataset$id
+    cli::cli_alert_success(
+      "{.strong {object_label}} {.val {result$title}} with ID {.val {result$id}} created inside Dataset with ID {.val {parent_id}}."
+    )
+  } else {
+    # For datasets (and all other endpoints), simple creation message (can be extended in the future)
+    cli::cli_alert_success(
+      "{.strong {object_label}} {.val {result$title}} created with ID {.val {result$id}}."
+    )
+  }
+
+  invisible(result)
+}
