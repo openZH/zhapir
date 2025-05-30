@@ -65,6 +65,7 @@ object_to_payload <- function(object) {
   # 1. Extract raw properties
   p <- S7::props(object)
 
+  # FIXME: Why here and not already in constructor??
   # Helper for ISO-8601
   fmt <- function(dt) format(dt, "%Y-%m-%dT%H:%M:%SZ")
 
