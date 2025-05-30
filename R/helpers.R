@@ -98,6 +98,12 @@ object_to_payload <- function(object) {
 
 
 #' Helper for API calls
+#'
+#' @param method string; what kind of request should be made
+#' @param endpoint string; which endpoint should be reached
+#' @param payload list containing the payload
+#' @inheritParams get_dataset
+#' @keywords internal
 api_request <- function(
     method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
     endpoint,
