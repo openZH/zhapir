@@ -4,7 +4,7 @@
 #' Generic method to create a new object in the data catalog via the API.
 #'
 #' @param object The object to create (Dataset or Distribution)
-#' @param auth_info Authentication information from login_to_api()
+#' @param api_key Authentication information from login_to_api()
 #' @param use_dev Whether to use the development environment
 #'
 #' @return The created object with updated information from the API response
@@ -20,7 +20,7 @@ create <- S7::new_generic("create", "object")
 #'
 #' @param object The object to update
 #' @param id ID of the object to update
-#' @param auth_info Authentication information from login_to_api()
+#' @param api_key Authentication information from login_to_api()
 #' @param use_dev Whether to use the development environment
 #'
 #' @return The updated object with updated information from the API response
