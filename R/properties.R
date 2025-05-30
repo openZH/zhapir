@@ -10,10 +10,14 @@ prop_posixct <- function(default = NULL) {
 }
 
 
-prop_string <- function(validator = NULL, ...) {
+prop_string <- function(default = NULL, validator = NULL, ...) {
   S7::new_property(
     class = S7::class_character,
-    default = NA_character_,
+    default = if (is.null(default)) {
+      NA_character_
+    } else {
+      default
+    },
     validator = function(value) validator(value, ...)
   )
 }
