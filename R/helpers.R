@@ -177,3 +177,23 @@ get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
     )
   }
 }
+
+
+
+to_POSIXct <- function(date_var){
+  if (!inherits(date_var, "S7_missing")) {
+    as.POSIXct(date_var, tz = "UTC")
+  } else {
+    S7::class_missing
+  }
+}
+
+to_list <- function(vec_var){
+  if (!inherits(vec_var, "S7_missing")) {
+    as.list(vec_var)
+  } else {
+    S7::class_missing
+  }
+}
+
+
