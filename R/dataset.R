@@ -34,8 +34,7 @@ Dataset <- S7::new_class(
 
     # Titel optional (wird nur bei Erstellung geprüft)
     title = prop_string(
-      validator = validate_text,
-      field = "title"
+      validator = validate_text
     ),
 
     # Organisation ID (required)
@@ -47,27 +46,22 @@ Dataset <- S7::new_class(
     # Optionale Beschreibung und Kontakt
     description = prop_string(
       validator = validate_text,
-      max_length = 10000L,
-      field = "description"
+      max_length = 10000L
     ),
-
     contact_email = prop_string(
       validator = validate_email
     ),
 
     # Weblink
     landing_page = prop_string(
-      validator = validate_url,
-      field = "landing_page"
+      validator = validate_url
     ),
 
     # Zeitpunkte (optional)
-    issued        = prop_posixct(
-      default = as.POSIXct(NA)
-    ),
-    start_date    = prop_posixct(),
-    end_date      = prop_posixct(),
-    modified      = prop_posixct(),
+    issued = prop_posixct(),
+    start_date = prop_posixct(),
+    end_date = prop_posixct(),
+    modified = prop_posixct(),
     modified_next = prop_posixct(),
 
     # Relations- und Katalog-IDs
@@ -106,5 +100,46 @@ Dataset <- S7::new_class(
         ))
       }
     }
+  },
+  constructor = function(
+      id = S7::class_missing,
+      title = S7::class_missing,
+      organisation_id = S7::class_missing,
+      description = S7::class_missing,
+      contact_email = S7::class_missing,
+      landing_page = S7::class_missing,
+      issued = S7::class_missing,
+      start_date = S7::class_missing,
+      end_date = S7::class_missing,
+      modified = S7::class_missing,
+      modified_next = S7::class_missing,
+      keyword_ids = S7::class_missing,
+      zh_web_catalog_ids = S7::class_missing,
+      relation_ids = S7::class_missing,
+      see_also_ids = S7::class_missing,
+      theme_ids = S7::class_missing,
+      periodicity_id = S7::class_missing) {
+    S7::new_object(S7::S7_object(),
+      id = id,
+      title = title,
+      organisation_id = organisation_id,
+      description = description,
+      contact_email = contact_email,
+      landing_page = landing_page,
+      issued = to_POSIXct(issued),
+      start_date = to_POSIXct(start_date),
+      end_date = to_POSIXct(end_date),
+      modified = to_POSIXct(modified),
+      modified_next = to_POSIXct(modified_next),
+      keyword_ids = to_list(keyword_ids),
+      zh_web_catalog_ids = to_list(zh_web_catalog_ids),
+      relation_ids = to_list(relation_ids),
+      see_also_ids = to_list(see_also_ids),
+      theme_ids = to_list(theme_ids),
+      periodicity_id = periodicity_id
+    )
   }
 )
+
+
+
