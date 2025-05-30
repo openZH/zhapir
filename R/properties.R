@@ -36,7 +36,6 @@ prop_numeric <- function(default = NULL, validator = NULL, ...) {
 }
 
 
-
 prop_list <- function(default = NULL, validator = NULL) {
   S7::new_property(
     class = S7::class_list,
@@ -65,34 +64,3 @@ prop_logical <- function(default = NULL) {
 
 
 
-validate_text <- function(value, max_length = 1000L, field = "Feld") {
-  if (!is.na(value) && nzchar(value) && nchar(value) > max_length) {
-    return(paste(field, "darf maximal", max_length, "Zeichen lang sein."))
-  }
-}
-
-
-validate_email <- function(value) {
-  if (!is.na(value) && nzchar(value)) {
-    if (!grepl("^[^@]+@[^@]+\\.[^@]+$", value)) {
-      return("contact_email muss eine gültige E-Mail-Adresse sein.")
-    }
-  }
-}
-
-
-validate_url <- function(value, field = "URL") {
-  if (!is.na(value) && nzchar(value)) {
-    if (!grepl(
-      "^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:].-]*)*$",
-      value
-    )) {
-      return(
-        paste0(
-          field,
-          " muss mit http:// oder https:// beginnen und eine gültige Domain haben"
-        )
-      )
-    }
-  }
-}
