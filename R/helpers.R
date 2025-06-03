@@ -65,6 +65,7 @@ object_to_payload <- function(object) {
   # 1. Extract raw properties
   p <- S7::props(object)
 
+  # FIXME: Why here and not already in constructor??
   # Helper for ISO-8601
   fmt <- function(dt) format(dt, "%Y-%m-%dT%H:%M:%SZ")
 
@@ -98,6 +99,12 @@ object_to_payload <- function(object) {
 
 
 #' Helper for API calls
+#'
+#' @param method string; what kind of request should be made
+#' @param endpoint string; which endpoint should be reached
+#' @param payload list containing the payload
+#' @inheritParams get_dataset
+#' @keywords internal
 api_request <- function(
     method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
     endpoint,
@@ -171,3 +178,23 @@ get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
     )
   }
 }
+
+
+
+to_POSIXct <- function(date_var){
+  if (!inherits(date_var, "S7_missing")) {
+    as.POSIXct(date_var, tz = "UTC")
+  } else {
+    S7::class_missing
+  }
+}
+
+to_list <- function(vec_var){
+  if (!inherits(vec_var, "S7_missing")) {
+    as.list(vec_var)
+  } else {
+    S7::class_missing
+  }
+}
+
+

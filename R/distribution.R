@@ -30,123 +30,128 @@ Distribution <- S7::new_class(
   properties = list(
 
     # Title (required)
-    title = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_,
-      validator = function(value) validate_optional_text(value, max = 1000, field = "title")
+    title = prop_string(
+      validator = validate_text,
+      max_length = 1000L
     ),
 
     # Dataset ID (required)
-    dataset_id = S7::new_property(
-      class = S7::class_numeric,
-      validator = function(value) validate_id(value, allow_na = FALSE)
+    dataset_id = prop_numeric(
+      validator = validate_id,
+      allow_na = FALSE
     ),
 
     # Flags (optional)
-    stat_server_flag = S7::new_property(
-      class = S7::class_logical,
-      default = NA
-    ),
-    zh_web_flag = S7::new_property(
-      class = S7::class_logical,
-      default = NA
-    ),
-    ogd_flag = S7::new_property(
-      class = S7::class_logical,
-      default = NA
-    ),
+    stat_server_flag = prop_logical(),
+    zh_web_flag = prop_logical(),
+    ogd_flag = prop_logical(),
 
     # Sort order (optional)
-    sort_order = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    sort_order = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # Description (optional)
-    description = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_,
-      validator = function(value) validate_optional_text(value, max = 10000, field = "description") # TODO max?
+    description = prop_string(
+      validator = validate_text,
+      max_length = 10000L
     ),
 
     # Modified (optional)
-    modified = S7::new_property(
-      class = S7::class_POSIXct,
-      default = as.POSIXct(NA)
-    ),
+    modified = prop_posixct(),
 
     # Access URL (optional)
-    access_url = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_,
-      validator = function(value) validate_url(value, field = "access_url")
+    access_url = prop_string(
+      validator = validate_url
     ),
 
     # Identifier (optional)
-    identifier = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_
-    ),
+    identifier = prop_string(),
 
     # Right (optional)
-    right = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_
-    ),
+    right = prop_string(),
 
     # Issued (optional)
-    issued = S7::new_property(
-      class = S7::class_POSIXct,
-      default = as.POSIXct(NA)
-    ),
+    issued = prop_posixct(),
 
     # Byte size (optional)
-    byte_size = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-    ),
+    byte_size = prop_numeric(),
 
     # Status ID (optional)
-    status_id = S7::new_property(
-      class = S7::class_numeric,
+    status_id = prop_numeric(
       default = 1,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # License ID (optional)
-    license_id = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    license_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # Format ID (optional)
-    format_id = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    format_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # Media Type ID (optional)
-    media_type_id = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    media_type_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # Periodicity ID (optional)
-    periodicity_id = S7::new_property(
-      class = S7::class_numeric,
-      default = NA_real_,
-      validator = function(value) validate_id(value, allow_na = TRUE)
+    periodicity_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
     ),
 
     # File Upload ID (optional)
-    file_upload_id = S7::new_property(
-      class = S7::class_character,
-      default = NA_character_
-    )
+    file_upload_id = prop_string()
   ),
-
+  constructor = function(
+      title = S7::class_missing,
+      dataset_id = S7::class_missing,
+      stat_server_flag = S7::class_missing,
+      zh_web_flag = S7::class_missing,
+      ogd_flag = S7::class_missing,
+      sort_order = S7::class_missing,
+      description = S7::class_missing,
+      modified = S7::class_missing,
+      access_url = S7::class_missing,
+      identifier = S7::class_missing,
+      right = S7::class_missing,
+      issued = S7::class_missing,
+      byte_size = S7::class_missing,
+      status_id = S7::class_missing,
+      license_id = S7::class_missing,
+      format_id = S7::class_missing,
+      media_type_id = S7::class_missing,
+      periodicity_id = S7::class_missing,
+      file_upload_id = S7::class_missing) {
+    S7::new_object(S7::S7_object(),
+      title = title,
+      dataset_id = dataset_id,
+      stat_server_flag = stat_server_flag,
+      zh_web_flag = zh_web_flag,
+      ogd_flag = ogd_flag,
+      sort_order = sort_order,
+      description = description,
+      modified = to_POSIXct(modified),
+      access_url = access_url,
+      identifier = identifier,
+      right = right,
+      issued = to_POSIXct(issued),
+      byte_size = byte_size,
+      status_id = status_id,
+      license_id = license_id,
+      format_id = format_id,
+      media_type_id = media_type_id,
+      periodicity_id = periodicity_id,
+      file_upload_id = file_upload_id
+    )
+  }
 )

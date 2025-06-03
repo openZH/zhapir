@@ -22,7 +22,8 @@ create_dataset(
   periodicity_id = NULL,
   see_also_ids = NULL,
   api_key = NULL,
-  use_dev = TRUE
+  use_dev = TRUE,
+  test = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,10 @@ create_dataset(
 \item{api_key}{API key (optional; falls back to env var)}
 
 \item{use_dev}{Logical; use development base URL}
+
+\item{test}{Defines if it is a test run. If TRUE, the
+dataset-object is returned into the environment.
+Default = FALSE}
 }
 \description{
 Create a new dataset via API

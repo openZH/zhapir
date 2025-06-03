@@ -62,24 +62,11 @@ update_dataset <- function(
 
 
   # Build S7 Dataset object preserving required fields
-  ds <- Dataset(
-    id                 = id,
-    title              = if (is.null(title))    NA_character_ else title,
-    organisation_id    = organisation_id,
-    description        = if (is.null(description))      NA_character_ else description,
-    contact_email      = if (is.null(contact_email))    NA_character_ else contact_email,
-    landing_page       = if (is.null(landing_page))     NA_character_ else landing_page,
-    issued             = if (!is.null(issued))          as.POSIXct(issued, tz = "UTC") else as.POSIXct(NA),
-    start_date         = if (!is.null(start_date))      as.POSIXct(start_date, tz = "UTC") else as.POSIXct(NA),
-    end_date           = if (!is.null(end_date))        as.POSIXct(end_date, tz = "UTC") else as.POSIXct(NA),
-    modified_next      = if (!is.null(modified_next))   as.POSIXct(modified_next, tz = "UTC") else as.POSIXct(NA),
-    keyword_ids        = if (is.null(keyword_ids))       list() else keyword_ids,
-    zh_web_catalog_ids = if (is.null(zh_web_catalog_ids)) list() else zh_web_catalog_ids,
-    relation_ids       = if (is.null(relation_ids))      list() else relation_ids,
-    theme_ids          = if (is.null(theme_ids))         list() else theme_ids,
-    periodicity_id     = if (is.null(periodicity_id))    NA_real_ else periodicity_id,
-    see_also_ids       = if (is.null(see_also_ids))      list() else see_also_ids
-  )
+  args <-as.list(match.call())
+  args <- args[2:length(args)]
+  args <- args[!grepl("api_key|use_dev", names(args))]
+
+  ds <- do.call(Dataset, args)
 
   # Dispatch the update method
   update(ds, api_key = api_key, use_dev = use_dev)

@@ -55,28 +55,12 @@ create_distribution <- function(
     stop("`title` ist erforderlich, um eine neue Distribution zu erstellen.", call. = FALSE)
   }
 
-  # Construct Distribution object
-  dist <- Distribution(
-    title             = title,
-    dataset_id        = dataset_id,
-    stat_server_flag  = if (is.null(stat_server_flag)) NA else stat_server_flag,
-    zh_web_flag       = if (is.null(zh_web_flag)) NA else zh_web_flag,
-    ogd_flag          = if (is.null(ogd_flag)) NA else ogd_flag,
-    sort_order        = if (is.null(sort_order)) NA_real_ else sort_order,
-    description       = if (is.null(description)) NA_character_ else description,
-    modified          = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
-    access_url        = if (is.null(access_url)) NA_character_ else access_url,
-    identifier        = if (is.null(identifier)) NA_character_ else identifier,
-    right             = if (is.null(right)) NA_character_ else right,
-    issued            = if (!is.null(issued)) as.POSIXct(issued, tz = "UTC") else as.POSIXct(NA),
-    byte_size         = if (is.null(byte_size)) NA_real_ else byte_size,
-    status_id         = if (is.null(status_id)) NA_real_ else status_id,
-    license_id        = if (is.null(license_id)) NA_real_ else license_id,
-    format_id         = if (is.null(format_id)) NA_real_ else format_id,
-    media_type_id     = if (is.null(media_type_id)) NA_real_ else media_type_id,
-    periodicity_id    = if (is.null(periodicity_id)) NA_real_ else periodicity_id,
-    file_upload_id    = if (is.null(file_upload_id)) NA_character_ else file_upload_id
-  )
+  # Capture arguments of function call and construct a Distribution-Object
+  args <- as.list(match.call())
+  args <- args[2:length(args)]
+  args <- args[!grepl("api_key|use_dev", names(args))]
+
+  dist <- do.call(Distribution, args)
 
   # Dispatch to API
   create(dist, api_key, use_dev)
