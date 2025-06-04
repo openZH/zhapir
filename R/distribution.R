@@ -67,16 +67,22 @@ Distribution <- S7::new_class(
     ),
 
     # Identifier (optional)
-    identifier = prop_string(),
+    identifier = prop_string(
+      validator = validate_text
+    ),
 
     # Right (optional)
-    right = prop_string(),
+    right = prop_string(
+      validator = validate_text
+    ),
 
     # Issued (optional)
     issued = prop_posixct(),
 
     # Byte size (optional)
-    byte_size = prop_numeric(),
+    byte_size = prop_numeric(
+      validator = validate_bytesize
+    ),
 
     # Status ID (optional)
     status_id = prop_numeric(
@@ -110,7 +116,9 @@ Distribution <- S7::new_class(
     ),
 
     # File Upload ID (optional)
-    file_upload_id = prop_string()
+    file_upload_id = prop_string(
+      validator = validate_text
+    )
   ),
   constructor = function(
       title = S7::class_missing,
