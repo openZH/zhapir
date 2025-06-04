@@ -76,5 +76,4 @@ create_distribution <- function(
     )
   }
 
-  invisible(result)
 }

@@ -98,6 +98,75 @@ object_to_payload <- function(object) {
 }
 
 
+#' Returns the first argument if it is not `NULL`, otherwise returns the second.
+`%||%` <- function(x, y) if (!is.null(x)) x else y
+
+
+
+#' Unified API Request Wrapper with CLI messages
+#'
+#' It performs the API request via `api_request()`,
+#' and provides user-facing CLI feedback on success or failure.
+#'
+api_request_wrapper <- function(
+    object,
+    method = c("POST", "PATCH", "PUT", "DELETE", "GET"),
+    endpoint,
+    api_key,
+    use_dev = TRUE,
+    object_label
+) {
+  method <- match.arg(method)
+  payload <- object_to_payload(object)
+
+  result <- tryCatch(
+    {
+      result <- api_request(method, endpoint, payload, api_key, use_dev)
+
+      title <- result$title %||% "unknown"
+      id <- result$id %||% "unknown"
+      parent_id <- result$dataset$id %||% "unknown"
+
+      # CLI success feedback
+      if (method == "POST" && object_label == "Dataset") {
+        cli::cli_alert_success(
+          "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created."
+        )
+      } else if (method == "POST" && object_label == "Distribution") {
+        cli::cli_alert_success(
+          "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created inside Dataset ID {.val {parent_id}}."
+        )
+      } else if (method == "PATCH" && object_label %in% c("Dataset", "Distribution")) {
+        cli::cli_alert_success(
+          "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully updated."
+        )
+      } else {
+        cli::cli_alert_success(
+          "{.strong {object_label}} {.val {title}} (ID {.val {id}}) {method}-request succeeded."
+        )
+      }
+
+      invisible(result)
+    },
+    error = function(e) {
+      code <- if (inherits(e, "httr2_http_error")) e$response$status_code else "unknown"
+      id <- object@id %||% "unknown"
+      msg <- as.character(e$message)
+
+      # specific error handling
+      cli::cli_alert_danger(
+        "{.strong {object_label}} (ID {.val {id}}) {method}-Request failed ({code}): {msg}"
+      )
+
+      invisible(NULL)
+    }
+  )
+
+  invisible(result)
+}
+
+
+
 #' Helper for API calls
 #'
 #' @param method string; what kind of request should be made
@@ -133,6 +202,7 @@ api_request <- function(
 
   httr2::resp_body_json(resp)
 }
+
 
 
 
