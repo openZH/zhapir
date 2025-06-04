@@ -18,29 +18,31 @@
 #' @param see_also_ids      Optional integer vector
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
+#' @param test              Defines if it is a test run. If TRUE, the
+#'                          dataset-object is returned into the environment.
+#'                          Default = FALSE
+#'
 #' @export
 create_dataset <- function(
     title,
     organisation_id,
-    description        = NULL,
-    contact_email      = NULL,
-    landing_page       = NULL,
-    issued             = NULL,
-    start_date         = NULL,
-    end_date           = NULL,
-    modified           = NULL,
-    modified_next      = NULL,
-    keyword_ids        = NULL,
+    description = NULL,
+    contact_email = NULL,
+    landing_page = NULL,
+    issued = NULL,
+    start_date = NULL,
+    end_date = NULL,
+    modified = NULL,
+    modified_next = NULL,
+    keyword_ids = NULL,
     zh_web_catalog_ids = NULL,
-    relation_ids       = NULL,
-    theme_ids          = NULL,
-    periodicity_id     = NULL,
-    see_also_ids       = NULL,
-    api_key            = NULL,
-    use_dev            = TRUE
-) {
-
-  print("Here")
+    relation_ids = NULL,
+    theme_ids = NULL,
+    periodicity_id = NULL,
+    see_also_ids = NULL,
+    api_key = NULL,
+    use_dev = TRUE,
+    test = FALSE) {
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
 
@@ -49,28 +51,17 @@ create_dataset <- function(
     stop("`title` ist erforderlich, um ein neues Dataset zu erstellen.", call. = FALSE)
   }
 
+  # Capture arguments of function call and construct a Dataset-Object
+  args <- as.list(match.call())
+  args <- args[2:length(args)]
+  args <- args[!grepl("api_key|use_dev|test", names(args))]
 
-  # Prepare fields, converting NULL to appropriate NA or defaults
-  ds <- Dataset(
-    id = NA_real_,
-    title = title,
-    organisation_id = organisation_id,
-    description = if (is.null(description)) NA_character_ else description,
-    contact_email = if (is.null(contact_email)) NA_character_ else contact_email,
-    landing_page = if (is.null(landing_page)) NA_character_ else landing_page,
-    issued = if (!is.null(issued)) as.POSIXct(issued, tz = "UTC") else as.POSIXct(NA),
-    start_date = if (!is.null(start_date)) as.POSIXct(start_date, tz = "UTC") else as.POSIXct(NA),
-    end_date = if (!is.null(end_date)) as.POSIXct(end_date, tz = "UTC") else as.POSIXct(NA),
-    modified = if (!is.null(modified)) as.POSIXct(modified, tz = "UTC") else as.POSIXct(NA),
-    modified_next = if (!is.null(modified_next)) as.POSIXct(modified_next, tz = "UTC") else as.POSIXct(NA),
-    keyword_ids = if (is.null(keyword_ids)) list() else keyword_ids,
-    zh_web_catalog_ids = if (is.null(zh_web_catalog_ids)) list() else zh_web_catalog_ids,
-    relation_ids = if (is.null(relation_ids)) list() else relation_ids,
-    theme_ids = if (is.null(theme_ids)) list() else theme_ids,
-    periodicity_id = if (is.null(periodicity_id)) NA_real_ else periodicity_id,
-    see_also_ids = if (is.null(see_also_ids)) list() else see_also_ids
-  )
+  ds <- do.call(Dataset, args)
 
   # Dispatch create method
-  create(ds, api_key, use_dev)
+  if (!test) {
+    create(ds, api_key, use_dev)
+  } else {
+    return(ds)
+  }
 }
