@@ -78,7 +78,7 @@ Distribution <- S7::new_class(
 
     # Status ID (optional)
     status_id = prop_numeric(
-      default = 1,
+      default = 1, #TODO ?
       validator = validate_id,
       allow_na = TRUE
     ),

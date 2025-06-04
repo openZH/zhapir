@@ -55,26 +55,13 @@ update_distribution <- function(
     stop("`id` is required to update a distribution.", call. = FALSE)
   }
 
-  # Create Distribution object
-  dist <- Distribution(
-    id               = id,
-    title            = if (is.null(title)) NA_character_ else title,
-    description      = if (is.null(description)) NA_character_ else description,
-    stat_server_flag = if (is.null(stat_server_flag)) NA else stat_server_flag,
-    zh_web_flag      = if (is.null(zh_web_flag)) NA else zh_web_flag,
-    ogd_flag         = if (is.null(ogd_flag)) NA else ogd_flag,
-    sort_order       = if (is.null(sort_order)) NA_real_ else sort_order,
-    access_url       = if (is.null(access_url)) NA_character_ else access_url,
-    right            = if (is.null(right)) NA_character_ else right,
-    byte_size        = if (is.null(byte_size)) NA_real_ else byte_size,
-    status_id        = if (is.null(status_id)) NA_real_ else status_id,
-    license_id       = if (is.null(license_id)) NA_real_ else license_id,
-    dataset_id       = if (is.null(dataset_id)) NA_real_ else dataset_id,
-    format_id        = if (is.null(format_id)) NA_real_ else format_id,
-    media_type_id    = if (is.null(media_type_id)) NA_real_ else media_type_id,
-    periodicity_id   = if (is.null(periodicity_id)) NA_real_ else periodicity_id,
-    file_upload_id   = if (is.null(file_upload_id)) NA_character_ else file_upload_id
-  )
+  # Build S7 Dataset object preserving required fields
+  args <- as.list(match.call())
+  args <- args[2:length(args)]
+  args <- args[!grepl("api_key|use_dev", names(args))]
+
+  dist <- do.call(Distribution, args)
+
 
   # Dispatch
   update(dist, api_key = api_key, use_dev = use_dev)
