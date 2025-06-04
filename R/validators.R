@@ -18,6 +18,12 @@ validate_id <- function(value, allow_na = TRUE) {
   return(NULL)
 }
 
+validate_bytesize <- function(value){
+  if (length(value) != 1) {
+    return("must have exactly one value")
+  }
+}
+
 
 validate_natural_number_list <- function(value) {
   if (length(value) > 0) {
