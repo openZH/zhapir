@@ -1,5 +1,25 @@
+validate <- function(value, validator, ...){
+  class(value) <- validator
+
+  validate_value(value, ...)
+
+}
+
+
+validate_value <- function(value, ...){
+  UseMethod("validate_value")
+}
+
+#' @export
+validate_value.default <- function(value, ...){
+  NULL
+}
+
+
 # Helper function to validate ID fields
-validate_id <- function(value, allow_na = TRUE) {
+#' @export
+validate_value.id <- function(value, allow_na = TRUE) {
+
   if (length(value) != 1) {
     return("must have exactly one value")
   }
@@ -18,14 +38,15 @@ validate_id <- function(value, allow_na = TRUE) {
   return(NULL)
 }
 
-validate_bytesize <- function(value){
-  if (length(value) != 1) {
-    return("must have exactly one value")
-  }
-}
+# validate_bytesize <- function(value){
+#   if (length(value) != 1) {
+#     return("must have exactly one value")
+#   }
+# }
 
+#' @export
+validate_value.natural_number_list <- function(value, ...) {
 
-validate_natural_number_list <- function(value) {
   if (length(value) > 0) {
     # Check if all elements are numeric
     if (!all(sapply(value, is.numeric))) {
@@ -40,8 +61,9 @@ validate_natural_number_list <- function(value) {
   }
 }
 
+#' @export
+validate_value.text <- function(value, max_length = 1000L) {
 
-validate_text <- function(value, max_length = 1000L) {
   # FIXME: is an empty string allowed?
   if (!is.na(value) && nzchar(value) && nchar(value) > max_length) {
     return(paste("can have a maximum of", max_length, "characters"))
@@ -49,8 +71,9 @@ validate_text <- function(value, max_length = 1000L) {
   return(NULL)
 }
 
+#' @export
+validate_value.url <- function(value, ...) {
 
-validate_url <- function(value) {
   if (!is.na(value) && nzchar(value)) {
     if (!grepl("^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:]._~%-]*)*$", value)) {
       return("must start with http:// or https:// and must have a valid domain")
@@ -60,8 +83,8 @@ validate_url <- function(value) {
 }
 
 
-
-validate_email <- function(value) {
+#' @export
+validate_value.email <- function(value, ...) {
   if (!is.na(value) && nzchar(value)) {
     if (!grepl("^[^@]+@[^@]+\\.[^@]+$", value)) {
       return("must be a valid address.")
