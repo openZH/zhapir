@@ -28,33 +28,33 @@ Dataset <- S7::new_class(
   properties = list(
     # ID des Datasets (wird serverseitig generiert)
     id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # Titel optional (wird nur bei Erstellung geprüft)
     title = prop_string(
-      validator = validate_text
+      validator = "text"
     ),
 
     # Organisation ID (required)
     organisation_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = FALSE
     ),
 
     # Optionale Beschreibung und Kontakt
     description = prop_string(
-      validator = validate_text,
+      validator = "text",
       max_length = 10000L
     ),
     contact_email = prop_string(
-      validator = validate_email
+      validator = "email"
     ),
 
     # Weblink
     landing_page = prop_string(
-      validator = validate_url
+      validator = "url"
     ),
 
     # Zeitpunkte (optional)
@@ -66,24 +66,24 @@ Dataset <- S7::new_class(
 
     # Relations- und Katalog-IDs
     keyword_ids = prop_list(
-      validator = validate_natural_number_list
+      validator = "natural_number_list"
     ),
     zh_web_catalog_ids = prop_list(
-      validator = validate_natural_number_list
+      validator = "natural_number_list"
     ),
     relation_ids = prop_list(
-      validator = validate_natural_number_list
+      validator = "natural_number_list"
     ),
     see_also_ids = prop_list(
-      validator = validate_natural_number_list
+      validator = "natural_number_list"
     ),
     theme_ids = prop_list(
-      validator = validate_natural_number_list
+      validator = "natural_number_list"
     ),
 
     # Periodizität
     periodicity_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     )
   ),

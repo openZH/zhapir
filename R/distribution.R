@@ -31,13 +31,13 @@ Distribution <- S7::new_class(
 
     # Title (required)
     title = prop_string(
-      validator = validate_text,
+      validator = "text",
       max_length = 1000L
     ),
 
     # Dataset ID (required)
     dataset_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = FALSE
     ),
 
@@ -48,13 +48,13 @@ Distribution <- S7::new_class(
 
     # Sort order (optional)
     sort_order = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # Description (optional)
     description = prop_string(
-      validator = validate_text,
+      validator = "text",
       max_length = 10000L
     ),
 
@@ -63,62 +63,54 @@ Distribution <- S7::new_class(
 
     # Access URL (optional)
     access_url = prop_string(
-      validator = validate_url
+      validator = "url"
     ),
 
     # Identifier (optional)
-    identifier = prop_string(
-      validator = validate_text
-    ),
+    identifier = prop_string(),
 
     # Right (optional)
-    right = prop_string(
-      validator = validate_text
-    ),
+    right = prop_string(),
 
     # Issued (optional)
     issued = prop_posixct(),
 
     # Byte size (optional)
-    byte_size = prop_numeric(
-      validator = validate_bytesize
-    ),
+    byte_size = prop_numeric(),
 
     # Status ID (optional)
     status_id = prop_numeric(
       default = 1,
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # License ID (optional)
     license_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # Format ID (optional)
     format_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # Media Type ID (optional)
     media_type_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # Periodicity ID (optional)
     periodicity_id = prop_numeric(
-      validator = validate_id,
+      validator = "id",
       allow_na = TRUE
     ),
 
     # File Upload ID (optional)
-    file_upload_id = prop_string(
-      validator = validate_text
-    )
+    file_upload_id = prop_string()
   ),
   constructor = function(
       title = S7::class_missing,

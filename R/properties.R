@@ -18,7 +18,7 @@ prop_string <- function(default = NULL, validator = NULL, ...) {
     } else {
       default
     },
-    validator = function(value) validator(value, ...)
+    validator = function(value) validate(value, validator, ...)
   )
 }
 
@@ -31,12 +31,13 @@ prop_numeric <- function(default = NULL, validator = NULL, ...) {
     } else {
       default
     },
-    validator = function(value) validator(value, ...)
+    validator = function(value) validate(value, validator, ...)
+
   )
 }
 
 
-prop_list <- function(default = NULL, validator = NULL) {
+prop_list <- function(default = NULL, validator = NULL, ...) {
   S7::new_property(
     class = S7::class_list,
     default = if (is.null(default)) {
@@ -44,7 +45,7 @@ prop_list <- function(default = NULL, validator = NULL) {
     } else {
       default
     },
-    validator = function(value) validator(value)
+    validator = function(value) validate(value, validator, ...)
   )
 }
 
