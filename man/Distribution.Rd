@@ -5,6 +5,7 @@
 \title{Distribution}
 \usage{
 Distribution(
+  id = S7::class_missing,
   title = S7::class_missing,
   dataset_id = S7::class_missing,
   stat_server_flag = S7::class_missing,
@@ -12,11 +13,8 @@ Distribution(
   ogd_flag = S7::class_missing,
   sort_order = S7::class_missing,
   description = S7::class_missing,
-  modified = S7::class_missing,
   access_url = S7::class_missing,
-  identifier = S7::class_missing,
   right = S7::class_missing,
-  issued = S7::class_missing,
   byte_size = S7::class_missing,
   status_id = S7::class_missing,
   license_id = S7::class_missing,
@@ -27,6 +25,8 @@ Distribution(
 )
 }
 \arguments{
+\item{id}{numeric; ID der Distribution (required for update)}
+
 \item{title}{character; distribution title (required on create, <=1000 characters)}
 
 \item{dataset_id}{numeric; ID of the related dataset (required)}
@@ -41,19 +41,13 @@ Distribution(
 
 \item{description}{character; distribution description (optional, <=4000 characters)}
 
-\item{modified}{POSIXct or ISO datetime string; timestamp of last modification (optional)}
-
 \item{access_url}{character; URL to access the distribution (optional, must start with http:// or https://)}
-
-\item{identifier}{character; optional string identifier for the distribution}
 
 \item{right}{character; optional textual statement of usage rights}
 
-\item{issued}{POSIXct or ISO datetime string; publication date of the distribution (optional)}
-
 \item{byte_size}{numeric; size in bytes (optional, must be a positive integer)}
 
-\item{status_id}{numeric; status ID (optional, default is 1)}
+\item{status_id}{numeric; status ID (optional)}
 
 \item{license_id}{numeric; license ID (optional)}
 

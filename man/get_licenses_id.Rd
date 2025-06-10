@@ -18,5 +18,7 @@ a data frame of licenses and then matching the provided name to its
 corresponding ID.
 }
 \examples{
+\dontrun{
 get_licenses_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
+}
 }

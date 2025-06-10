@@ -20,6 +20,8 @@ associated IDs. This function is typically used to look up valid organisation
 options for other functions.
 }
 \examples{
+\dontrun{
 df_organisation <- get_organisations()
 head(df_organisation)
+}
 }

@@ -1,4 +1,6 @@
-#' @describeIn update a Dataset via API call
+#' @name update_dataset
+#' @rdname update_dataset
+#'
 S7::method(update, Dataset) <- function(object, api_key, use_dev = TRUE) {
   api_request_wrapper(
     object,
@@ -10,7 +12,8 @@ S7::method(update, Dataset) <- function(object, api_key, use_dev = TRUE) {
   )
 }
 
-#' @describeIn update a Distribution via API call
+#' @name update_distribution
+#' @rdname update_distribution
 S7::method(update, Distribution) <- function(object, api_key, use_dev = TRUE) {
   api_request_wrapper(
     object,

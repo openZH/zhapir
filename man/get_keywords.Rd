@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid keyword
 options for other functions.
 }
 \examples{
+\dontrun{
 df_keywords <- get_keywords()
 head(df_keywords)
+}
 }

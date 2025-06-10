@@ -18,5 +18,7 @@ data frame of themes and then matching the provided name to its
 corresponding ID.
 }
 \examples{
+\dontrun{
 get_themes_id("Wirtschaft und Finanzen")
+}
 }

@@ -18,5 +18,7 @@ a data frame of formats and then matching the provided name to its
 corresponding ID.
 }
 \examples{
+\dontrun{
 get_formats_id("CSV")
+}
 }

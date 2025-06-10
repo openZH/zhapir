@@ -98,8 +98,14 @@ object_to_payload <- function(object) {
 }
 
 
+#' Get first or second argument
+#'
 #' Returns the first argument if it is not `NULL`, otherwise returns the second.
-`%||%` <- function(x, y) if (!is.null(x)) x else y
+#'
+#' @param x Object 1
+#' @param y Object 2
+#'
+`%<>%` <- function(x, y) if (!is.null(x)) x else y
 
 
 
@@ -107,6 +113,11 @@ object_to_payload <- function(object) {
 #'
 #' It performs the API request via `api_request()`,
 #' and provides user-facing CLI feedback on success or failure.
+#'
+#' @inheritParams object_to_payload
+#' @inheritParams api_request
+#' @param object_label A character string describing if the object is a `Dataset` or
+#' a `Distribution`
 #'
 api_request_wrapper <- function(
     object,
@@ -123,9 +134,9 @@ api_request_wrapper <- function(
     {
       result <- api_request(method, endpoint, payload, api_key, use_dev)
 
-      title <- result$title %||% "unknown"
-      id <- result$id %||% "unknown"
-      parent_id <- result$dataset$id %||% "unknown"
+      title <- result$title %<>% "unknown"
+      id <- result$id %<>% "unknown"
+      parent_id <- result$dataset$id %<>% "unknown"
 
       # CLI success feedback
       if (method == "POST" && object_label == "Dataset") {
@@ -150,7 +161,7 @@ api_request_wrapper <- function(
     },
     error = function(e) {
       code <- if (inherits(e, "httr2_http_error")) e$response$status_code else "unknown"
-      id <- object@id %||% "unknown"
+      id <- object@id %<>% "unknown"
       msg <- as.character(e$message)
 
       # specific error handling

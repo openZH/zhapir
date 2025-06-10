@@ -53,7 +53,7 @@ create_distribution <- function(
 
   # Dataset is required
   if (is.null(dataset_id) || is.na(dataset_id)) {
-    stop("`dataset_id` ist erforderlich für das Erstellen einer Distribution.", call. = FALSE)
+    stop("`dataset_id` ist erforderlich, um eine neue Distribution zu erstellen.", call. = FALSE)
   }
 
   # Capture arguments of function call and construct a Distribution-Object

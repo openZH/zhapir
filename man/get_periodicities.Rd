@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid periodicity
 options for other functions.
 }
 \examples{
+\dontrun{
 df_periocidity <- get_periodicity()
 head(df_periocidity)
+}
 }

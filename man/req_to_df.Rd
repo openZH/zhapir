@@ -18,6 +18,8 @@ For a given Endpoint, this function retrieves the ID's and corresponding
 Endpoint's entries and returns it as a data frame.
 }
 \examples{
+\dontrun{
 df_formats  <- req_to_df("formats")
 head(df_formats)
+}
 }

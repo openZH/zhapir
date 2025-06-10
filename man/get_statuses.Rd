@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid status
 options for other functions.
 }
 \examples{
+\dontrun{
 df_status <- get_statuses()
 head(df_status)
+}
 }

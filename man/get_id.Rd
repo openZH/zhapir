@@ -32,9 +32,11 @@ column to filter and find the corresponding ID(s).
 }
 }
 \examples{
+\dontrun{
 df_formats <- get_formats()
 
 get_id("CSV", df_formats)
 # example of handling of invalid names
 get_id(c("CSV", "blabla"), df_formats)
+}
 }

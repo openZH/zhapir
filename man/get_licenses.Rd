@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid license
 options for other functions.
 }
 \examples{
+\dontrun{
 df_license <- get_licenses()
 head(df_license)
+}
 }

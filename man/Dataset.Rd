@@ -22,7 +22,6 @@ Dataset(
   see_also_ids = S7::class_missing,
   theme_ids = S7::class_missing,
   periodicity_id = S7::class_missing
-
 )
 }
 \arguments{

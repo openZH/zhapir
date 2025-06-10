@@ -20,5 +20,7 @@ first retrieving a data frame of keywords and then matching the provided name
 to its corresponding ID.
 }
 \examples{
+\dontrun{
 get_zh_web_catalog_id("Bevölkerung")
+}
 }

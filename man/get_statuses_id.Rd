@@ -20,5 +20,7 @@ a data frame of statuses and then matching the provided name to its
 corresponding ID.
 }
 \examples{
+\dontrun{
 get_statuses_id("Entwurf")
+}
 }

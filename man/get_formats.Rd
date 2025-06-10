@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid format
 options for other functions.
 }
 \examples{
+\dontrun{
 df_format <- get_formats()
 head(df_format)
+}
 }

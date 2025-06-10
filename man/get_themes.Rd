@@ -16,6 +16,8 @@ associated IDs. This function is typically used to look up valid theme
 options for other functions.
 }
 \examples{
+\dontrun{
 df_themes <- get_themes()
 head(df_themes)
+}
 }

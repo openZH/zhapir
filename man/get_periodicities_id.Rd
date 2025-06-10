@@ -20,5 +20,7 @@ retrieving a data frame of periodicities and then matching the provided name
 to its corresponding ID.
 }
 \examples{
+\dontrun{
 get_periodicity_id("Jährlich")
+}
 }

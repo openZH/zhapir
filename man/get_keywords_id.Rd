@@ -18,5 +18,7 @@ data frame of keywords and then matching the provided name to its
 corresponding ID.
 }
 \examples{
+\dontrun{
 get_keywords_id("abfall")
+}
 }

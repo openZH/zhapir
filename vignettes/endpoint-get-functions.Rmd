@@ -15,9 +15,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# FIXME: Replace devtools::load_all(".") as soon as package is released
-# library(zhapir)
-devtools::load_all(".")
+# # FIXME: Replace devtools::load_all(".") as soon as package is released
+# # library(zhapir)
+# devtools::load_all(".")
 
 ```
 
@@ -28,10 +28,10 @@ When creating/updating a data set or a distribution, you have to specify the val
 1.  `get_[...]`**-Functions:** Retrieve all possible values and the corresponding IDs of a given endpoint
 
 ```{r}
-# Example for the endpoint 'keywords'
-df_keywords <- get_keywords()
-nrow(df_keywords)
-head(df_keywords)
+# # Example for the endpoint 'keywords'
+# df_keywords <- get_keywords()
+# nrow(df_keywords)
+# head(df_keywords)
 ```
 
 2.  `get_[...]_id`**-Functions:** Retrieve the ID associated with a keyword
@@ -39,7 +39,7 @@ head(df_keywords)
 ```{r}
 # Example for the endpoint 'keywords'
 
-get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+# get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
 ```
 
 # Function Overview
@@ -49,8 +49,8 @@ This section provides you an overview of all the get-functions for the available
 ## Organisations
 
 ```{r}
-df_organisations <- get_organisations()
-head(df_organisations)
+# df_organisations <- get_organisations()
+# head(df_organisations)
 ```
 
 Note that there is not `get_organisations_id()`-function which means that the organisation ID has to be entered manually when creating/updating as dataset or a distribution.
@@ -58,67 +58,63 @@ Note that there is not `get_organisations_id()`-function which means that the or
 ## Keywords
 
 ```{r}
-df_keywords <-  get_keywords()
-head(df_keywords)
+# df_keywords <-  get_keywords()
+# head(df_keywords)
 ```
 
 ```{r}
-get_keywords_id(c("abfall", "luftqualitaet"))
+# get_keywords_id(c("abfall", "luftqualitaet"))
 ```
 
 ## Zh_web_catalog
 
 ```{r}
-
-df_zh_web_catalog <-  get_zh_web_catalog()
-head(df_zh_web_catalog)
-
+# df_zh_web_catalog <-  get_zh_web_catalog()
+# head(df_zh_web_catalog)
 ```
 
 ```{r}
-get_zh_web_catalog_id("Geodaten")
+# get_zh_web_catalog_id("Geodaten")
 ```
 
 ## Themes
 
 ```{r}
-df_themes <- get_themes()
-head(df_themes)
+# df_themes <- get_themes()
+# head(df_themes)
 ```
 
 ```{r}
-get_themes_id("Wirtschaft und Finanzen")
+# get_themes_id("Wirtschaft und Finanzen")
 ```
 
 ## Periodicities
 
 ```{r}
-df_periocidity <- get_periodicities()
-head(df_periocidity)
+# df_periocidity <- get_periodicities()
+# head(df_periocidity)
 ```
 
 ```{r}
-get_periodicities_id("Halbjährlich")
+# get_periodicities_id("Halbjährlich")
 ```
 
 ## Statuses
 
 ```{r}
-
-df_status <- get_statuses()
-head(df_status)
-
+# df_status <- get_statuses()
+# head(df_status)
 ```
 
 ```{r}
-get_statuses_id("Entwurf")
+# get_statuses_id("Entwurf")
 ```
 
 ## Licenses
 
 ```{r}
-df_license <- get_licenses()
-head(df_license)
+# df_license <- get_licenses()
+# head(df_license)
 ```
 
 Note that there is not `get_licenses_id()`-function which means that the license ID has to be entered manually when creating/updating as data set or a distribution.
@@ -126,12 +122,12 @@ Note that there is not `get_licenses_id()`-function which means that the license
 ## Formats
 
 ```{r}
-df_format <- get_formats()
-head(df_format)
+# df_format <- get_formats()
+# head(df_format)
 ```
 
 ```{r}
-get_formats_id("CSV")
+# get_formats_id("CSV")
 ```
 
 # Workflow example
@@ -139,25 +135,25 @@ get_formats_id("CSV")
 Note that that in theory, you can retrieve the ID's from the `get_keywords`-ouput manually. However, it is more transparent to specify the a new data set or distribution using the actual values of the endpoints. The only endpoints where you work with ID's when dealing with data sets and distributions are `organisations` and `licenses`. Keeping this in mind a typical workflow when working with the endpoint-get-functions could look like this:
 
 ```{r}
-# Example Parameters:
-# - Organisation: ARE
-
-# Look up the Organisation
-df_organsiations <- get_organisations()
-head(df_organisations)
-
-# Check what keywords are available
-df_keywords <- get_keywords()
-head(df_keywords)
-
-# create the data set 
-create_dataset("Hello Dataset 1",
-               organisation_id = 1, # ARE
-               description = "Such insights, much wow!",
-               keyword_ids  = get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
-               )
-
-
+# # Example Parameters:
+# # - Organisation: ARE
+# 
+# # Look up the Organisation
+# df_organsiations <- get_organisations()
+# head(df_organisations)
+# 
+# # Check what keywords are available
+# df_keywords <- get_keywords()
+# head(df_keywords)
+# 
+# # create the data set 
+# create_dataset("Hello Dataset 1",
+#                organisation_id = 1, # ARE
+#                description = "Such insights, much wow!",
+#                keyword_ids  = get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+#                )
+# 
+# 
 
 ```
 
