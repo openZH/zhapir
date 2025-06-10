@@ -28,6 +28,7 @@ Collate:
     'create_dataset.R'
     'create_distribution.R'
     'update_dataset.R'
+    'update_distribution.R'
     'zzz.R'
 Suggests: 
     testthat (>= 3.0.0)
