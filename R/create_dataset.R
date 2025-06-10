@@ -43,6 +43,7 @@ create_dataset <- function(
     api_key = NULL,
     use_dev = TRUE,
     test = FALSE) {
+
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
 
@@ -58,6 +59,7 @@ create_dataset <- function(
 
   ds <- do.call(Dataset, args)
 
+  
   # Dispatch create method
   if (!test) {
     create(ds, api_key, use_dev)
