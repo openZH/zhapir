@@ -18,5 +18,5 @@ data frame of themes and then matching the provided name to its
 corresponding ID.
 }
 \examples{
-get_zh_web_catalog_id("Bevölkerung")
+get_themes_id("Wirtschaft und Finanzen")
 }
