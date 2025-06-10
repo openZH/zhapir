@@ -12,8 +12,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_organisation <- get_organisations()
 #' head(df_organisation)
+#' }
 get_organisations <- function(show_organisation_units = TRUE) {
   req <- api_request(
     method = "GET",
@@ -74,7 +76,9 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_keywords_id("abfall")
+#' }
 get_keywords_id <- function(name) {
   df_keywords <- get_keywords()
   id <- get_id(name, df_keywords)
@@ -94,8 +98,10 @@ get_keywords_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_keywords <- get_keywords()
 #' head(df_keywords)
+#' }
 get_keywords <- function() {
   df_keywords <- req_to_df("keywords")
 
@@ -118,7 +124,9 @@ get_keywords <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_zh_web_catalog_id("Bevölkerung")
+#' }
 get_zh_web_catalog_id <- function(name) {
   df_zh_web_catalog <- get_zh_web_catalog()
   id <- get_id(name, df_zh_web_catalog)
@@ -138,8 +146,10 @@ get_zh_web_catalog_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_zh_web_catalog <- get_zh_web_catalog()
 #' head(df_zh_web_catalog)
+#' }
 get_zh_web_catalog <- function() {
   df_zh_web_catalog <- req_to_df("zhweb-datenkataloge")
 
@@ -161,7 +171,9 @@ get_zh_web_catalog <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_themes_id("Wirtschaft und Finanzen")
+#' }
 get_themes_id <- function(name) {
   df_theme <- get_themes()
   id <- get_id(name, df_theme)
@@ -183,8 +195,10 @@ get_themes_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_themes <- get_themes()
 #' head(df_themes)
+#' }
 get_themes <- function() {
   df_themes <- req_to_df("themes")
 
@@ -208,7 +222,9 @@ get_themes <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_periodicity_id("Jährlich")
+#' }
 get_periodicities_id <- function(name) {
   df_periodicity <- get_periodicities()
   id <- get_id(name, df_periodicity)
@@ -230,8 +246,10 @@ get_periodicities_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_periocidity <- get_periodicity()
 #' head(df_periocidity)
+#' }
 get_periodicities <- function() {
   df_periocidity <- req_to_df("periodicities")
 
@@ -255,7 +273,9 @@ get_periodicities <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_statuses_id("Entwurf")
+#' }
 get_statuses_id <- function(name) {
   df_status <- get_statuses()
   id <- get_id(name, df_status)
@@ -277,8 +297,10 @@ get_statuses_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_status <- get_statuses()
 #' head(df_status)
+#' }
 get_statuses <- function() {
   df_status <- req_to_df("statuses")
 
@@ -299,7 +321,9 @@ get_statuses <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_licenses_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
+#' }
 get_licenses_id <- function(name) {
   df_license <- get_licenses()
   id <- get_id(name, df_license)
@@ -320,8 +344,10 @@ get_licenses_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_license <- get_licenses()
 #' head(df_license)
+#' }
 get_licenses <- function() {
   df_license <- req_to_df("licenses")
 
@@ -343,7 +369,9 @@ get_licenses <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_formats_id("CSV")
+#' }
 get_formats_id <- function(name) {
   df_format <- get_formats()
   id <- get_id(name, df_format)
@@ -365,8 +393,10 @@ get_formats_id <- function(name) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_format <- get_formats()
 #' head(df_format)
+#' }
 get_formats <- function() {
   df_format <- req_to_df("formats")
 
@@ -388,8 +418,10 @@ get_formats <- function() {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_formats  <- req_to_df("formats")
 #' head(df_formats)
+#' }
 req_to_df <- function(endpoint) {
   req <- api_request(
     method = "GET",
@@ -436,11 +468,13 @@ req_to_df <- function(endpoint) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df_formats <- get_formats()
 #'
 #' get_id("CSV", df_formats)
 #' # example of handling of invalid names
 #' get_id(c("CSV", "blabla"), df_formats)
+#' }
 get_id <- function(name, df) {
 
   filter_col <- rlang::sym(names(df)[names(df) != "id"])

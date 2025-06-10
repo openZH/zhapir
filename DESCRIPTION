@@ -15,7 +15,9 @@ Imports:
     httr2,
     askpass,
     purrr,
-    cli
+    cli,
+    dplyr,
+    rlang
 Collate:
     'helpers.R'
     'validators.R'
@@ -27,6 +29,7 @@ Collate:
     'update.R'
     'create_dataset.R'
     'create_distribution.R'
+    'text_arguments_parser.R'
     'update_dataset.R'
     'update_distribution.R'
     'zzz.R'
