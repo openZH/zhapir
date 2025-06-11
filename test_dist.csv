@@ -1,0 +1,9 @@
+gemeinde_bfs_nr,gemeinde,anlage_nr,anlage_name,anlage_typ,zeit_von,zeit_bis,richtung,richtung_name,spur_nr,lat,lon,anzahl
+230,Winterthur,bda81f33d038f8d70122e7f481b53020,Unterführung Bahnhof,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,O,Richtung Unterführung raus,2.0,47.50064007245619,8.725398797174437,1
+230,Winterthur,bda81f33d038f8d70122e7f481b53020,Unterführung Bahnhof,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,W,Richtung Unterführung rein,1.0,47.50064007245619,8.725398797174437,4
+230,Winterthur,89ec9c99764a468aef714df37cfbd83f,K501 Velo - Seenerstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,N,Richtung Oberwinterthur,2.0,47.49333465808204,8.760644924994143,1
+230,Winterthur,89ec9c99764a468aef714df37cfbd83f,K501 Velo - Seenerstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,S,Richtung Seen,1.0,47.49333465808204,8.760644924994143,2
+230,Winterthur,0790984be7042b7cba782aa0a73f7ae4,Frohbergstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,-,Richtung Meisenstrasse,2.0,47.49711006385951,8.72656101567254,0
+230,Winterthur,0790984be7042b7cba782aa0a73f7ae4,Frohbergstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,O,Richtung Rosenaustrasse,1.0,47.49711006385951,8.72656101567254,4
+230,Winterthur,2be45cdaaa2d54d45d7acea1ec6efe0b,K611 Velo - Steigstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,N,Richtung Winterthur Zentrum,2.0,47.47721998360666,8.70307288823233,0
+230,Winterthur,2be45cdaaa2d54d45d7acea1ec6efe0b,K611 Velo - Steigstrasse,Velo,2025-06-02T23:00:00+01,2025-06-02T23:59:59+01,S,Richtung Bassersdorf,1.0,47.47721998360666,8.70307288823233,0
