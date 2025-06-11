@@ -15,6 +15,7 @@
 #' @param format_id         Optional format ID
 #' @param media_type_id     Optional media type ID
 #' @param periodicity_id    Optional periodicity ID
+#' @param file_path         Optional local file path for upload (if provided -> post request internally)
 #' @param file_upload_id    Optional file upload ID (string)
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
@@ -39,12 +40,18 @@ create_distribution <- function(
     format_id        = NULL,
     media_type_id    = NULL,
     periodicity_id   = NULL,
+    file_path        = NULL,
     file_upload_id   = NULL,
     api_key          = NULL,
     use_dev          = TRUE
 ) {
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
+
+  # Capture arguments of function call and construct a Distribution-Object
+  args <- as.list(match.call())
+  args <- args[2:length(args)]
+  args <- args[!grepl("api_key|use_dev", names(args))]
 
   # Title is required
   if (is.null(title) || is.na(title) || nzchar(title) == FALSE) {
@@ -56,15 +63,26 @@ create_distribution <- function(
     stop("`dataset_id` ist erforderlich, um eine neue Distribution zu erstellen.", call. = FALSE)
   }
 
-  # Capture arguments of function call and construct a Distribution-Object
-  args <- as.list(match.call())
-  args <- args[2:length(args)]
-  args <- args[!grepl("api_key|use_dev", names(args))]
+  # If file upload if file_path is provided -> POST
+  if (!is.null(file_path)) {
+    file_result <- create_file(args$file_path, api_key = api_key, use_dev = use_dev)
 
+    # Add file_upload_id & format/media type
+    args$file_upload_id <- file_result$id
+    args$format_id <- file_result$file_format$id
+    args$media_type_id <- file_result$media_type$id
+
+    # Remove file_path (not part of Distribution class)
+    args$file_path <- NULL
+  }
+
+
+  # Create distirubtion object
   dist <- do.call(Distribution, args)
 
   # Dispatch to API
   result <- create(dist, api_key, use_dev)
+
 
   # If a status_id is provided, update it via PATCH
   # (status defaults to status_id = 1 on creation and cannot be set via PATCH)
