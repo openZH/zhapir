@@ -20,6 +20,7 @@
 #' @param format_id         numeric; file format ID (optional)
 #' @param media_type_id     numeric; media type ID (optional)
 #' @param periodicity_id    numeric; periodicity ID (optional)
+#' @param file_path         Optional local file path (will be uploaded via API and linked)
 #' @param file_upload_id    character; file upload UUID (optional)
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
@@ -43,6 +44,7 @@ update_distribution <- function(
     dataset_id        = NULL,
     media_type_id     = NULL,
     periodicity_id    = NULL,
+    file_path         = NULL,
     file_upload_id    = NULL,
     api_key           = NULL,
     use_dev           = TRUE
@@ -55,10 +57,23 @@ update_distribution <- function(
     stop("`id` is required to update a distribution.", call. = FALSE)
   }
 
-  # Build S7 Dataset object preserving required fields
+  # Capture arguments of function call and construct a Distribution-Object
   args <- as.list(match.call())
   args <- args[2:length(args)]
   args <- args[!grepl("api_key|use_dev", names(args))]
+
+  # If file upload if file_path is provided -> POST
+  if (!is.null(file_path)) {
+    file_result <- create_file(args$file_path, api_key = api_key, use_dev = use_dev)
+
+    # Add file_upload_id & format/media type
+    args$file_upload_id <- file_result$id
+    args$format_id <- file_result$file_format$id
+    args$media_type_id <- file_result$media_type$id
+
+    # Remove file_path (not part of Distribution class)
+    args$file_path <- NULL
+  }
 
   dist <- do.call(Distribution, args)
 
