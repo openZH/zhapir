@@ -1,19 +1,20 @@
-#' Upload a file via API
+#' Upload a local file via API
 #'
-#' Creates a new `FileUpload` object and uploads the file via the API.
+#' @description
+#' Uploads a file to the server by creating a `FileUpload` object and sending it to the API.
 #'
-#' @param file_path Local file path to upload (required).
-#' @param api_key   Optional API key. Falls back to environment if NULL.
-#' @param use_dev   Logical; whether to use development environment (default: TRUE).
+#' @param file_path Path to a local file to be uploaded (must exist).
+#' @param api_key   Optional API key. If not provided, the function attempts to retrieve it from the environment.
+#' @param use_dev   Logical; whether to use the development API environment (default: `TRUE`).
 #'
-#' @return Invisibly returns the parsed API response (including `file_upload_id`).
+#' @return Invisibly returns the parsed API response as a list, including the `file_upload_id`.
 #' @export
 create_file <- function(
     file_path,
     api_key = NULL,
     use_dev = TRUE
 ) {
-  # Ensure API key is present
+  # Retrieve API key
   api_key <- get_api_key(api_key)
 
   # Validate input
@@ -21,10 +22,10 @@ create_file <- function(
     stop("`file_path` must point to an existing file.", call. = FALSE)
   }
 
-  # Create FileUpload object
+  # Construct FileUpload object
   file_obj <- FileUpload(file_path = file_path)
 
-  # Send to API
+  # Dispatch upload request to the API
   result <- create(file_obj, api_key, use_dev)
 
   invisible(result)

@@ -109,22 +109,24 @@ fallback_null <- function(x, y) if (!is.null(x)) x else y
 
 
 
-#' API Request Wrapper with CLI Feedback
+#' Send an API request and print CLI feedback
 #'
-#' Sends an API request based on the given S7 object. Automatically handles
-#' JSON or multipart payloads and routes the request to the appropriate internal
-#' function (`api_request_json()` or `api_request_multipart()`).
+#' @description
+#' Sends an HTTP request to the API for a given S7 object and provides contextual
+#' CLI feedback based on the object type and HTTP method.
+#' The request body is automatically encoded as JSON or multipart/form-data
 #'
-#' On success, prints a CLI message. On failure, shows an error alert.
+#' On success, a confirmation message is shown via the CLI. On failure, a formatted error message is printed.
 #'
-#' @param object An S7 object (e.g., Dataset, Distribution, FileUpload).
-#' @param method HTTP method as string (e.g., "POST", "PATCH").
-#' @param endpoint API endpoint as string.
-#' @param api_key API key string.
-#' @param use_dev Logical; use development API.
-#' @param object_label Label used in CLI output.
+#' @param object        An S7 object (e.g., `Dataset`, `Distribution`, `FileUpload`) to be sent as payload.
+#' @param method        HTTP method as string; one of `"POST"`, `"PATCH"`, `"PUT"`, `"DELETE"`, `"GET"`.
+#' @param endpoint      Character string; the target API endpoint.
+#' @param api_key       API key string used for authentication.
+#' @param use_dev       Logical; whether to use the development API base URL (default: `TRUE`).
+#' @param object_label  Human-readable label for the object (used in CLI messages).
 #'
-#' @return Parsed API response (invisibly), or `NULL` on error.
+#' @return Invisibly returns the parsed API response as a list. Returns `NULL` if the request fails.
+#'
 #' @keywords internal
 api_request_wrapper <- function(
     object,
@@ -138,14 +140,15 @@ api_request_wrapper <- function(
 
   result <- tryCatch(
     {
+      # Perform the actual API request (JSON or multipart is handled internally)
       result <- api_request(method, endpoint, object, object_label, api_key, use_dev)
 
-      # extract values for feedback
+      # Extract key info for CLI feedback
       title <- fallback_null(result$title, "unknown")
       id <- fallback_null(result$id, "unknown")
       parent_id <- fallback_null(result$dataset$id, "unknown")
 
-      # CLI success feedback
+      # Method- and object-specific success messages
       if (method == "POST" && object_label == "Dataset") {
         cli::cli_alert_success(
           "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created."
@@ -173,11 +176,12 @@ api_request_wrapper <- function(
       invisible(result)
     },
     error = function(e) {
+      # Extract HTTP status code and ID
       code <- if (inherits(e, "httr2_http_error")) e$response$status_code else "unknown"
       id <- tryCatch(object@id, error = function(e) "n/a")
       msg <- as.character(e$message)
 
-      # specific error handling
+      # CLI error message
       cli::cli_alert_danger(
         "{.strong {object_label}} (ID {.val {id}}) {method}-Request failed ({code}): {msg}"
       )
@@ -193,16 +197,19 @@ api_request_wrapper <- function(
 
 #' Send API Request
 #'
-#' Accepts an S7 object, converts it to the appropriate payload (JSON or multipart),
-#' and performs the request using `httr2`.
+#' @description
+#' Internal function to perform an API request for a given S7 object.
+#' Depending on the object type, the payload is serialized as JSON (for most objects)
+#' or as multipart/form-data (for file uploads). The request is executed using the `httr2` package.
 #'
-#' @param method HTTP method (e.g., "POST", "PATCH", "GET").
-#' @param endpoint Character; API endpoint (e.g., "/api/v1/datasets").
-#' @param objectlabel An S7 object (e.g., Dataset, Distribution, or FileUpload).
-#' @param api_key API key for authentication.
-#' @param use_dev Logical; whether to use the development environment.
+#' @param method        HTTP method to use, e.g. `"POST"`, `"PATCH"`, `"GET"` (required).
+#' @param endpoint      Character string; relative API endpoint (e.g. `"/api/v1/datasets"`).
+#' @param object        An S7 object representing the payload (e.g., `Dataset`, `Distribution`, or `FileUpload`).
+#' @param object_label  Character string indicating the object type (used to determine encoding strategy).
+#' @param api_key       API key string used for authentication.
+#' @param use_dev       Logical; whether to use the development environment (default: `TRUE`).
 #'
-#' @return Parsed response body as list.
+#' @return Parsed response content as a list.
 #' @keywords internal
 api_request <- function(
     method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
@@ -215,7 +222,7 @@ api_request <- function(
   method <- match.arg(method)
   url <- paste0(get_base_url(use_dev), endpoint)
 
-  # Prepare request
+  # Initialise request with method and headers
   req <- httr2::request(url) |>
     httr2::req_method(method) |>
     httr2::req_headers(
@@ -223,12 +230,14 @@ api_request <- function(
       `x-api-key` = api_key
     )
 
-  # Convert object to appropriate payload
+  # If object is a file upload, use multipart/form-data
   if (object_label == "FileUpload") {
     payload <- list(file = curl::form_file(object@file_path))
 
+    # Attach file using multipart body
     req <- req |> httr2::req_body_multipart(!!!payload)
   } else {
+    # Otherwise, serialise object as JSON
     payload <- object_to_payload(object)
     req <- req |>
       httr2::req_headers(`Content-Type` = "application/json") |>
@@ -238,12 +247,9 @@ api_request <- function(
   # Perform request
   resp <- req |> httr2::req_perform()
 
-
   # Return parsed JSON body
   httr2::resp_body_json(resp)
 }
-
-
 
 
 #' Retrieve a dataset by ID from the MDV API

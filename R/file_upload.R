@@ -1,9 +1,12 @@
-#' file_upload
+#' FileUpload class
 #'
-#' Create a new File Upload object for distribution.
+#' @description
+#' Defines a new `FileUpload` object representing a local file to be uploaded
+#' via the API.
 #'
-#' @param file_path local path of file
-#' @return An S7 `Distribution` object.
+#' @param file_path Path to the local file to upload (must exist).
+#'
+#' @return An S7 `FileUpload` object.
 FileUpload <- S7::new_class(
   "FileUpload",
   package = "zhapir",
