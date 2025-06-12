@@ -81,7 +81,7 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #' }
 get_keywords_id <- function(name) {
   df_keywords <- get_keywords()
-  id <- get_id(name, df_keywords)
+  id <- get_id(df_keywords, name, internal = TRUE)
 
   return(invisible(id))
 }
@@ -102,8 +102,16 @@ get_keywords_id <- function(name) {
 #' df_keywords <- get_keywords()
 #' head(df_keywords)
 #' }
-get_keywords <- function() {
+get_keywords <- function(name = NULL) {
   df_keywords <- req_to_df("keywords")
+
+  if (!is.null(name)) {
+    ids <- get_id(df_keywords, name, internal = FALSE)
+
+    df_keywords <- df_keywords |>
+      dplyr::filter(id %in% ids)
+  }
+
 
   return(df_keywords)
 }
@@ -129,7 +137,7 @@ get_keywords <- function() {
 #' }
 get_zh_web_catalog_id <- function(name) {
   df_zh_web_catalog <- get_zh_web_catalog()
-  id <- get_id(name, df_zh_web_catalog)
+  id <- get_id(df_zh_web_catalog, name)
 
   return(invisible(id))
 }
@@ -176,7 +184,7 @@ get_zh_web_catalog <- function() {
 #' }
 get_themes_id <- function(name) {
   df_theme <- get_themes()
-  id <- get_id(name, df_theme)
+  id <- get_id(df_theme, name)
 
   return(invisible(id))
 }
@@ -227,7 +235,7 @@ get_themes <- function() {
 #' }
 get_periodicities_id <- function(name) {
   df_periodicity <- get_periodicities()
-  id <- get_id(name, df_periodicity)
+  id <- get_id(df_periodicity, name)
 
   return(invisible(id))
 }
@@ -278,7 +286,7 @@ get_periodicities <- function() {
 #' }
 get_statuses_id <- function(name) {
   df_status <- get_statuses()
-  id <- get_id(name, df_status)
+  id <- get_id(df_status, name)
 
   return(invisible(id))
 }
@@ -326,7 +334,7 @@ get_statuses <- function() {
 #' }
 get_licenses_id <- function(name) {
   df_license <- get_licenses()
-  id <- get_id(name, df_license)
+  id <- get_id(df_license, name)
 
   return(invisible(id))
 }
@@ -374,7 +382,7 @@ get_licenses <- function() {
 #' }
 get_formats_id <- function(name) {
   df_format <- get_formats()
-  id <- get_id(name, df_format)
+  id <- get_id(df_format, name)
 
   return(invisible(id))
 }
@@ -471,19 +479,20 @@ req_to_df <- function(endpoint) {
 #' \dontrun{
 #' df_formats <- get_formats()
 #'
-#' get_id("CSV", df_formats)
+#' get_id(df_formats, "CSV")
 #' # example of handling of invalid names
-#' get_id(c("CSV", "blabla"), df_formats)
+#' get_id(df_formats, c("CSV", "blabla"))
 #' }
-get_id <- function(name, df) {
+get_id <- function(df, name, internal) {
+  browser()
 
-  filter_col <- rlang::sym(names(df)[names(df) != "id"])
+  label_col <- rlang::sym(names(df)[names(df) != "id"])
   name <- tolower(name)
 
   ids <- c()
 
   for (i in name) {
-    switch(as.character(filter_col),
+    switch(as.character(label_col),
       "keywords" = {
         error_noun <- "keyword"
         fun_name <- "get_keywords()"
@@ -516,40 +525,148 @@ get_id <- function(name, df) {
     )
 
     df_filtered <- df |>
-      dplyr::mutate(filter_col_lower = tolower(!!filter_col)) |>
+      dplyr::mutate(filter_col_lower = tolower(!!label_col)) |>
       dplyr::filter(grepl(i, filter_col_lower))
 
-    exact_match <- df_filtered |>
+    df_exact_match <- df |>
+      dplyr::mutate(filter_col_lower = tolower(!!label_col)) |>
       dplyr::filter(filter_col_lower == i)
 
-    if (nrow(exact_match == 1)) {
-      single_id <- exact_match |>
-        dplyr::pull(id)
 
-      names(single_id) <- exact_match |>
-        dplyr::pull(!!filter_col)
+    if (internal == TRUE) {
+      single_id <- name_to_single_id(df_filtered,
+                                   df_exact_match,
+                                   name = i,
+                                   label_col,
+                                   error_noun,
+                                   fun_name)
 
       ids <- c(ids, single_id)
-
-    } else if (nrow(df_filtered) == 0) {
-      stop(paste0(
-        "'", i, "' is not a valid ", error_noun, ".",
-        " To explore all '", error_noun, "' run '", fun_name, "'."
-      ))
-    } else if (nrow(df_filtered) > 1) {
-      multiple_matches <- df_filtered |>
-        dplyr::pull(!!filter_col)
-
-      stop(
-        paste0(
-          "For '", i, "' there are multiple entries:\n",
-          paste0(multiple_matches, collapse = ", "),
-          paste0("\nTo explore all '", error_noun, "' run '", fun_name, "'.")
-        )
-      )
+    } else {
+      multiple_ids <- name_to_multiple_ids(df_filtered,
+                                           name = i,
+                                           label_col,
+                                           error_noun,
+                                           fun_name)
+      ids <- c(ids, multiple_ids)
     }
   }
 
-print(ids)
 return(ids)
+}
+
+
+
+
+name_to_single_id <- function(df_filtered,
+                              df_exact_match,
+                              name,
+                              label_col,
+                              error_noun,
+                              fun_name) {
+
+  if (nrow(df_exact_match) != 1) {
+
+    if (nrow(df_filtered) == 0){
+      stop(paste0(
+        "'", name, "' is not a valid ", error_noun, ".",
+        " To explore all '", error_noun, "' run '", fun_name, "'."
+      ))
+
+    } else {
+      not_exact_match <- df_filtered |>
+        dplyr::pull(!!label_col)
+
+      stop(
+        paste0(
+          "For '", name, "' there is not an exact match. The available option(s) is/are:\n",
+          paste0(not_exact_match, collapse = ", "),
+          paste0("\nTo explore all '", error_noun, "' run '", fun_name, "'.")
+        )
+      )
+
+    }
+  } else {
+
+    single_id <- df_exact_match |>
+      dplyr::pull(id)
+    names(single_id) <- df_exact_match |>
+      dplyr::pull(!!label_col)
+
+  }
+
+  return(single_id)
+
+}
+
+
+
+
+name_to_multiple_ids <- function(df_filtered,
+                                 name,
+                                 label_col,
+                                 error_noun,
+                                 fun_name) {
+
+  if (nrow(df_filtered) == 0) {
+    stop(paste0(
+      "'", i, "' is not a valid ", error_noun, ".",
+      " To explore all '", error_noun, "' run '", fun_name, "'."
+    ))
+  } else {
+    multiple_ids <- df_filtered %>%
+      dplyr::pull(id)
+
+    names(multiple_ids) <- df_filtered %>%
+      dplyr::pull(!!label_col)
+  }
+
+  return(multiple_ids)
+
+}
+
+get_label <- function(df, id) {
+
+  label_col <- rlang::sym(names(df)[names(df) != "id"])
+
+  labels <- c()
+
+  for (i in id) {
+
+  single_label <- df |>
+    dplyr::filter(id == i) |>
+    dplyr::pull(!!label_col)
+
+  if (length(single_label) == 0) {
+    cli::cli_abort("No entry found for id: {.val {i}}")
+  }
+
+  labels <- c(labels, single_label)
+
+  }
+
+  return(labels)
+}
+
+
+
+converter <- function(df, input, internal) {
+browser()
+
+  label_col <- rlang::sym(names(df)[names(df) != "id"])
+
+  if(is.character(input)) {
+    ids <- get_id(df, input, internal)
+
+    output <- df |>
+      dplyr::filter(id %in% ids)
+
+  } else {
+    labels <- get_label(df, input)
+
+    output <- df |>
+      dplyr::filter(!!label_col %in% labels)
+
+  }
+  return(output)
 }
