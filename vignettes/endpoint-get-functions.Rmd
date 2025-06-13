@@ -39,7 +39,7 @@ When creating/updating a data set or a distribution, you have to specify the val
 ```{r}
 # Example for the endpoint 'keywords'
 
-# get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+# convert_keywords_to_id(c("abfall", "abgase", "luftqualitaet"))
 ```
 
 # Function Overview
@@ -63,7 +63,7 @@ Note that there is not `get_organisations_id()`-function which means that the or
 ```
 
 ```{r}
-# get_keywords_id(c("abfall", "luftqualitaet"))
+# convert_keywords_to_id(c("abfall", "luftqualitaet"))
 ```
 
 ## Zh_web_catalog
@@ -150,7 +150,7 @@ Note that that in theory, you can retrieve the ID's from the `get_keywords`-oupu
 # create_dataset("Hello Dataset 1",
 #                organisation_id = 1, # ARE
 #                description = "Such insights, much wow!",
-#                keyword_ids  = get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+#                keyword_ids  = convert_keywords_to_id(c("abfall", "abgase", "luftqualitaet"))
 #                )
 # 
 # 

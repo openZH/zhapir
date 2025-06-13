@@ -28,6 +28,10 @@ api_request(method = "GET",
             endpoint = "/api/v1/organisation-units",
             api_key =  get_api_key())
 
+api_request_wrapper(method = "GET",
+                    endpoint = "/api/v1/organisation-units",
+                    api_key = get_api_key()
+                    )
 
-get_keywords()
+df <- get_keywords()
 

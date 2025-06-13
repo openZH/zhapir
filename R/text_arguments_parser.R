@@ -77,13 +77,14 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' get_keywords_id("abfall")
+#' convert_keywords_to_id("abfall")
 #' }
-get_keywords_id <- function(name) {
+convert_keywords_to_id <- function(name) {
+
   df_keywords <- get_keywords()
   id <- get_id(df_keywords, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -102,14 +103,14 @@ get_keywords_id <- function(name) {
 #' df_keywords <- get_keywords()
 #' head(df_keywords)
 #' }
-get_keywords <- function(name = NULL) {
+get_keywords <- function(input = NULL) {
+
   df_keywords <- req_to_df("keywords")
 
-  if (!is.null(name)) {
-    ids <- get_id(df_keywords, name, internal = FALSE)
+  if (!is.null(input)) {
 
     df_keywords <- df_keywords |>
-      dplyr::filter(id %in% ids)
+      converter(input, internal = FALSE)
   }
 
 
@@ -484,7 +485,6 @@ req_to_df <- function(endpoint) {
 #' get_id(df_formats, c("CSV", "blabla"))
 #' }
 get_id <- function(df, name, internal) {
-  browser()
 
   label_col <- rlang::sym(names(df)[names(df) != "id"])
   name <- tolower(name)
@@ -568,22 +568,20 @@ name_to_single_id <- function(df_filtered,
   if (nrow(df_exact_match) != 1) {
 
     if (nrow(df_filtered) == 0){
-      stop(paste0(
-        "'", name, "' is not a valid ", error_noun, ".",
-        " To explore all '", error_noun, "' run '", fun_name, "'."
+      cli::cli_abort(c(
+        "!" = "{.val {name}} is not a valid {.emph {error_noun}}.",
+        ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
       ))
 
     } else {
       not_exact_match <- df_filtered |>
         dplyr::pull(!!label_col)
 
-      stop(
-        paste0(
-          "For '", name, "' there is not an exact match. The available option(s) is/are:\n",
-          paste0(not_exact_match, collapse = ", "),
-          paste0("\nTo explore all '", error_noun, "' run '", fun_name, "'.")
-        )
-      )
+      cli::cli_abort(c(
+        "!" = "For {.val {name}}, there is not an exact match.",
+        "i" = "The available option(s) {.emph are}: {.val {not_exact_match}}.",
+        ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
+      ))
 
     }
   } else {
@@ -609,9 +607,9 @@ name_to_multiple_ids <- function(df_filtered,
                                  fun_name) {
 
   if (nrow(df_filtered) == 0) {
-    stop(paste0(
-      "'", i, "' is not a valid ", error_noun, ".",
-      " To explore all '", error_noun, "' run '", fun_name, "'."
+    cli::cli_abort(c(
+      "!" = "{.val {name}} is not a valid {.emph {error_noun}}.",
+      ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
     ))
   } else {
     multiple_ids <- df_filtered %>%
@@ -651,7 +649,6 @@ get_label <- function(df, id) {
 
 
 converter <- function(df, input, internal) {
-browser()
 
   label_col <- rlang::sym(names(df)[names(df) != "id"])
 
