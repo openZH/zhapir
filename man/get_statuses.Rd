@@ -4,7 +4,11 @@
 \alias{get_statuses}
 \title{Get All Statuses and Their IDs}
 \usage{
-get_statuses()
+get_statuses(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter statuses dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for status names and one for
@@ -19,5 +23,9 @@ options for other functions.
 \dontrun{
 df_status <- get_statuses()
 head(df_status)
+
+get_statuses("verworfen")
+
+get_statuses(3)
 }
 }

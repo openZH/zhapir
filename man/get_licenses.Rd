@@ -4,7 +4,11 @@
 \alias{get_licenses}
 \title{Get All Licenses and Their IDs}
 \usage{
-get_licenses()
+get_licenses(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter licenses dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for license names and one for
@@ -19,5 +23,8 @@ options for other functions.
 \dontrun{
 df_license <- get_licenses()
 head(df_license)
+
+get_licenses(1)
+
 }
 }

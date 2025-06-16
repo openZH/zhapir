@@ -80,7 +80,6 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #' convert_keywords_to_id("abfall")
 #' }
 convert_keywords_to_id <- function(name) {
-
   df_keywords <- get_keywords()
   id <- get_id(df_keywords, name, internal = TRUE)
 
@@ -94,6 +93,9 @@ convert_keywords_to_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid keyword
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter the keyword dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for keyword names and one for
 #' their corresponding IDs.
 #' @export
@@ -102,19 +104,22 @@ convert_keywords_to_id <- function(name) {
 #' \dontrun{
 #' df_keywords <- get_keywords()
 #' head(df_keywords)
+#'
+#' get_keywords("abwasser")
+#'
+#' get_keyords(c(578, 590))
+#'
 #' }
 get_keywords <- function(input = NULL) {
 
   df_keywords <- req_to_df("keywords")
 
   if (!is.null(input)) {
-
     df_keywords <- df_keywords |>
       converter(input, internal = FALSE)
   }
 
-
-  return(df_keywords)
+    return(df_keywords)
 }
 
 
@@ -134,13 +139,13 @@ get_keywords <- function(input = NULL) {
 #'
 #' @examples
 #' \dontrun{
-#' get_zh_web_catalog_id("Bevölkerung")
+#' convert_zh_web_catalog_to_id("Bevölkerung")
 #' }
-get_zh_web_catalog_id <- function(name) {
+convert_zh_web_catalog_to_id <- function(name) {
   df_zh_web_catalog <- get_zh_web_catalog()
-  id <- get_id(df_zh_web_catalog, name)
+  id <- get_id(df_zh_web_catalog, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -150,6 +155,10 @@ get_zh_web_catalog_id <- function(name) {
 #' with their associated IDs. This function is typically used to look up valid
 #' keyword options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter the zh-web-catalog dataset. If NULL (default), returns the full
+#' dataset.
+#'
 #' @return A data frame with two columns: one for zh-web-catalog keyword names
 #' and one for their corresponding IDs.
 #' @export
@@ -158,9 +167,18 @@ get_zh_web_catalog_id <- function(name) {
 #' \dontrun{
 #' df_zh_web_catalog <- get_zh_web_catalog()
 #' head(df_zh_web_catalog)
+#'
+#' get_zh_web_catalog("Wasserdaten")
+#'
+#' get_zh_web_catalog(13)
 #' }
-get_zh_web_catalog <- function() {
+get_zh_web_catalog <- function(input = NULL) {
   df_zh_web_catalog <- req_to_df("zhweb-datenkataloge")
+
+  if (!is.null(input)) {
+    df_zh_web_catalog <- df_zh_web_catalog |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_zh_web_catalog)
 }
@@ -181,13 +199,13 @@ get_zh_web_catalog <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' get_themes_id("Wirtschaft und Finanzen")
+#' convert_themes_to_id("Wirtschaft und Finanzen")
 #' }
-get_themes_id <- function(name) {
+convert_themes_to_id <- function(name) {
   df_theme <- get_themes()
-  id <- get_id(df_theme, name)
+  id <- get_id(df_theme, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -199,6 +217,9 @@ get_themes_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid theme
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter themes dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for theme names and one for
 #' their corresponding IDs.
 #' @export
@@ -207,9 +228,19 @@ get_themes_id <- function(name) {
 #' \dontrun{
 #' df_themes <- get_themes()
 #' head(df_themes)
+#'
+#' get_themes("Verkehr")
+#'
+#' get_themes(41)
+#'
 #' }
-get_themes <- function() {
+get_themes <- function(input = NULL) {
   df_themes <- req_to_df("themes")
+
+  if (!is.null(input)) {
+    df_themes <- df_themes |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_themes)
 }
@@ -232,13 +263,13 @@ get_themes <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' get_periodicity_id("Jährlich")
+#' convert_periodicities_to_id("Jährlich")
 #' }
-get_periodicities_id <- function(name) {
+convert_periodicities_to_id <- function(name) {
   df_periodicity <- get_periodicities()
-  id <- get_id(df_periodicity, name)
+  id <- get_id(df_periodicity, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -250,17 +281,29 @@ get_periodicities_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid periodicity
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter periodicity dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for periodicity names and one for
 #' their corresponding IDs.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' df_periocidity <- get_periodicity()
-#' head(df_periocidity)
+#' df_periocidities <- get_periodicities()
+#' head(df_periocidities)
+#'
+#' get_periodicities("Jährlich")
+#'
+#' get_periodicities(42)
 #' }
-get_periodicities <- function() {
+get_periodicities <- function(input = NULL) {
   df_periocidity <- req_to_df("periodicities")
+
+  if (!is.null(input)) {
+    df_periocidity <- df_periocidity |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_periocidity)
 }
@@ -283,13 +326,13 @@ get_periodicities <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' get_statuses_id("Entwurf")
+#' convert_statuses_to_id("Entwurf")
 #' }
-get_statuses_id <- function(name) {
+convert_statuses_to_id <- function(name) {
   df_status <- get_statuses()
-  id <- get_id(df_status, name)
+  id <- get_id(df_status, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -301,6 +344,9 @@ get_statuses_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid status
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter statuses dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for status names and one for
 #' their corresponding IDs.
 #' @export
@@ -309,9 +355,18 @@ get_statuses_id <- function(name) {
 #' \dontrun{
 #' df_status <- get_statuses()
 #' head(df_status)
+#'
+#' get_statuses("verworfen")
+#'
+#' get_statuses(3)
 #' }
-get_statuses <- function() {
+get_statuses <- function(input = NULL) {
   df_status <- req_to_df("statuses")
+
+  if (!is.null(input)) {
+    df_status <- df_status |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_status)
 }
@@ -331,13 +386,13 @@ get_statuses <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' get_licenses_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
+#' convert_licenses_to_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
 #' }
-get_licenses_id <- function(name) {
+convert_licenses_to_id <- function(name) {
   df_license <- get_licenses()
-  id <- get_id(df_license, name)
+  id <- get_id(df_license, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -348,6 +403,9 @@ get_licenses_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid license
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter licenses dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for license names and one for
 #' their corresponding IDs.
 #' @export
@@ -356,9 +414,17 @@ get_licenses_id <- function(name) {
 #' \dontrun{
 #' df_license <- get_licenses()
 #' head(df_license)
+#'
+#' get_licenses(1)
+#'
 #' }
-get_licenses <- function() {
+get_licenses <- function(input = NULL) {
   df_license <- req_to_df("licenses")
+
+  if (!is.null(input)) {
+    df_license <- df_license |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_license)
 }
@@ -379,13 +445,13 @@ get_licenses <- function() {
 #'
 #' @examples
 #' \dontrun{
-#' get_formats_id("CSV")
+#' convert_formats_to_id("CSV")
 #' }
-get_formats_id <- function(name) {
+convert_formats_to_id <- function(name) {
   df_format <- get_formats()
-  id <- get_id(df_format, name)
+  id <- get_id(df_format, name, internal = TRUE)
 
-  return(invisible(id))
+  return(id)
 }
 
 
@@ -397,6 +463,9 @@ get_formats_id <- function(name) {
 #' associated IDs. This function is typically used to look up valid format
 #' options for other functions.
 #'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter formats dataset. If NULL (default), returns the full dataset.
+#'
 #' @return A data frame with two columns: one for format names and one for
 #' their corresponding IDs.
 #' @export
@@ -405,9 +474,18 @@ get_formats_id <- function(name) {
 #' \dontrun{
 #' df_format <- get_formats()
 #' head(df_format)
+#'
+#' get_formats("xlsx")
+#'
+#' get_formats(3)
 #' }
-get_formats <- function() {
+get_formats <- function(input = NULL) {
   df_format <- req_to_df("formats")
+
+  if (!is.null(input)) {
+    df_format <- df_format |>
+      converter(input, internal = FALSE)
+  }
 
   return(df_format)
 }
@@ -465,6 +543,7 @@ req_to_df <- function(endpoint) {
 #'
 #' @param name A character vector of one or more names to look up.
 #' @param df A data frame containing at least one name column and an "id" column.
+#' @param internal TRUE if an exact match is required for internal processes.
 #'
 #' @return A named vector of IDs corresponding to the input name(s).
 #' Names of the vector correspond to the matched names in the data frame.
@@ -491,38 +570,10 @@ get_id <- function(df, name, internal) {
 
   ids <- c()
 
+  error_noun <- label_switch(label_col)[["error_noun"]]
+  fun_name <- label_switch(label_col)[["fun_name"]]
+
   for (i in name) {
-    switch(as.character(label_col),
-      "keywords" = {
-        error_noun <- "keyword"
-        fun_name <- "get_keywords()"
-      },
-      "zhweb-datenkataloge" = {
-        error_noun <- "zh_web_catalog"
-        fun_name <- "get_zh_web_catalog()"
-      },
-      "themes" = {
-        error_noun <- "theme"
-        fun_name <- "get_themes()"
-      },
-      "periodicities" = {
-        error_noun <- "periodicities"
-        fun_name <- "get_periodicities()"
-      },
-      "statuses" = {
-        error_noun <- "status"
-        fun_name <- "get_statuses()"
-      },
-      "licenses" = {
-        error_noun <- "license"
-        fun_name <- "get_licenses()"
-      },
-      ,
-      "formats" = {
-        error_noun <- "format"
-        fun_name <- "get_formats()"
-      }
-    )
 
     df_filtered <- df |>
       dplyr::mutate(filter_col_lower = tolower(!!label_col)) |>
@@ -623,11 +674,14 @@ name_to_multiple_ids <- function(df_filtered,
 
 }
 
-get_label <- function(df, id) {
+get_label <- function(df, id, error_noun, fun_name) {
 
   label_col <- rlang::sym(names(df)[names(df) != "id"])
 
   labels <- c()
+
+  error_noun <- label_switch(label_col)[["error_noun"]]
+  fun_name <- label_switch(label_col)[["fun_name"]]
 
   for (i in id) {
 
@@ -636,7 +690,11 @@ get_label <- function(df, id) {
     dplyr::pull(!!label_col)
 
   if (length(single_label) == 0) {
-    cli::cli_abort("No entry found for id: {.val {i}}")
+    cli::cli_abort(c(
+      "No entry found for id: {.val {i}}",
+      ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
+      ))
+
   }
 
   labels <- c(labels, single_label)
@@ -667,3 +725,42 @@ converter <- function(df, input, internal) {
   }
   return(output)
 }
+
+label_switch <- function(label_col) {
+
+  switch(as.character(label_col),
+       "keywords" = {
+         error_noun <- "keywords"
+         fun_name <- "get_keywords()"
+       },
+       "zhweb-datenkataloge" = {
+         error_noun <- "zh_web_catalog"
+         fun_name <- "get_zh_web_catalog()"
+       },
+       "themes" = {
+         error_noun <- "themes"
+         fun_name <- "get_themes()"
+       },
+       "periodicities" = {
+         error_noun <- "periodicities"
+         fun_name <- "get_periodicities()"
+       },
+       "statuses" = {
+         error_noun <- "statuses"
+         fun_name <- "get_statuses()"
+       },
+       "licenses" = {
+         error_noun <- "licenses"
+         fun_name <- "get_licenses()"
+       },
+       ,
+       "formats" = {
+         error_noun <- "formats"
+         fun_name <- "get_formats()"
+       })
+
+  return(c(error_noun = error_noun,
+           fun_name = fun_name))
+
+}
+

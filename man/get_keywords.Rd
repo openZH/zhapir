@@ -4,7 +4,11 @@
 \alias{get_keywords}
 \title{Get All Keywords and Their IDs}
 \usage{
-get_keywords()
+get_keywords(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter the keyword dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for keyword names and one for
@@ -19,5 +23,10 @@ options for other functions.
 \dontrun{
 df_keywords <- get_keywords()
 head(df_keywords)
+
+get_keywords("abwasser")
+
+get_keyords(c(578, 590))
+
 }
 }

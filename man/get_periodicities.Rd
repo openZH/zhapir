@@ -4,7 +4,11 @@
 \alias{get_periodicities}
 \title{Get All Periodicities and Their IDs}
 \usage{
-get_periodicities()
+get_periodicities(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter periodicity dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for periodicity names and one for
@@ -17,7 +21,11 @@ options for other functions.
 }
 \examples{
 \dontrun{
-df_periocidity <- get_periodicity()
-head(df_periocidity)
+df_periocidities <- get_periodicities()
+head(df_periocidities)
+
+get_periodicities("Jährlich")
+
+get_periodicities(42)
 }
 }

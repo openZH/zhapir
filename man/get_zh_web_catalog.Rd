@@ -4,7 +4,12 @@
 \alias{get_zh_web_catalog}
 \title{Get All zh-web-catalog keywords and Their IDs}
 \usage{
-get_zh_web_catalog()
+get_zh_web_catalog(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter the zh-web-catalog dataset. If NULL (default), returns the full
+dataset.}
 }
 \value{
 A data frame with two columns: one for zh-web-catalog keyword names
@@ -19,5 +24,9 @@ keyword options for other functions.
 \dontrun{
 df_zh_web_catalog <- get_zh_web_catalog()
 head(df_zh_web_catalog)
+
+get_zh_web_catalog("Wasserdaten")
+
+get_zh_web_catalog(13)
 }
 }

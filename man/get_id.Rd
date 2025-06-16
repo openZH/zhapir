@@ -4,12 +4,14 @@
 \alias{get_id}
 \title{Get the ID(s) of Entries for Given Variable from a Data Frame}
 \usage{
-get_id(name, df)
+get_id(df, name, internal)
 }
 \arguments{
+\item{df}{A data frame containing at least one name column and an "id" column.}
+
 \item{name}{A character vector of one or more names to look up.}
 
-\item{df}{A data frame containing at least one name column and an "id" column.}
+\item{internal}{TRUE if an exact match is required for internal processes.}
 }
 \value{
 A named vector of IDs corresponding to the input name(s).
@@ -35,8 +37,8 @@ column to filter and find the corresponding ID(s).
 \dontrun{
 df_formats <- get_formats()
 
-get_id("CSV", df_formats)
+get_id(df_formats, "CSV")
 # example of handling of invalid names
-get_id(c("CSV", "blabla"), df_formats)
+get_id(df_formats, c("CSV", "blabla"))
 }
 }

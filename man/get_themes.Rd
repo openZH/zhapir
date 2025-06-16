@@ -4,7 +4,11 @@
 \alias{get_themes}
 \title{Get All Themes and Their IDs}
 \usage{
-get_themes()
+get_themes(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter themes dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for theme names and one for
@@ -19,5 +23,10 @@ options for other functions.
 \dontrun{
 df_themes <- get_themes()
 head(df_themes)
+
+get_themes("Verkehr")
+
+get_themes(41)
+
 }
 }

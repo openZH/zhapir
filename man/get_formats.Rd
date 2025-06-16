@@ -4,7 +4,11 @@
 \alias{get_formats}
 \title{Get All Formats and Their IDs}
 \usage{
-get_formats()
+get_formats(input = NULL)
+}
+\arguments{
+\item{input}{Optional. A character string, numeric value, or a vector of either.
+Used to filter formats dataset. If NULL (default), returns the full dataset.}
 }
 \value{
 A data frame with two columns: one for format names and one for
@@ -19,5 +23,9 @@ options for other functions.
 \dontrun{
 df_format <- get_formats()
 head(df_format)
+
+get_formats("xlsx")
+
+get_formats(3)
 }
 }
