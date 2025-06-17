@@ -1,3 +1,6 @@
+library(rlang)
+
+
 #' Get the base URL based on environment setting
 #'
 #' @param use_dev Whether to use the development environment
@@ -98,16 +101,6 @@ object_to_payload <- function(object) {
 }
 
 
-#' Get first or second argument
-#'
-#' Returns the first argument if it is not `NULL`, otherwise returns the second.
-#'
-#' @param x Object 1
-#' @param y Object 2
-#'
-fallback_null <- function(x, y) if (!is.null(x)) x else y
-
-
 
 #' Send an API request and print CLI feedback
 #'
@@ -144,9 +137,9 @@ api_request_wrapper <- function(
       result <- api_request(method, endpoint, object, object_label, api_key, use_dev)
 
       # Extract key info for CLI feedback
-      title <- fallback_null(result$title, "unknown")
-      id <- fallback_null(result$id, "unknown")
-      parent_id <- fallback_null(result$dataset$id, "unknown")
+      title <- result$title %||% "unknown"
+      id <- result$id %||%  "unknown"
+      parent_id <- result$dataset$id %||%  "unknown"
 
       # Method- and object-specific success messages
       if (method == "POST" && object_label == "Dataset") {
@@ -159,7 +152,7 @@ api_request_wrapper <- function(
         )
       } else if (method == "POST" && object_label == "FileUpload") {
         file_path <- tryCatch(object@file_path, error = function(e) "unknown")
-        file_upload_id <- fallback_null(result$id, "unknown")
+        file_upload_id <- result$id %||% "unknown"
         cli::cli_alert_success(
           "{.strong File} {.file {file_path}} uploaded successfully (Upload ID: {.val {file_upload_id}})."
         )
@@ -248,7 +241,6 @@ api_request <- function(
   resp <- req |> httr2::req_perform()
 
   # Return parsed JSON body
-  httr2::resp_body_json(resp)
 }
 
 
