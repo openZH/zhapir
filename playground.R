@@ -21,12 +21,21 @@ create_distribution(
 
 update_distribution(id = 5871, dataset_id = 6831, file_path = "test_dist.csv")
 
+# getter user facting functions
 api_request(method = "GET",
             endpoint = "/api/v1/organisation-units",
             api_key =  get_api_key())
 
-
 get_keywords()
 
 
+# create and delete a dummy csv file
+dummy_data <- data.frame(
+  id = 1:3,
+  name = c("Gemeinde", "Anzahl Kühe", "Beliebtester Kuhname"),
+  value = c("User", 999, "Anneliseli")
+)
+write.csv(dummy_data, "test_dist.csv", row.names = FALSE)
 
+# Delete the file
+file.remove("test_dist.csv")
