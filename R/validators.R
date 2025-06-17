@@ -68,3 +68,11 @@ validate_email <- function(value) {
     }
   }
 }
+
+
+validate_file_exists <- function(value) {
+  if (!file.exists(value)) {
+    return(paste0("File doesn't exist: ", value))
+  }
+}
+

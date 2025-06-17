@@ -1,31 +1,35 @@
 #' Update an existing distribution via API
 #'
-#' @description
-#' Update fields of an existing Distribution in the MDV data catalog.
-#' Only the `id` is required; all other fields are optional and will be included if non-NULL.
+#' @param id                ID of the distribution to update (required).
+#' @param title             Title of the distribution (optional; max. 1000 characters).
+#' @param dataset_id        ID of the dataset to which this distribution belongs (optional).
+#' @param stat_server_flag  Logical; should the distribution be published on the statistical server? (optional).
+#' @param zh_web_flag       Logical; should the distribution be shown on the Zurich web catalog? (optional).
+#' @param ogd_flag          Logical; should the distribution be published on the OGD portal? (optional).
+#' @param sort_order        Integer; optional custom sorting index.
+#' @param description       Optional free-text description.
+#' @param access_url        Optional URL to access the distribution (must start with http:// or https://).
+#' @param right             Optional usage rights description.
+#' @param byte_size         Optional file size in bytes (must be a positive number).
+#' @param status_id         Optional status ID (applied via PATCH after update).
+#' @param license_id        Optional license ID.
+#' @param format_id         Optional file format ID.
+#' @param media_type_id     Optional media type ID.
+#' @param periodicity_id    Optional update frequency ID.
+#' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.
+#' @param file_upload_id    Optional ID of a previously uploaded file (overridden if file_path is used).
+#' @param api_key           Optional API key; if not provided, the default environment variable is used.
+#' @param use_dev           Logical; whether to use the development API endpoint (default: TRUE).
 #'
-#' @param id                numeric; the distribution ID to update (required)
-#' @param title             character; new title (optional)
-#' @param description       character; new description (optional)
-#' @param stat_server_flag  logical; publish to statistical server (optional)
-#' @param zh_web_flag       logical; publish to zh web catalog (optional)
-#' @param ogd_flag          logical; publish to OGD portal (optional)
-#' @param sort_order        numeric; optional sorting index
-#' @param access_url        character; access URL (optional)
-#' @param right             character; rights statement (optional)
-#' @param byte_size         numeric; size in bytes (optional)
-#' @param status_id         numeric; status ID (optional)
-#' @param license_id        numeric; license ID (optional)
-#' @param dataset_id        numeric; dataset ID (optional)
-#' @param format_id         numeric; file format ID (optional)
-#' @param media_type_id     numeric; media type ID (optional)
-#' @param periodicity_id    numeric; periodicity ID (optional)
-#' @param file_upload_id    character; file upload UUID (optional)
-#' @param api_key           API key (optional; falls back to env var)
-#' @param use_dev           Logical; use development base URL
+#' @details
+#' If `file_path` is provided, the file will be uploaded via a separate API call prior to updating the distribution.
+#' The resulting `file_upload_id`, `format_id`, and `media_type_id` will be automatically extracted and included in the update payload.
 #'
-#' @return Invisibly returns the parsed API response (named list) on success.
+#' If `status_id` is specified, it will be applied via a separate PATCH request after the distribution is updated.
+#'
+#' @return Invisibly returns the parsed API response as a list.
 #' @export
+
 update_distribution <- function(
     id,
     title             = NULL,
@@ -43,26 +47,41 @@ update_distribution <- function(
     dataset_id        = NULL,
     media_type_id     = NULL,
     periodicity_id    = NULL,
+    file_path         = NULL,
     file_upload_id    = NULL,
     api_key           = NULL,
     use_dev           = TRUE
 ) {
-  # API key
+  # Retrieve API key
   api_key <- get_api_key(api_key)
 
-  # Require ID
+  # Validate require ID
   if (missing(id) || is.na(id)) {
     stop("`id` is required to update a distribution.", call. = FALSE)
   }
 
-  # Build S7 Dataset object preserving required fields
+  # Extract arguments and prepare for Distribution object creation
   args <- as.list(match.call())
   args <- args[2:length(args)]
   args <- args[!grepl("api_key|use_dev", names(args))]
 
+  # If a file_path is provided, upload the file and extract IDs
+  if (!is.null(file_path)) {
+    file_result <- create_file(args$file_path, api_key = api_key, use_dev = use_dev)
+
+    # Add linked file information to distribution
+    args$file_upload_id <- file_result$id
+    args$format_id <- file_result$file_format$id
+    args$media_type_id <- file_result$media_type$id
+
+    # file_path is not part of the Distribution class
+    args$file_path <- NULL
+  }
+
+  # Create the Distribution object from arguments
   dist <- do.call(Distribution, args)
 
 
-  # Dispatch
+  # Send POST request to create distribution
   update(dist, api_key = api_key, use_dev = use_dev)
 }
