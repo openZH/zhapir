@@ -142,11 +142,13 @@ Distribution <- S7::new_class(
       access_url = access_url,
       right = right,
       byte_size = byte_size,
-      status_id = status_id,
+      status_id = convert_statuses_to_id(status_id),
       license_id = license_id,
-      format_id = format_id,
+      format_id = convert_formats_to_id(format_id),
       media_type_id = media_type_id,
-      periodicity_id = periodicity_id,
+      periodicity_id = convert_periodicities_to_id(periodicity_id)
+
+      ,
       file_upload_id = file_upload_id
     )
   }

@@ -77,10 +77,6 @@ object_to_payload <- function(object) {
       if (!is.na(x)) return(fmt(x))
       return(NA_character_)
     }
-    if (is.list(x) && length(x) > 0L &&
-        all(purrr::map_lgl(x, ~ is.atomic(.) && length(.) == 1L))) {
-      return(unlist(x, use.names = FALSE))
-    }
     x
   })
 
@@ -129,6 +125,8 @@ api_request_wrapper <- function(
 ) {
   method <- match.arg(method)
   payload <- object_to_payload(object)
+
+
 
   result <- tryCatch(
     {

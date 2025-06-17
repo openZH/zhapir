@@ -131,12 +131,12 @@ Dataset <- S7::new_class(
       end_date = to_POSIXct(end_date),
       modified = to_POSIXct(modified),
       modified_next = to_POSIXct(modified_next),
-      keyword_ids = to_list(keyword_ids),
-      zh_web_catalog_ids = to_list(zh_web_catalog_ids),
+      keyword_ids = to_list(convert_keywords_to_id(keyword_ids)),
+      zh_web_catalog_ids = to_list(convert_zh_web_catalog_to_id(zh_web_catalog_ids)),
       relation_ids = to_list(relation_ids),
       see_also_ids = to_list(see_also_ids),
-      theme_ids = to_list(theme_ids),
-      periodicity_id = periodicity_id
+      theme_ids = to_list(convert_themes_to_id(theme_ids)),
+      periodicity_id = convert_periodicities_to_id(periodicity_id)
     )
   }
 )
