@@ -134,7 +134,7 @@ Dataset <- S7::new_class(
       keyword_ids = to_list(convert_keywords_to_id(keyword_ids)),
       zh_web_catalog_ids = to_list(convert_zh_web_catalog_to_id(zh_web_catalog_ids)),
       relation_ids = to_list(relation_ids),
-      see_also_ids = to_list(see_also_ids),
+      see_also_ids = to_list(convert_datasets_to_id(see_also_ids)),
       theme_ids = to_list(convert_themes_to_id(theme_ids)),
       periodicity_id = convert_periodicities_to_id(periodicity_id)
     )

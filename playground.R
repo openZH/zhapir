@@ -7,7 +7,8 @@ create_dataset("maus Test 1", organisation_id = 14, description = "Such insights
                keyword_ids = c("wasser", "s-bahn"),
                periodicity_id = "jährlich")
 
-update_dataset(id = 6809, organisation_id = 14, title = "Katze Test 1 - updated", keyword_ids = c("Wasser", "abwasser"))
+update_dataset(id = 6809, organisation_id = 14, title = "Katze Test 1 - updated", keyword_ids = c("Wasser", "abwasser"),
+               see_also_ids = "Hotels [Anz.]")
 
 
 6809# distribution user facing functions

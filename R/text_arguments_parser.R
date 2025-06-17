@@ -1,3 +1,4 @@
+
 #' Get All Organisation and Their IDs
 #'
 #' Retrieves a data frame containing all available organisation along with their
@@ -60,6 +61,86 @@ get_organisations <- function(show_organisation_units = TRUE) {
 
   return(df_organisation_info)
 }
+
+
+#' Retrieve Dataset ID by Name
+#'
+#' This function returns the ID associated with a dataset by first retrieving a
+#' data frame of dataset-names and then matching the provided name to its
+#' corresponding ID.
+#'
+#' @param name A character string or vector specifying the name(s) of the dataset(s).
+#'
+#' @return An integer value or vector representing the ID(s) of the dataset(s).
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' convert_keywords_to_id("abfall")
+#' }
+convert_datasets_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
+    df_datasets <- get_datasets()
+    id <- get_id(df_datasets, name, internal = TRUE)
+
+    return(id)
+  }
+}
+
+
+
+
+
+#' Get All Datasets and Their IDs
+#'
+#' Retrieves a data frame containing all available datasets along with their
+#' associated IDs from the API. Optionally, it can filter the results based on
+#' an input vector.
+#'
+#' @param input Optional. A character string, numeric value, or a vector of either.
+#' Used to filter the "dataset" dataset. If NULL (default), returns the full dataset.
+#'
+#' @return A data frame with two columns: one for dataset titles and one for
+#' their corresponding IDs.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' datasets_df <- get_datasets()
+#' head(datasets_df)
+#'
+#' # With input conversion/filtering
+#' get_datasets(10)
+#'
+#' get_datasets("Hotels")
+#' }#'
+get_datasets <- function(input = NULL) {
+
+  req <- api_request(
+    method = "GET",
+    endpoint = "/api/v1/datasets",
+    api_key = get_api_key()
+  )
+
+  df_datasets <- purrr::map_df(req$items, ~ {
+    x <- .x
+    id <- x$id
+    datasets <- x$title
+    data.frame(id = id, datasets = datasets)
+  })
+
+  if (!is.null(input)) {
+    df_datasets <- df_datasets |>
+      converter(input, internal = FALSE)
+  }
+
+  return(df_datasets)
+  }
+
+
+
 
 
 
@@ -785,10 +866,13 @@ label_switch <- function(label_col) {
          error_noun <- "licenses"
          fun_name <- "get_licenses()"
        },
-       ,
        "formats" = {
          error_noun <- "formats"
          fun_name <- "get_formats()"
+       },
+       "datasets" = {
+         error_noun <- "datasets"
+         fun_name <- "get_datasets()"
        })
 
   return(c(error_noun = error_noun,
