@@ -101,7 +101,6 @@ object_to_payload <- function(object) {
 }
 
 
-
 #' Send an API request and print CLI feedback
 #'
 #' @description
@@ -135,11 +134,12 @@ api_request_wrapper <- function(
     {
       # Perform the actual API request (JSON or multipart is handled internally)
       result <- api_request(method, endpoint, object, object_label, api_key, use_dev)
+      parsed_result <- httr2::resp_body_json(result)
 
       # Extract key info for CLI feedback
-      title <- result$title %||% "unknown"
-      id <- result$id %||%  "unknown"
-      parent_id <- result$dataset$id %||%  "unknown"
+      title <- parsed_result$title %||% "unknown"
+      id <- parsed_result$id %||%  "unknown"
+      parent_id <- parsed_result$dataset$id %||%  "unknown"
 
       # Method- and object-specific success messages
       if (method == "POST" && object_label == "Dataset") {
@@ -152,7 +152,7 @@ api_request_wrapper <- function(
         )
       } else if (method == "POST" && object_label == "FileUpload") {
         file_path <- tryCatch(object@file_path, error = function(e) "unknown")
-        file_upload_id <- result$id %||% "unknown"
+        file_upload_id <- parsed_result$id %||% "unknown"
         cli::cli_alert_success(
           "{.strong File} {.file {file_path}} uploaded successfully (Upload ID: {.val {file_upload_id}})."
         )

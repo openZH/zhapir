@@ -13,8 +13,8 @@ create_distribution(
   dataset_id = 6831,
   stat_server_flag = TRUE,
   zh_web_flag = TRUE,
-  ogd_flag = TRUE
-  #file_path = "test_dist.csv"
+  ogd_flag = TRUE,
+  file_path = "test_dist.csv"
   #access_url = "https://link.ch",
   #status_id = 1
 )
