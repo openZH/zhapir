@@ -80,10 +80,14 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #' convert_keywords_to_id("abfall")
 #' }
 convert_keywords_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_keywords <- get_keywords()
   id <- get_id(df_keywords, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -142,10 +146,14 @@ get_keywords <- function(input = NULL) {
 #' convert_zh_web_catalog_to_id("Bevölkerung")
 #' }
 convert_zh_web_catalog_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_zh_web_catalog <- get_zh_web_catalog()
   id <- get_id(df_zh_web_catalog, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -202,10 +210,14 @@ get_zh_web_catalog <- function(input = NULL) {
 #' convert_themes_to_id("Wirtschaft und Finanzen")
 #' }
 convert_themes_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_theme <- get_themes()
   id <- get_id(df_theme, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -266,10 +278,14 @@ get_themes <- function(input = NULL) {
 #' convert_periodicities_to_id("Jährlich")
 #' }
 convert_periodicities_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_periodicity <- get_periodicities()
   id <- get_id(df_periodicity, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -329,10 +345,14 @@ get_periodicities <- function(input = NULL) {
 #' convert_statuses_to_id("Entwurf")
 #' }
 convert_statuses_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_status <- get_statuses()
   id <- get_id(df_status, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -389,10 +409,14 @@ get_statuses <- function(input = NULL) {
 #' convert_licenses_to_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
 #' }
 convert_licenses_to_id <- function(name) {
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
   df_license <- get_licenses()
   id <- get_id(df_license, name, internal = TRUE)
 
   return(id)
+  }
 }
 
 
@@ -448,14 +472,20 @@ get_licenses <- function(input = NULL) {
 #' convert_formats_to_id("CSV")
 #' }
 convert_formats_to_id <- function(name) {
-  df_format <- get_formats()
-  id <- get_id(df_format, name, internal = TRUE)
+  if(inherits(name, "S7_missing")){
+    S7::class_missing
+  } else {
+    df_format <- get_formats()
+    id <- get_id(df_format, name, internal = TRUE)
 
-  return(id)
+    return(id)
+  }
 }
 
-
-
+  # df_format <- get_formats()
+  # id <- get_id(df_format, name, internal = TRUE)
+  #
+  # return(id)
 
 #' Get All Formats and Their IDs
 #'
@@ -593,6 +623,8 @@ get_id <- function(df, name, internal) {
                                    fun_name)
 
       ids <- c(ids, single_id)
+      names(ids) <- NULL
+
     } else {
       multiple_ids <- name_to_multiple_ids(df_filtered,
                                            name = i,
