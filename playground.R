@@ -1,17 +1,37 @@
 devtools::load_all(".")
 
 # dataset user facing functions
-create_dataset("Katze Test 2", organisation_id = 14, description = "Such insights, much wow!", keyword_ids = c("wasser"))
+create_dataset("Katze Test 2", organisation_id = 14, description = "Such insights, much wow!", keywords = c("wasser"))
 
 create_dataset("maus Test 1", organisation_id = 14, description = "Such insights, much wow!",
-               keyword_ids = c("wasser", "s-bahn"),
+               keywords = c("wasser", "s-bahn"),
                periodicity_id = "jährlich")
 
-update_dataset(id = 6809, organisation_id = 14, title = "Katze Test 1 - updated", keyword_ids = c("Wasser", "abwasser"),
+update_dataset(id = 6809, organisation_id = 14, title = "Katze Test 1 - updated", keywords = c("Wasser", "abwasser"),
                see_also_ids = "Hotels [Anz.]")
 
+create_dataset(
+  title = "test bla bla bla 2",
+  organisation_id = 14,
+  description = "Such insights, much wow!",
+  contact_email = "test.test@blabla.com",
+  landing_page = "https://test.ch",
+  issued = "2025-03-31",
+  start_date = "2023-03-31",
+  end_date = "2025-03-31",
+  modified = "2025-03-31",
+  #modified_next = "2026-03-31",
+  keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
+  #zh_web_catalog_ids = c("Bevölkerung", "Wahlarchiv"),
 
-6809# distribution user facing functions
+  relation_ids = NULL,
+  theme_ids = c("Energie", "Gesundheit"),
+  periodicity_id = "Jährlich",
+  see_also_ids = NULL)
+
+
+
+
 create_distribution(
   title = "Hund Distribution XY123",
   dataset_id = 6809,
