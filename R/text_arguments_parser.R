@@ -262,7 +262,7 @@ convert_zh_web_catalog_to_id <- function(name) {
 #' get_zh_web_catalog(13)
 #' }
 get_zh_web_catalog <- function(input = NULL) {
-  df_zh_web_catalog <- req_to_df("zhweb-datenkataloge")
+  df_zh_web_catalog <- req_to_df("zh-web-datacatalogs")
 
   if (!is.null(input)) {
     df_zh_web_catalog <- df_zh_web_catalog |>
@@ -591,7 +591,7 @@ convert_formats_to_id <- function(name) {
 #' get_formats(3)
 #' }
 get_formats <- function(input = NULL) {
-  df_format <- req_to_df("formats")
+  df_format <- req_to_df("file-formats")
 
   if (!is.null(input)) {
     df_format <- df_format |>
@@ -617,7 +617,7 @@ get_formats <- function(input = NULL) {
 #'
 #' @examples
 #' \dontrun{
-#' df_formats  <- req_to_df("formats")
+#' df_formats  <- req_to_df("file-formats")
 #' head(df_formats)
 #' }
 req_to_df <- function(endpoint) {
@@ -846,7 +846,7 @@ label_switch <- function(label_col) {
          error_noun <- "keywords"
          fun_name <- "get_keywords()"
        },
-       "zhweb-datenkataloge" = {
+       "zh-web-datacatalogs" = {
          error_noun <- "zh_web_catalog"
          fun_name <- "get_zh_web_catalog()"
        },
@@ -866,7 +866,7 @@ label_switch <- function(label_col) {
          error_noun <- "licenses"
          fun_name <- "get_licenses()"
        },
-       "formats" = {
+       "file-formats" = {
          error_noun <- "formats"
          fun_name <- "get_formats()"
        },

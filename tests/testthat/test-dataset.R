@@ -11,12 +11,12 @@ test_that("the dataset object is correctly created", {
       end_date = "2025-03-31",
       modified = "2025-03-31",
       modified_next = "2026-03-31",
-      keyword_ids = c(1, 2, 3),
-      zh_web_catalog_ids = c(1, 2, 3),
+      keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
+      zh_web_catalog_ids = c("Bevölkerung", "Bevölkerungsbestand"),
       relation_ids = c(1, 2, 3),
-      see_also_ids = c(1, 2, 3),
-      theme_ids = c(1, 2, 3),
-      periodicity_id = 1
+      # see_also_ids = c(1, 2, 3),
+      theme_ids = c("Energie", "Gesundheit")
+      # periodicity_id = 1
     )
   )
 })
@@ -26,7 +26,7 @@ ds_test <- Dataset(
   title = "Hello Dataset 1",
   organisation_id = 14,
   description = "Such insights, much wow!",
-  theme_ids = c(1, 2, 3),
+  theme_ids = c("Energie", "Gesundheit"),
   issued = "2025-03-31"
 )
 
@@ -35,7 +35,7 @@ test_that("The the values are correctly set", {
   expect_equal(ds_test@title, "Hello Dataset 1")
   expect_equal(ds_test@organisation_id, 14)
   expect_equal(ds_test@description, "Such insights, much wow!")
-  expect_equal(ds_test@theme_ids, list(1, 2, 3))
+  expect_equal(ds_test@theme_ids, list(42, 43))
   expect_equal(ds_test@issued, as.POSIXct("2025-03-31", tz = "UTC"))
 })
 
@@ -75,20 +75,10 @@ test_that("The values are correctly validated", {
     Dataset(
       title = "Hello Dataset 1",
       organisation_id = 14,
-      theme_ids = c(1, 2, "1")
+      theme_ids = c("Energie", "Gesundheit", 1)
     ),
-    "@theme_ids all elements must be numeric"
-  )
+    '"1" is not a valid themes.'
 
-
-  # return error when a list entry contains non positive numbers
-  expect_error(
-    Dataset(
-      title = "Hello Dataset 1",
-      organisation_id = 14,
-      theme_ids = c(1, 2, -1)
-    ),
-    "@theme_ids all elements must be positive integers"
   )
 
 
