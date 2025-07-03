@@ -15,7 +15,7 @@
 #' @param end_date          POSIXct or ISO datetime string; new end of timeseries (optional)
 #' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param keyword_ids       integer vector; new keyword IDs (optional)
-#' @param zh_web_catalog_ids integer vector; new web catalog IDs (optional)
+#' @param zh_web_catalogs integer vector; new web catalog IDs (optional)
 #' @param relation_ids      integer vector; new relation IDs (optional)
 #' @param theme_ids         integer vector; new theme IDs (optional)
 #' @param periodicity_id    numeric; new periodicity ID (optional)
@@ -37,7 +37,7 @@ update_dataset <- function(
     end_date          = NULL,
     modified_next     = NULL,
     keyword_ids       = NULL,
-    zh_web_catalog_ids= NULL,
+    zh_web_catalogs    = NULL,
     relation_ids      = NULL,
     theme_ids         = NULL,
     periodicity_id    = NULL,

@@ -17,7 +17,7 @@ Dataset(
   modified = S7::class_missing,
   modified_next = S7::class_missing,
   keyword_ids = S7::class_missing,
-  zh_web_catalog_ids = S7::class_missing,
+  zh_web_catalogs = S7::class_missing,
   relation_ids = S7::class_missing,
   see_also_ids = S7::class_missing,
   theme_ids = S7::class_missing,
@@ -49,7 +49,7 @@ Dataset(
 
 \item{keyword_ids}{character vector; keyword IDs (optional)}
 
-\item{zh_web_catalog_ids}{charISO datetime string; last modification timestamp (optional)}
+\item{zh_web_catalogs}{charISO datetime string; last modification timestamp (optional)}
 
 \item{relation_ids}{integer vector; relation IDs (optional)}
 

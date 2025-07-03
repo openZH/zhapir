@@ -16,7 +16,7 @@ create_dataset(
   modified = NULL,
   modified_next = NULL,
   keyword_ids = NULL,
-  zh_web_catalog_ids = NULL,
+  zh_web_catalogs = NULL,
   relation_ids = NULL,
   theme_ids = NULL,
   periodicity_id = NULL,
@@ -49,7 +49,7 @@ create_dataset(
 
 \item{keyword_ids}{Optional character vector}
 
-\item{zh_web_catalog_ids}{Optional character vector}
+\item{zh_web_catalogs}{Optional character vector}
 
 \item{relation_ids}{Optional integer vector}
 

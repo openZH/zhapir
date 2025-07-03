@@ -13,7 +13,7 @@
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
 #' @param modified          POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param keyword_ids       character vector; keyword IDs (optional)
-#' @param zh_web_catalog_ids charISO datetime string; last modification timestamp (optional)
+#' @param zh_web_catalogs charISO datetime string; last modification timestamp (optional)
 #' @param modified_next     POSIXct or acter vector; web catalog IDs (optional)
 #' @param relation_ids      integer vector; relation IDs (optional)
 #' @param see_also_ids      integer vector; see-also IDs (optional)
@@ -68,7 +68,7 @@ Dataset <- S7::new_class(
     keyword_ids = prop_list(
       validator = validate_natural_number_list
     ),
-    zh_web_catalog_ids = prop_list(
+    zh_web_catalogs = prop_list(
       validator = validate_natural_number_list
     ),
     relation_ids = prop_list(
@@ -114,7 +114,7 @@ Dataset <- S7::new_class(
       modified = S7::class_missing,
       modified_next = S7::class_missing,
       keyword_ids = S7::class_missing,
-      zh_web_catalog_ids = S7::class_missing,
+      zh_web_catalogs = S7::class_missing,
       relation_ids = S7::class_missing,
       see_also_ids = S7::class_missing,
       theme_ids = S7::class_missing,
@@ -132,7 +132,7 @@ Dataset <- S7::new_class(
       modified = to_POSIXct(modified),
       modified_next = to_POSIXct(modified_next),
       keyword_ids = to_list(convert_keywords_to_id(keyword_ids)),
-      zh_web_catalog_ids = to_list(convert_zh_web_catalog_to_id(zh_web_catalog_ids)),
+      zh_web_catalogs = to_list(convert_zh_web_catalog_to_id(zh_web_catalogs)),
       relation_ids = to_list(relation_ids),
       see_also_ids = to_list(convert_datasets_to_id(see_also_ids)),
       theme_ids = to_list(convert_themes_to_id(theme_ids)),

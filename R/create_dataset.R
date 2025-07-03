@@ -11,7 +11,7 @@
 #' @param modified          Optional ISO datetime string or POSIXct
 #' @param modified_next     Optional ISO datetime string or POSIXct
 #' @param keyword_ids       Optional character vector
-#' @param zh_web_catalog_ids Optional character vector
+#' @param zh_web_catalogs Optional character vector
 #' @param relation_ids      Optional integer vector
 #' @param theme_ids         Optional character vector
 #' @param periodicity_id    Optional character
@@ -49,7 +49,7 @@ create_dataset <- function(
     modified = NULL,
     modified_next = NULL,
     keyword_ids = NULL,
-    zh_web_catalog_ids = NULL,
+    zh_web_catalogs = NULL,
     relation_ids = NULL,
     theme_ids = NULL,
     periodicity_id = NULL,

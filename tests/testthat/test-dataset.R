@@ -12,7 +12,7 @@ test_that("the dataset object is correctly created", {
       modified = "2025-03-31",
       modified_next = "2026-03-31",
       keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
-      zh_web_catalog_ids = c("Bevölkerung", "Bevölkerungsbestand"),
+      zh_web_catalogs = c("Bevölkerung", "Bevölkerungsbestand"),
       relation_ids = c(1, 2, 3),
       # see_also_ids = c(1, 2, 3),
       theme_ids = c("Energie", "Gesundheit")

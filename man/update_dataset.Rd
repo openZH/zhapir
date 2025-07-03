@@ -16,7 +16,7 @@ update_dataset(
   end_date = NULL,
   modified_next = NULL,
   keyword_ids = NULL,
-  zh_web_catalog_ids = NULL,
+  zh_web_catalogs = NULL,
   relation_ids = NULL,
   theme_ids = NULL,
   periodicity_id = NULL,
@@ -48,7 +48,7 @@ update_dataset(
 
 \item{keyword_ids}{integer vector; new keyword IDs (optional)}
 
-\item{zh_web_catalog_ids}{integer vector; new web catalog IDs (optional)}
+\item{zh_web_catalogs}{integer vector; new web catalog IDs (optional)}
 
 \item{relation_ids}{integer vector; new relation IDs (optional)}
 

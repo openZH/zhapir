@@ -22,7 +22,7 @@ create_dataset(
   modified = "2025-03-31",
   #modified_next = "2026-03-31",
   keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
-  #zh_web_catalog_ids = c("Bevölkerung", "Wahlarchiv"),
+  zh_web_catalogs = c("Bevölkerung", "Wahlarchiv"),
 
   relation_ids = NULL,
   theme_ids = c("Energie", "Gesundheit"),
