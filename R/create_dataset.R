@@ -10,17 +10,31 @@
 #' @param end_date          Optional ISO datetime string or POSIXct
 #' @param modified          Optional ISO datetime string or POSIXct
 #' @param modified_next     Optional ISO datetime string or POSIXct
-#' @param keyword_ids       Optional integer vector
-#' @param zh_web_catalog_ids Optional integer vector
+#' @param keyword_ids       Optional character vector
+#' @param zh_web_catalog_ids Optional character vector
 #' @param relation_ids      Optional integer vector
-#' @param theme_ids         Optional integer vector
-#' @param periodicity_id    Optional integer
+#' @param theme_ids         Optional character vector
+#' @param periodicity_id    Optional character
 #' @param see_also_ids      Optional integer vector
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
 #' @param test              Defines if it is a test run. If TRUE, the
 #'                          dataset-object is returned into the environment.
 #'                          Default = FALSE
+#'
+#' @details
+#' To assist in constructing valid queries, the following functions provide the
+#' set of acceptable values:
+#'
+#' - `get_organisations()`
+#' - `get_keyword()`
+#' - `get_zh_web_catalog()`
+#' - `get_theme()`
+#' - `get_periodicities()`
+#' - `get_datasets()`: Valid values for the `see_also_ids` argument.
+#'
+#'
+#' Use these functions to inspect the available values before making a query.
 #'
 #' @export
 create_dataset <- function(
@@ -59,7 +73,7 @@ create_dataset <- function(
 
   ds <- do.call(Dataset, args)
 
-  
+
   # Dispatch create method
   if (!test) {
     create(ds, api_key, use_dev)

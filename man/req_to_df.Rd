@@ -19,7 +19,7 @@ Endpoint's entries and returns it as a data frame.
 }
 \examples{
 \dontrun{
-df_formats  <- req_to_df("formats")
+df_formats  <- req_to_df("file-formats")
 head(df_formats)
 }
 }

@@ -10,16 +10,27 @@
 #' @param access_url        Optional access URL (must start with http:// or https://)
 #' @param right             Optional rights statement
 #' @param byte_size         Optional numeric byte size (positive integer)
-#' @param status_id         Optional status ID (will be set via follow-up PATCH)
-#' @param license_id        Optional license ID
-#' @param format_id         Optional format ID
-#' @param media_type_id     Optional media type ID
-#' @param periodicity_id    Optional periodicity ID
-#' @param file_upload_id    Optional file upload ID (string)
+#' @param status_id         Optional character; status ID (will be set via follow-up PATCH)
+#' @param license_id        Optional integer; license ID
+#' @param format_id         Optional character; format ID
+#' @param media_type_id     Optional integer; media type ID
+#' @param periodicity_id    Optional character periodicity ID
+#' @param file_upload_id    Optional character; file upload ID
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
 #'
+#'
 #' @details If `status_id` is provided, it will be applied via a follow-up API PATCH request after creation.
+#'
+#' To assist in constructing valid queries, the following functions provide the
+#' set of acceptable values:
+#'
+#' - `get_statuses()`
+#' - `get_licenses())`
+#' - `get_formates()`
+#' - `get_periodicities()`
+#'
+#' Use these functions to inspect the available values before making a query.
 #'
 #' @return Invisibly returns the parsed API response
 #' @export

@@ -13,11 +13,11 @@
 #' @param access_url        character; URL to access the distribution (optional, must start with http:// or https://)
 #' @param right             character; optional textual statement of usage rights
 #' @param byte_size         numeric; size in bytes (optional, must be a positive integer)
-#' @param status_id         numeric; status ID (optional)
+#' @param status_id         character; status ID (optional)
 #' @param license_id        numeric; license ID (optional)
-#' @param format_id         numeric; file format ID (optional)
+#' @param format_id         character; file format ID (optional)
 #' @param media_type_id     numeric; media type ID (optional)
-#' @param periodicity_id    numeric; periodicity ID (optional)
+#' @param periodicity_id    character; periodicity ID (optional)
 #' @param file_upload_id    character; ID of the uploaded file (optional)
 #'
 #' @return An S7 `Distribution` object.

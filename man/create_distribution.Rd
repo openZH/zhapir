@@ -46,17 +46,17 @@ create_distribution(
 
 \item{byte_size}{Optional numeric byte size (positive integer)}
 
-\item{status_id}{Optional status ID (will be set via follow-up PATCH)}
+\item{status_id}{Optional character; status ID (will be set via follow-up PATCH)}
 
-\item{license_id}{Optional license ID}
+\item{license_id}{Optional integer; license ID}
 
-\item{format_id}{Optional format ID}
+\item{format_id}{Optional character; format ID}
 
-\item{media_type_id}{Optional media type ID}
+\item{media_type_id}{Optional integer; media type ID}
 
-\item{periodicity_id}{Optional periodicity ID}
+\item{periodicity_id}{Optional character periodicity ID}
 
-\item{file_upload_id}{Optional file upload ID (string)}
+\item{file_upload_id}{Optional character; file upload ID}
 
 \item{api_key}{API key (optional; falls back to env var)}
 
@@ -70,4 +70,15 @@ Create a new distribution via API
 }
 \details{
 If \code{status_id} is provided, it will be applied via a follow-up API PATCH request after creation.
+
+To assist in constructing valid queries, the following functions provide the
+set of acceptable values:
+\itemize{
+\item \code{get_statuses()}
+\item \verb{get_licenses())}
+\item \code{get_formates()}
+\item \code{get_periodicities()}
+}
+
+Use these functions to inspect the available values before making a query.
 }

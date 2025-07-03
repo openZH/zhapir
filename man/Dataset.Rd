@@ -43,21 +43,21 @@ Dataset(
 
 \item{end_date}{POSIXct or ISO datetime string; end of timeseries (optional)}
 
-\item{modified}{POSIXct or ISO datetime string; last modification timestamp (optional)}
+\item{modified}{POSIXct or ISO datetime string; next modification timestamp (optional)}
 
-\item{modified_next}{POSIXct or ISO datetime string; next modification timestamp (optional)}
+\item{modified_next}{POSIXct or acter vector; web catalog IDs (optional)}
 
-\item{keyword_ids}{integer vector; keyword IDs (optional)}
+\item{keyword_ids}{character vector; keyword IDs (optional)}
 
-\item{zh_web_catalog_ids}{integer vector; web catalog IDs (optional)}
+\item{zh_web_catalog_ids}{charISO datetime string; last modification timestamp (optional)}
 
 \item{relation_ids}{integer vector; relation IDs (optional)}
 
 \item{see_also_ids}{integer vector; see-also IDs (optional)}
 
-\item{theme_ids}{integer vector; theme IDs (optional)}
+\item{theme_ids}{character vector; theme IDs (optional)}
 
-\item{periodicity_id}{numeric; periodicity ID (optional)}
+\item{periodicity_id}{character; periodicity ID (optional)}
 }
 \value{
 An S7 \code{Dataset} object.

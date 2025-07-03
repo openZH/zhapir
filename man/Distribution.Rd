@@ -47,15 +47,15 @@ Distribution(
 
 \item{byte_size}{numeric; size in bytes (optional, must be a positive integer)}
 
-\item{status_id}{numeric; status ID (optional)}
+\item{status_id}{character; status ID (optional)}
 
 \item{license_id}{numeric; license ID (optional)}
 
-\item{format_id}{numeric; file format ID (optional)}
+\item{format_id}{character; file format ID (optional)}
 
 \item{media_type_id}{numeric; media type ID (optional)}
 
-\item{periodicity_id}{numeric; periodicity ID (optional)}
+\item{periodicity_id}{character; periodicity ID (optional)}
 
 \item{file_upload_id}{character; ID of the uploaded file (optional)}
 }

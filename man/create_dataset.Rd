@@ -47,15 +47,15 @@ create_dataset(
 
 \item{modified_next}{Optional ISO datetime string or POSIXct}
 
-\item{keyword_ids}{Optional integer vector}
+\item{keyword_ids}{Optional character vector}
 
-\item{zh_web_catalog_ids}{Optional integer vector}
+\item{zh_web_catalog_ids}{Optional character vector}
 
 \item{relation_ids}{Optional integer vector}
 
-\item{theme_ids}{Optional integer vector}
+\item{theme_ids}{Optional character vector}
 
-\item{periodicity_id}{Optional integer}
+\item{periodicity_id}{Optional character}
 
 \item{see_also_ids}{Optional integer vector}
 
@@ -69,4 +69,18 @@ Default = FALSE}
 }
 \description{
 Create a new dataset via API
+}
+\details{
+To assist in constructing valid queries, the following functions provide the
+set of acceptable values:
+\itemize{
+\item \code{get_organisations()}
+\item \code{get_keyword()}
+\item \code{get_zh_web_catalog()}
+\item \code{get_theme()}
+\item \code{get_periodicities()}
+\item \code{get_datasets()}: Valid values for the \code{see_also_ids} argument.
+}
+
+Use these functions to inspect the available values before making a query.
 }

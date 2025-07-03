@@ -11,14 +11,14 @@
 #' @param issued            POSIXct or ISO datetime string; publication date (optional)
 #' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
-#' @param modified          POSIXct or ISO datetime string; last modification timestamp (optional)
-#' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
-#' @param keyword_ids       integer vector; keyword IDs (optional)
-#' @param zh_web_catalog_ids integer vector; web catalog IDs (optional)
+#' @param modified          POSIXct or ISO datetime string; next modification timestamp (optional)
+#' @param keyword_ids       character vector; keyword IDs (optional)
+#' @param zh_web_catalog_ids charISO datetime string; last modification timestamp (optional)
+#' @param modified_next     POSIXct or acter vector; web catalog IDs (optional)
 #' @param relation_ids      integer vector; relation IDs (optional)
 #' @param see_also_ids      integer vector; see-also IDs (optional)
-#' @param theme_ids         integer vector; theme IDs (optional)
-#' @param periodicity_id    numeric; periodicity ID (optional)
+#' @param theme_ids         character vector; theme IDs (optional)
+#' @param periodicity_id    character; periodicity ID (optional)
 #'
 #' @return An S7 `Dataset` object.
 #' @export
