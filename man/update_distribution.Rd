@@ -21,54 +21,62 @@ update_distribution(
   dataset_id = NULL,
   media_type_id = NULL,
   periodicity_id = NULL,
+  file_path = NULL,
   file_upload_id = NULL,
   api_key = NULL,
   use_dev = TRUE
 )
 }
 \arguments{
-\item{id}{numeric; the distribution ID to update (required)}
+\item{id}{ID of the distribution to update (required).}
 
-\item{title}{character; new title (optional)}
+\item{title}{Title of the distribution (optional; max. 1000 characters).}
 
-\item{description}{character; new description (optional)}
+\item{description}{Optional free-text description.}
 
-\item{stat_server_flag}{logical; publish to statistical server (optional)}
+\item{stat_server_flag}{Logical; should the distribution be published on the statistical server? (optional).}
 
-\item{zh_web_flag}{logical; publish to zh web catalog (optional)}
+\item{zh_web_flag}{Logical; should the distribution be shown on the Zurich web catalog? (optional).}
 
-\item{ogd_flag}{logical; publish to OGD portal (optional)}
+\item{ogd_flag}{Logical; should the distribution be published on the OGD portal? (optional).}
 
-\item{sort_order}{numeric; optional sorting index}
+\item{sort_order}{Integer; optional custom sorting index.}
 
-\item{access_url}{character; access URL (optional)}
+\item{access_url}{Optional URL to access the distribution (must start with http:// or https://).}
 
-\item{right}{character; rights statement (optional)}
+\item{right}{Optional usage rights description.}
 
-\item{byte_size}{numeric; size in bytes (optional)}
+\item{byte_size}{Optional file size in bytes (must be a positive number).}
 
-\item{status_id}{numeric; status ID (optional)}
+\item{status_id}{Optional status ID (applied via PATCH after update).}
 
-\item{license_id}{numeric; license ID (optional)}
+\item{license_id}{Optional license ID.}
 
-\item{format_id}{numeric; file format ID (optional)}
+\item{format_id}{Optional file format ID.}
 
-\item{dataset_id}{numeric; dataset ID (optional)}
+\item{dataset_id}{ID of the dataset to which this distribution belongs (optional).}
 
-\item{media_type_id}{numeric; media type ID (optional)}
+\item{media_type_id}{Optional media type ID.}
 
-\item{periodicity_id}{numeric; periodicity ID (optional)}
+\item{periodicity_id}{Optional update frequency ID.}
 
-\item{file_upload_id}{character; file upload UUID (optional)}
+\item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
-\item{api_key}{API key (optional; falls back to env var)}
+\item{file_upload_id}{Optional ID of a previously uploaded file (overridden if file_path is used).}
 
-\item{use_dev}{Logical; use development base URL}
+\item{api_key}{Optional API key; if not provided, the default environment variable is used.}
+
+\item{use_dev}{Logical; whether to use the development API endpoint (default: TRUE).}
 }
 \value{
-Invisibly returns the parsed API response (named list) on success.
+Invisibly returns the parsed API response as a list.
 }
 \description{
-Update fields of an existing Distribution in the MDV data catalog.
-Only the \code{id} is required; all other fields are optional and will be included if non-NULL.
+Update an existing distribution via API
+}
+\details{
+If \code{file_path} is provided, the file will be uploaded via a separate API call prior to updating the distribution.
+The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the update payload.
+
+If \code{status_id} is specified, it will be applied via a separate PATCH request after the distribution is updated.
 }

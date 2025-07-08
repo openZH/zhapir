@@ -2,28 +2,36 @@
 % Please edit documentation in R/helpers.R
 \name{api_request}
 \alias{api_request}
-\title{Helper for API calls}
+\title{Send API Request}
 \usage{
 api_request(
   method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
   endpoint,
-  payload = NULL,
+  object,
+  object_label,
   api_key,
   use_dev = TRUE
 )
 }
 \arguments{
-\item{method}{string; what kind of request should be made}
+\item{method}{HTTP method to use, e.g. \code{"POST"}, \code{"PATCH"}, \code{"GET"} (required).}
 
-\item{endpoint}{string; which endpoint should be reached}
+\item{endpoint}{Character string; relative API endpoint (e.g. \code{"/api/v1/datasets"}).}
 
-\item{payload}{list containing the payload}
+\item{object}{An S7 object representing the payload (e.g., \code{Dataset}, \code{Distribution}, or \code{FileUpload}).}
 
-\item{api_key}{MDV API key (optional; falls back to env var).}
+\item{object_label}{Character string indicating the object type (used to determine encoding strategy).}
 
-\item{use_dev}{Logical; if TRUE, uses the development API endpoint.}
+\item{api_key}{API key string used for authentication.}
+
+\item{use_dev}{Logical; whether to use the development environment (default: \code{TRUE}).}
+}
+\value{
+Parsed response content as a list.
 }
 \description{
-Helper for API calls
+Internal function to perform an API request for a given S7 object.
+Depending on the object type, the payload is serialized as JSON (for most objects)
+or as multipart/form-data (for file uploads). The request is executed using the \code{httr2} package.
 }
 \keyword{internal}

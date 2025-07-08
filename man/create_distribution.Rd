@@ -20,54 +20,61 @@ create_distribution(
   format_id = NULL,
   media_type_id = NULL,
   periodicity_id = NULL,
+  file_path = NULL,
   file_upload_id = NULL,
   api_key = NULL,
   use_dev = TRUE
 )
 }
 \arguments{
-\item{title}{Title of the distribution (required, <= 1000 chars)}
+\item{title}{Title of the distribution (required; max. 1000 characters).}
 
-\item{dataset_id}{ID of the related dataset (required integer)}
+\item{dataset_id}{ID of the dataset to which this distribution belongs (required).}
 
-\item{stat_server_flag}{Logical; publish to statistical server (optional)}
+\item{stat_server_flag}{Logical; should the distribution be published on the statistical server? (optional).}
 
-\item{zh_web_flag}{Logical; publish to zh web catalog (optional)}
+\item{zh_web_flag}{Logical; should the distribution be shown on the Zurich web catalog? (optional).}
 
-\item{ogd_flag}{Logical; publish to Open Government Data portal (optional)}
+\item{ogd_flag}{Logical; should the distribution be published on the OGD portal? (optional).}
 
-\item{sort_order}{Numeric; optional sorting index}
+\item{sort_order}{Integer; optional custom sorting index.}
 
-\item{description}{Optional description string}
+\item{description}{Optional free-text description.}
 
-\item{access_url}{Optional access URL (must start with http:// or https://)}
+\item{access_url}{Optional URL to access the distribution (must start with http:// or https://).}
 
-\item{right}{Optional rights statement}
+\item{right}{Optional usage rights description.}
 
-\item{byte_size}{Optional numeric byte size (positive integer)}
+\item{byte_size}{Optional file size in bytes (must be a positive number).}
 
-\item{status_id}{Optional status ID (will be set via follow-up PATCH)}
+\item{status_id}{Optional status ID (applied via PATCH after creation).}
 
-\item{license_id}{Optional license ID}
+\item{license_id}{Optional license ID.}
 
-\item{format_id}{Optional format ID}
+\item{format_id}{Optional file format ID.}
 
-\item{media_type_id}{Optional media type ID}
+\item{media_type_id}{Optional media type ID.}
 
-\item{periodicity_id}{Optional periodicity ID}
+\item{periodicity_id}{Optional update frequency ID.}
 
-\item{file_upload_id}{Optional file upload ID (string)}
+\item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
-\item{api_key}{API key (optional; falls back to env var)}
+\item{file_upload_id}{Optional ID of a previously uploaded file (overridden if file_path is used).}
 
-\item{use_dev}{Logical; use development base URL}
+\item{api_key}{Optional API key; if not provided, the default environment variable is used.}
+
+\item{use_dev}{Logical; whether to use the development API endpoint (default: TRUE).}
 }
 \value{
-Invisibly returns the parsed API response
+Invisibly returns the parsed API response as a list.
 }
 \description{
 Create a new distribution via API
 }
 \details{
-If \code{status_id} is provided, it will be applied via a follow-up API PATCH request after creation.
+If \code{file_path} is provided, the file will be uploaded via a separate API call prior to creating the distribution.
+The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the distribution payload.
+
+If \code{status_id} is specified, it will be applied via a follow-up PATCH request after the distribution is created,
+as the initial POST request does not accept a custom status.
 }

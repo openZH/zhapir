@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{api_request_wrapper}
 \alias{api_request_wrapper}
-\title{Unified API Request Wrapper with CLI messages}
+\title{Send an API request and print CLI feedback}
 \usage{
 api_request_wrapper(
   object,
@@ -14,20 +14,26 @@ api_request_wrapper(
 )
 }
 \arguments{
-\item{object}{An S7 object (e.g., Dataset or Distribution)}
+\item{object}{An S7 object (e.g., \code{Dataset}, \code{Distribution}, \code{FileUpload}) to be sent as payload.}
 
-\item{method}{string; what kind of request should be made}
+\item{method}{HTTP method as string; one of \code{"POST"}, \code{"PATCH"}, \code{"PUT"}, \code{"DELETE"}, \code{"GET"}.}
 
-\item{endpoint}{string; which endpoint should be reached}
+\item{endpoint}{Character string; the target API endpoint.}
 
-\item{api_key}{MDV API key (optional; falls back to env var).}
+\item{api_key}{API key string used for authentication.}
 
-\item{use_dev}{Logical; if TRUE, uses the development API endpoint.}
+\item{use_dev}{Logical; whether to use the development API base URL (default: \code{TRUE}).}
 
-\item{object_label}{A character string describing if the object is a \code{Dataset} or
-a \code{Distribution}}
+\item{object_label}{Human-readable label for the object (used in CLI messages).}
+}
+\value{
+Invisibly returns the parsed API response as a list. Returns \code{NULL} if the request fails.
 }
 \description{
-It performs the API request via \code{api_request()},
-and provides user-facing CLI feedback on success or failure.
+Sends an HTTP request to the API for a given S7 object and provides contextual
+CLI feedback based on the object type and HTTP method.
+The request body is automatically encoded as JSON or multipart/form-data
+
+On success, a confirmation message is shown via the CLI. On failure, a formatted error message is printed.
 }
+\keyword{internal}
