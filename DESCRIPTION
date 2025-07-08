@@ -31,6 +31,7 @@ Collate:
     'create_file.R'
     'create_dataset.R'
     'create_distribution.R'
+    'rrexport-rlang.R'
     'text_arguments_parser.R'
     'update_dataset.R'
     'update_distribution.R'
