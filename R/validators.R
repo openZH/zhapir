@@ -8,7 +8,7 @@ validate_id <- function(value, allow_na = TRUE) {
       return("cannot be NA")
     }
   } else {
-    if (value <= 0) {
+    if (value < 0) {
       return("must be a positive number")
     }
     if (value != floor(value)) {
@@ -16,6 +16,12 @@ validate_id <- function(value, allow_na = TRUE) {
     }
   }
   return(NULL)
+}
+
+validate_bytesize <- function(value){
+  if (length(value) != 1) {
+    return("must have exactly one value")
+  }
 }
 
 
@@ -35,19 +41,38 @@ validate_natural_number_list <- function(value) {
 }
 
 
-validate_optional_text <- function(value, max = 1000, field = "Feld") {
-  if (!is.na(value) && nzchar(value) && nchar(value) > max) {
-    return(paste(field, "darf maximal", max, "Zeichen lang sein."))
+validate_text <- function(value, max_length = 1000L) {
+  # FIXME: is an empty string allowed?
+  if (!is.na(value) && nzchar(value) && nchar(value) > max_length) {
+    return(paste("can have a maximum of", max_length, "characters"))
   }
   return(NULL)
 }
 
 
-validate_url <- function(value, field = "URL") {
+validate_url <- function(value) {
   if (!is.na(value) && nzchar(value)) {
     if (!grepl("^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:]._~%-]*)*$", value)) {
-      return(paste(field, "muss mit http:// oder https:// beginnen und eine gültige Domain haben"))
+      return("must start with http:// or https:// and must have a valid domain")
     }
   }
   return(NULL)
 }
+
+
+
+validate_email <- function(value) {
+  if (!is.na(value) && nzchar(value)) {
+    if (!grepl("^[^@]+@[^@]+\\.[^@]+$", value)) {
+      return("must be a valid address.")
+    }
+  }
+}
+
+
+validate_file_exists <- function(value) {
+  if (!file.exists(value)) {
+    return(paste0("File doesn't exist: ", value))
+  }
+}
+
