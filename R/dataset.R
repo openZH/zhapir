@@ -8,10 +8,8 @@
 #' @param description       character; dataset description (optional)
 #' @param contact_email     character; contact email (optional, must be a valid email)
 #' @param landing_page      character; landing page URL (optional, must start with http:// or https://)
-#' @param issued            POSIXct or ISO datetime string; publication date (optional)
 #' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
-#' @param modified          POSIXct or ISO datetime string; last modification timestamp (optional)
 #' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param keyword_ids       integer vector; keyword IDs (optional)
 #' @param zh_web_catalog_ids integer vector; web catalog IDs (optional)
@@ -57,12 +55,10 @@ Dataset <- S7::new_class(
       validator = validate_url
     ),
 
-    # Zeitpunkte (optional)
-    issued = prop_posixct(),
-    start_date = prop_posixct(),
-    end_date = prop_posixct(),
-    modified = prop_posixct(),
-    modified_next = prop_posixct(),
+    # Zeitpunkte
+    start_date = prop_date(),
+    end_date = prop_date(),
+    modified_next = prop_date(),
 
     # Relations- und Katalog-IDs
     keyword_ids = prop_list(
@@ -108,10 +104,8 @@ Dataset <- S7::new_class(
       description = S7::class_missing,
       contact_email = S7::class_missing,
       landing_page = S7::class_missing,
-      issued = S7::class_missing,
       start_date = S7::class_missing,
       end_date = S7::class_missing,
-      modified = S7::class_missing,
       modified_next = S7::class_missing,
       keyword_ids = S7::class_missing,
       zh_web_catalog_ids = S7::class_missing,
@@ -126,11 +120,9 @@ Dataset <- S7::new_class(
       description = description,
       contact_email = contact_email,
       landing_page = landing_page,
-      issued = to_POSIXct(issued),
-      start_date = to_POSIXct(start_date),
-      end_date = to_POSIXct(end_date),
-      modified = to_POSIXct(modified),
-      modified_next = to_POSIXct(modified_next),
+      start_date = to_date(start_date),
+      end_date = to_date(end_date),
+      modified_next = to_date(modified_next),
       keyword_ids = to_list(keyword_ids),
       zh_web_catalog_ids = to_list(zh_web_catalog_ids),
       relation_ids = to_list(relation_ids),

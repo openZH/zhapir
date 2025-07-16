@@ -5,10 +5,8 @@
 #' @param description       Optional description string
 #' @param contact_email     Optional contact email
 #' @param landing_page      Optional landing page URL
-#' @param issued            Optional ISO datetime string or POSIXct
 #' @param start_date        Optional ISO datetime string or POSIXct
 #' @param end_date          Optional ISO datetime string or POSIXct
-#' @param modified          Optional ISO datetime string or POSIXct
 #' @param modified_next     Optional ISO datetime string or POSIXct
 #' @param keyword_ids       Optional integer vector
 #' @param zh_web_catalog_ids Optional integer vector
@@ -29,10 +27,8 @@ create_dataset <- function(
     description = NULL,
     contact_email = NULL,
     landing_page = NULL,
-    issued = NULL,
     start_date = NULL,
     end_date = NULL,
-    modified = NULL,
     modified_next = NULL,
     keyword_ids = NULL,
     zh_web_catalog_ids = NULL,
@@ -59,7 +55,7 @@ create_dataset <- function(
 
   ds <- do.call(Dataset, args)
 
-  
+
   # Dispatch create method
   if (!test) {
     create(ds, api_key, use_dev)
