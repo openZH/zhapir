@@ -11,7 +11,7 @@ S7::method(create, Distribution) <- function(object, api_key, use_dev = TRUE) {
 }
 
 #' @name create_file_upload
-#' @rdname create_file_upload
+#' @rdname create_file
 S7::method(create, FileUpload) <- function(object, api_key, use_dev = TRUE) {
   api_request_wrapper(object, "POST", "/api/v1/file-uploads", api_key, use_dev, object_label = "FileUpload")
 }
