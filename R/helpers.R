@@ -1,5 +1,3 @@
-library(rlang)
-
 
 #' Get the base URL based on environment setting
 #'
@@ -65,25 +63,29 @@ get_api_key <- function(key = NULL) {
 #' @return A named list suitable for httr2::req_body_json()
 #' @keywords internal
 object_to_payload <- function(object) {
+
   # 1. Extract raw properties
   p <- S7::props(object)
 
-  # FIXME: Why here and not already in constructor??
-  # Helper for ISO-8601
-  fmt <- function(dt) format(dt, "%Y-%m-%dT%H:%M:%SZ")
+  # Helper for date-only format (needed for S7 to JSON)
+  fmt_date <- function(d) format(d, "%Y-%m-%d")
 
   # 2. Transform properties:
-  #   - POSIXct -> ISO strings
-  #   - simple lists of scalars -> atomic vectors
   p <- purrr::map(p, function(x) {
-    if (inherits(x, "POSIXct")) {
-      if (!is.na(x)) return(fmt(x))
+    # POSIXct or Date → YYYY-MM-DD
+    if (inherits(x, c("POSIXct", "Date"))) {
+      if (!is.na(x)) {
+        return(fmt_date(x))
+      }
       return(NA_character_)
     }
+
+    # Simple lists → atomic vectors
     if (is.list(x) && length(x) > 0L &&
         all(purrr::map_lgl(x, ~ is.atomic(.) && length(.) == 1L))) {
       return(unlist(x, use.names = FALSE))
     }
+
     x
   })
 
@@ -215,7 +217,7 @@ api_request <- function(
   method <- match.arg(method)
   url <- paste0(get_base_url(use_dev), endpoint)
 
-  # Initialise request with method and headers
+    # Initialise request with method and headers
   req <- httr2::request(url) |>
     httr2::req_method(method) |>
     httr2::req_headers(
@@ -281,10 +283,9 @@ get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
 }
 
 
-
-to_POSIXct <- function(date_var){
-  if (!inherits(date_var, "S7_missing")) {
-    as.POSIXct(date_var, tz = "UTC")
+to_date <- function(x) {
+  if (!inherits(x, "S7_missing")) {
+    as.Date(x)
   } else {
     S7::class_missing
   }
