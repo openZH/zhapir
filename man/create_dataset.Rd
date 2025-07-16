@@ -10,10 +10,8 @@ create_dataset(
   description = NULL,
   contact_email = NULL,
   landing_page = NULL,
-  issued = NULL,
   start_date = NULL,
   end_date = NULL,
-  modified = NULL,
   modified_next = NULL,
   keyword_ids = NULL,
   zh_web_catalog_ids = NULL,
@@ -37,13 +35,9 @@ create_dataset(
 
 \item{landing_page}{Optional landing page URL}
 
-\item{issued}{Optional ISO datetime string or POSIXct}
-
 \item{start_date}{Optional ISO datetime string or POSIXct}
 
 \item{end_date}{Optional ISO datetime string or POSIXct}
-
-\item{modified}{Optional ISO datetime string or POSIXct}
 
 \item{modified_next}{Optional ISO datetime string or POSIXct}
 

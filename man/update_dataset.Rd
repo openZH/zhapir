@@ -11,7 +11,6 @@ update_dataset(
   description = NULL,
   contact_email = NULL,
   landing_page = NULL,
-  issued = NULL,
   start_date = NULL,
   end_date = NULL,
   modified_next = NULL,
@@ -37,8 +36,6 @@ update_dataset(
 \item{contact_email}{character; new contact email (optional)}
 
 \item{landing_page}{character; new landing page URL (optional)}
-
-\item{issued}{POSIXct or ISO datetime string; new publication date (optional)}
 
 \item{start_date}{POSIXct or ISO datetime string; new start of timeseries (optional)}
 
