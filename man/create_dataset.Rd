@@ -21,7 +21,8 @@ create_dataset(
   see_also_ids = NULL,
   api_key = NULL,
   use_dev = TRUE,
-  test = FALSE
+  verbosity = 0,
+  preview = FALSE
 )
 }
 \arguments{
@@ -57,7 +58,9 @@ create_dataset(
 
 \item{use_dev}{Logical; use development base URL}
 
-\item{test}{Defines if it is a test run. If TRUE, the
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
+
+\item{preview}{Defines if it is a test run. If TRUE, the
 dataset-object is returned into the environment.
 Default = FALSE}
 }

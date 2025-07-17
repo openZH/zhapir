@@ -5,7 +5,7 @@
 \alias{create_file}
 \title{Upload a local file via API}
 \usage{
-create_file(file_path, api_key = NULL, use_dev = TRUE)
+create_file(file_path, api_key = NULL, use_dev = TRUE, verbosity = 0)
 }
 \arguments{
 \item{file_path}{Path to a local file to be uploaded (must exist).}
@@ -13,6 +13,8 @@ create_file(file_path, api_key = NULL, use_dev = TRUE)
 \item{api_key}{Optional API key. If not provided, the function attempts to retrieve it from the environment.}
 
 \item{use_dev}{Logical; whether to use the development API environment (default: \code{TRUE}).}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 }
 \value{
 Invisibly returns the parsed API response as a list, including the \code{file_upload_id}.

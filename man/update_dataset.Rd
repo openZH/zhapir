@@ -21,7 +21,9 @@ update_dataset(
   periodicity_id = NULL,
   see_also_ids = NULL,
   api_key = NULL,
-  use_dev = TRUE
+  use_dev = TRUE,
+  verbosity = 0,
+  preview = FALSE
 )
 }
 \arguments{
@@ -58,6 +60,8 @@ update_dataset(
 \item{api_key}{API key (optional; falls back to env var)}
 
 \item{use_dev}{Logical; use development base URL (default TRUE)}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 }
 \value{
 Invisibly returns the parsed API response (named list) on success.

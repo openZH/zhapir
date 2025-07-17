@@ -10,6 +10,7 @@ api_request(
   object,
   object_label,
   api_key,
+  verbosity = 0,
   use_dev = TRUE
 )
 }
@@ -23,6 +24,8 @@ api_request(
 \item{object_label}{Character string indicating the object type (used to determine encoding strategy).}
 
 \item{api_key}{API key string used for authentication.}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 
 \item{use_dev}{Logical; whether to use the development environment (default: \code{TRUE}).}
 }

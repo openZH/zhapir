@@ -10,6 +10,7 @@ api_request_wrapper(
   endpoint,
   api_key,
   use_dev = TRUE,
+  verbosity = 0,
   object_label
 )
 }
@@ -23,6 +24,8 @@ api_request_wrapper(
 \item{api_key}{API key string used for authentication.}
 
 \item{use_dev}{Logical; whether to use the development API base URL (default: \code{TRUE}).}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 
 \item{object_label}{Human-readable label for the object (used in CLI messages).}
 }
