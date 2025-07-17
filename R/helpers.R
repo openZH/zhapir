@@ -56,8 +56,9 @@ get_api_key <- function(key = NULL) {
 
 #' Convert an S7 object into a JSON-ready payload list
 #'
-#' This helper extracts all properties, formats dates, flattens simple lists,
-#' and removes empty or missing values.
+#' This helper extracts all properties, formats dates, and removes empty
+#' or missing values (including single-element lists of NA), but does not
+#' flatten length-1 lists so that they remain JSON arrays.
 #'
 #' @param object An S7 object (e.g., Dataset or Distribution)
 #' @return A named list suitable for httr2::req_body_json()
@@ -71,32 +72,32 @@ object_to_payload <- function(object) {
   fmt_date <- function(d) format(d, "%Y-%m-%d")
 
   # 2. Transform properties:
+  #    - POSIXct/Date → YYYY-MM-DD
   p <- purrr::map(p, function(x) {
-    # POSIXct or Date → YYYY-MM-DD
     if (inherits(x, c("POSIXct", "Date"))) {
       if (!is.na(x)) {
         return(fmt_date(x))
       }
       return(NA_character_)
     }
-
-    # Simple lists → atomic vectors
-    if (is.list(x) && length(x) > 0L &&
-        all(purrr::map_lgl(x, ~ is.atomic(.) && length(.) == 1L))) {
-      return(unlist(x, use.names = FALSE))
-    }
-
     x
   })
 
   # 3. Remove empty or missing values:
   #    - NULL
-  #    - length-1 NA
+  #    - length-1 atomic NA
   #    - empty lists
+  #    - single-element lists whose only element is NA
   p <- purrr::keep(p, function(x) {
-    !(is.null(x) ||
+    !(
+      is.null(x) ||
         (is.atomic(x) && length(x) == 1L && is.na(x)) ||
-        (is.list(x) && length(x) == 0L))
+        (is.list(x)   && length(x) == 0L) ||
+        (is.list(x)   &&
+           length(x) == 1L &&
+           is.atomic(x[[1]]) &&
+           is.na(x[[1]]))
+    )
   })
 
   p
@@ -117,6 +118,7 @@ object_to_payload <- function(object) {
 #' @param endpoint      Character string; the target API endpoint.
 #' @param api_key       API key string used for authentication.
 #' @param use_dev       Logical; whether to use the development API base URL (default: `TRUE`).
+#' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param object_label  Human-readable label for the object (used in CLI messages).
 #'
 #' @return Invisibly returns the parsed API response as a list. Returns `NULL` if the request fails.
@@ -128,14 +130,14 @@ api_request_wrapper <- function(
     endpoint,
     api_key,
     use_dev = TRUE,
+    verbosity = 0,
     object_label
 ) {
   method <- match.arg(method)
-
   result <- tryCatch(
     {
       # Perform the actual API request (JSON or multipart is handled internally)
-      result <- api_request(method, endpoint, object, object_label, api_key, use_dev)
+      result <- api_request(method, endpoint, object, object_label, api_key, verbosity = verbosity, use_dev)
       parsed_result <- httr2::resp_body_json(result)
 
       # Extract key info for CLI feedback
@@ -202,6 +204,7 @@ api_request_wrapper <- function(
 #' @param object        An S7 object representing the payload (e.g., `Dataset`, `Distribution`, or `FileUpload`).
 #' @param object_label  Character string indicating the object type (used to determine encoding strategy).
 #' @param api_key       API key string used for authentication.
+#' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev       Logical; whether to use the development environment (default: `TRUE`).
 #'
 #' @return Parsed response content as a list.
@@ -212,6 +215,7 @@ api_request <- function(
     object,
     object_label,
     api_key,
+    verbosity = 0,
     use_dev = TRUE
 ) {
   method <- match.arg(method)
@@ -238,9 +242,8 @@ api_request <- function(
       httr2::req_headers(`Content-Type` = "application/json") |>
       httr2::req_body_json(payload, null = "null")
   }
-
   # Perform request
-  resp <- req |> httr2::req_perform()
+  resp <- req |> httr2::req_perform(verbosity = verbosity)
 
   # Return parsed JSON body
 }
