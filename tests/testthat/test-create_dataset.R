@@ -10,7 +10,7 @@ test_that("dataset object is correctly created by the create_dataset function", 
     organisation_id = 14,
     description = "Such insights, much wow!",
     theme_ids = c(1,2,3),
-    test = TRUE
+    preview = TRUE
   )
 
   ds_test <- Dataset(
@@ -39,7 +39,7 @@ test_that("an error is returned if no title is set", {
     organisation_id = 14,
     description = "Such insights, much wow!",
     theme_ids = c(1,2,3),
-    test = TRUE
+    preview = TRUE
   ),
   "`title` ist erforderlich"
   )
