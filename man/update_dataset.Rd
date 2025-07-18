@@ -11,7 +11,6 @@ update_dataset(
   description = NULL,
   contact_email = NULL,
   landing_page = NULL,
-  issued = NULL,
   start_date = NULL,
   end_date = NULL,
   modified_next = NULL,
@@ -22,7 +21,9 @@ update_dataset(
   periodicity_id = NULL,
   see_also_ids = NULL,
   api_key = NULL,
-  use_dev = TRUE
+  use_dev = TRUE,
+  verbosity = 0,
+  preview = FALSE
 )
 }
 \arguments{
@@ -37,8 +38,6 @@ update_dataset(
 \item{contact_email}{character; new contact email (optional)}
 
 \item{landing_page}{character; new landing page URL (optional)}
-
-\item{issued}{POSIXct or ISO datetime string; new publication date (optional)}
 
 \item{start_date}{POSIXct or ISO datetime string; new start of timeseries (optional)}
 
@@ -61,6 +60,8 @@ update_dataset(
 \item{api_key}{API key (optional; falls back to env var)}
 
 \item{use_dev}{Logical; use development base URL (default TRUE)}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 }
 \value{
 Invisibly returns the parsed API response (named list) on success.

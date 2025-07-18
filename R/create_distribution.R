@@ -18,6 +18,7 @@
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.
 #' @param file_upload_id    Optional ID of a previously uploaded file (overridden if file_path is used).
 #' @param api_key           Optional API key; if not provided, the default environment variable is used.
+#' @param verbosity       Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev           Logical; whether to use the development API endpoint (default: TRUE).
 #'
 #' @details
@@ -48,6 +49,7 @@ create_distribution <- function(
     file_path        = NULL,
     file_upload_id   = NULL,
     api_key          = NULL,
+    verbosity        = 0,
     use_dev          = TRUE
 ) {
   # Retrieve API key
@@ -66,7 +68,7 @@ create_distribution <- function(
   # Extract arguments and prepare for Distribution object creation
   args <- as.list(match.call())
   args <- args[2:length(args)]
-  args <- args[!grepl("api_key|use_dev", names(args))]
+  args <- args[!grepl("api_key|use_dev|verbosity", names(args))]
 
   # If a file_path is provided, upload the file and extract IDs
   if (!is.null(file_path)) {
@@ -85,15 +87,17 @@ create_distribution <- function(
   dist <- do.call(Distribution, args)
 
   # Send POST request to create distribution
-  result <- create(dist, api_key, use_dev)
+  result <- create(dist, api_key, use_dev, verbosity = verbosity)
 
   # If status_id is given, apply it via follow-up PATCH (cannot be set on POST)
   if (!is.null(result) && !is.null(status_id)) {
     update(
       Distribution(id = result$id, status_id = status_id),
       api_key = api_key,
-      use_dev = use_dev
+      use_dev = use_dev,
+      verbosity = verbosity
     )
   }
+  invisible(result)
 }
 

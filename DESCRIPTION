@@ -17,7 +17,8 @@ Imports:
     purrr,
     cli,
     dplyr,
-    rlang
+    rlang,
+    curl
 Collate:
     'helpers.R'
     'validators.R'
