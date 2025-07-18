@@ -62,6 +62,10 @@ update_dataset(
 \item{use_dev}{Logical; use development base URL (default TRUE)}
 
 \item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
+
+\item{preview}{Defines if it is a test run. If TRUE, the
+dataset-object is returned into the environment.
+Default = FALSE}
 }
 \value{
 Invisibly returns the parsed API response (named list) on success.
