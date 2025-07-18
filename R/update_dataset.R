@@ -10,7 +10,6 @@
 #' @param description       character; new description (optional)
 #' @param contact_email     character; new contact email (optional)
 #' @param landing_page      character; new landing page URL (optional)
-#' @param issued            POSIXct or ISO datetime string; new publication date (optional)
 #' @param start_date        POSIXct or ISO datetime string; new start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; new end of timeseries (optional)
 #' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
@@ -21,6 +20,7 @@
 #' @param periodicity_id    numeric; new periodicity ID (optional)
 #' @param see_also_ids      integer vector; new see-also IDs (optional)
 #' @param api_key           API key (optional; falls back to env var)
+#' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev           Logical; use development base URL (default TRUE)
 #'
 #' @return Invisibly returns the parsed API response (named list) on success.
@@ -32,7 +32,6 @@ update_dataset <- function(
     description       = NULL,
     contact_email     = NULL,
     landing_page      = NULL,
-    issued            = NULL,
     start_date        = NULL,
     end_date          = NULL,
     modified_next     = NULL,
@@ -43,8 +42,9 @@ update_dataset <- function(
     periodicity_id    = NULL,
     see_also_ids      = NULL,
     api_key           = NULL,
-    use_dev           = TRUE
-) {
+    use_dev           = TRUE,
+    verbosity         = 0,
+    preview           = FALSE) {
 
   # API key
   api_key <- get_api_key(api_key)
@@ -64,10 +64,14 @@ update_dataset <- function(
   # Build S7 Dataset object preserving required fields
   args <-as.list(match.call())
   args <- args[2:length(args)]
-  args <- args[!grepl("api_key|use_dev", names(args))]
+  args <- args[!grepl("api_key|use_dev|preview|verbosity", names(args))]
 
   ds <- do.call(Dataset, args)
 
   # Dispatch the update method
-  update(ds, api_key = api_key, use_dev = use_dev)
+  if (!preview) {
+    update(ds, api_key, use_dev, verbosity = verbosity)
+  } else {
+    return(ds)
+  }
 }

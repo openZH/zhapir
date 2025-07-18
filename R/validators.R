@@ -1,3 +1,23 @@
+#’ Validate that a value is a single Date, POSIXct, or ISO-8601 “YYYY-MM-DD”
+#’
+#’ @param value A vector to validate
+#’ @return NULL if OK, or an error string
+validate_date <- function(value) {
+  if (inherits(value, "Date") && length(value) == 1L) {
+    return(NULL)
+  }
+  if (inherits(value, "POSIXct") && length(value) == 1L) {
+    return(NULL)
+  }
+  if (is.character(value) && length(value) == 1L &&
+      grepl("^\\d{4}-\\d{2}-\\d{2}$", value)) {
+    return(NULL)
+  }
+  "must be a single Date, POSIXct, or YYYY-MM-DD string"
+}
+
+
+
 # Helper function to validate ID fields
 validate_id <- function(value, allow_na = TRUE) {
   if (length(value) != 1) {

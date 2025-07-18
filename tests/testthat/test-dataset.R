@@ -6,10 +6,8 @@ test_that("the dataset object is correctly created", {
       description = "Such insights, much wow!",
       contact_email = "test.test@blabla.com",
       landing_page = "https://test.ch",
-      issued = "2025-03-31",
       start_date = "2023-03-31",
       end_date = "2025-03-31",
-      modified = "2025-03-31",
       modified_next = "2026-03-31",
       keyword_ids = c(1, 2, 3),
       zh_web_catalog_ids = c(1, 2, 3),
@@ -27,7 +25,6 @@ ds_test <- Dataset(
   organisation_id = 14,
   description = "Such insights, much wow!",
   theme_ids = c(1, 2, 3),
-  issued = "2025-03-31"
 )
 
 
@@ -36,14 +33,13 @@ test_that("The the values are correctly set", {
   expect_equal(ds_test@organisation_id, 14)
   expect_equal(ds_test@description, "Such insights, much wow!")
   expect_equal(ds_test@theme_ids, list(1, 2, 3))
-  expect_equal(ds_test@issued, as.POSIXct("2025-03-31", tz = "UTC"))
 })
 
 
 
 
 test_that("The defaults are correctly set", {
-  expect_equal(ds_test@end_date, as.POSIXct(NA))
+  expect_equal(ds_test@end_date, as.Date(NA))
   expect_equal(ds_test@relation_ids, list())
   expect_equal(ds_test@contact_email, NA_character_)
   expect_equal(ds_test@periodicity_id, NA_real_)

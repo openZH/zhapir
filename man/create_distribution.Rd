@@ -23,6 +23,7 @@ create_distribution(
   file_path = NULL,
   file_upload_id = NULL,
   api_key = NULL,
+  verbosity = 0,
   use_dev = TRUE
 )
 }
@@ -62,6 +63,8 @@ create_distribution(
 \item{file_upload_id}{Optional ID of a previously uploaded file (overridden if file_path is used).}
 
 \item{api_key}{Optional API key; if not provided, the default environment variable is used.}
+
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 
 \item{use_dev}{Logical; whether to use the development API endpoint (default: TRUE).}
 }
