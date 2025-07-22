@@ -113,6 +113,24 @@ Dataset <- S7::new_class(
       see_also_ids = S7::class_missing,
       theme_ids = S7::class_missing,
       periodicity_id = S7::class_missing) {
+
+
+    # Replace any S7_missing with actual defaults
+    if (identical(id, S7::class_missing))             id             <- NA_real_
+    if (identical(description, S7::class_missing))    description    <- NA_character_
+    if (identical(contact_email, S7::class_missing))  contact_email  <- NA_character_
+    if (identical(landing_page, S7::class_missing))   landing_page   <- NA_character_
+    if (identical(start_date, S7::class_missing))     start_date     <- as.Date(NA)
+    if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
+    if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
+    if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
+    if (identical(zh_web_catalog_ids, S7::class_missing)) zh_web_catalog_ids <- list()
+    if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
+    if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
+    if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
+    if (identical(periodicity_id, S7::class_missing)) periodicity_id <- NA_real_
+
+
     S7::new_object(S7::S7_object(),
       id = id,
       title = title,

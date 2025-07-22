@@ -22,6 +22,9 @@
 #' @param api_key           API key (optional; falls back to env var)
 #' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev           Logical; use development base URL (default TRUE)
+#' @param preview           Defines if it is a test run. If TRUE, the
+#'                          dataset-object is returned into the environment.
+#'                          Default = FALSE
 #'
 #' @return Invisibly returns the parsed API response (named list) on success.
 #' @export

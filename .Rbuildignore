@@ -1,4 +1,5 @@
 ^zhapir\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^\.github$
 playground.R
