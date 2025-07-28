@@ -10,10 +10,8 @@ create_dataset(
   description = NULL,
   contact_email = NULL,
   landing_page = NULL,
-  issued = NULL,
   start_date = NULL,
   end_date = NULL,
-  modified = NULL,
   modified_next = NULL,
   keyword_ids = NULL,
   zh_web_catalogs = NULL,
@@ -23,7 +21,8 @@ create_dataset(
   see_also_ids = NULL,
   api_key = NULL,
   use_dev = TRUE,
-  test = FALSE
+  verbosity = 0,
+  preview = FALSE
 )
 }
 \arguments{
@@ -37,13 +36,9 @@ create_dataset(
 
 \item{landing_page}{Optional landing page URL}
 
-\item{issued}{Optional ISO datetime string or POSIXct}
-
 \item{start_date}{Optional ISO datetime string or POSIXct}
 
 \item{end_date}{Optional ISO datetime string or POSIXct}
-
-\item{modified}{Optional ISO datetime string or POSIXct}
 
 \item{modified_next}{Optional ISO datetime string or POSIXct}
 
@@ -63,7 +58,9 @@ create_dataset(
 
 \item{use_dev}{Logical; use development base URL}
 
-\item{test}{Defines if it is a test run. If TRUE, the
+\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
+
+\item{preview}{Defines if it is a test run. If TRUE, the
 dataset-object is returned into the environment.
 Default = FALSE}
 }

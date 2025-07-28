@@ -8,13 +8,11 @@
 #' @param description       character; dataset description (optional)
 #' @param contact_email     character; contact email (optional, must be a valid email)
 #' @param landing_page      character; landing page URL (optional, must start with http:// or https://)
-#' @param issued            POSIXct or ISO datetime string; publication date (optional)
 #' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
-#' @param modified          POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param keyword_ids       character vector; keyword IDs (optional)
 #' @param zh_web_catalogs charISO datetime string; last modification timestamp (optional)
-#' @param modified_next     POSIXct or acter vector; web catalog IDs (optional)
+#' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param relation_ids      integer vector; relation IDs (optional)
 #' @param see_also_ids      integer vector; see-also IDs (optional)
 #' @param theme_ids         character vector; theme IDs (optional)
@@ -57,12 +55,10 @@ Dataset <- S7::new_class(
       validator = validate_url
     ),
 
-    # Zeitpunkte (optional)
-    issued = prop_posixct(),
-    start_date = prop_posixct(),
-    end_date = prop_posixct(),
-    modified = prop_posixct(),
-    modified_next = prop_posixct(),
+    # Zeitpunkte
+    start_date = prop_date(),
+    end_date = prop_date(),
+    modified_next = prop_date(),
 
     # Relations- und Katalog-IDs
     keyword_ids = prop_list(
@@ -108,10 +104,8 @@ Dataset <- S7::new_class(
       description = S7::class_missing,
       contact_email = S7::class_missing,
       landing_page = S7::class_missing,
-      issued = S7::class_missing,
       start_date = S7::class_missing,
       end_date = S7::class_missing,
-      modified = S7::class_missing,
       modified_next = S7::class_missing,
       keyword_ids = S7::class_missing,
       zh_web_catalogs = S7::class_missing,
@@ -119,6 +113,24 @@ Dataset <- S7::new_class(
       see_also_ids = S7::class_missing,
       theme_ids = S7::class_missing,
       periodicity_id = S7::class_missing) {
+
+
+    # Replace any S7_missing with actual defaults
+    if (identical(id, S7::class_missing))             id             <- NA_real_
+    if (identical(description, S7::class_missing))    description    <- NA_character_
+    if (identical(contact_email, S7::class_missing))  contact_email  <- NA_character_
+    if (identical(landing_page, S7::class_missing))   landing_page   <- NA_character_
+    if (identical(start_date, S7::class_missing))     start_date     <- as.Date(NA)
+    if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
+    if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
+    if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
+    if (identical(zh_web_catalog_ids, S7::class_missing)) zh_web_catalog_ids <- list()
+    if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
+    if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
+    if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
+    if (identical(periodicity_id, S7::class_missing)) periodicity_id <- NA_real_
+
+
     S7::new_object(S7::S7_object(),
       id = id,
       title = title,
@@ -126,13 +138,11 @@ Dataset <- S7::new_class(
       description = description,
       contact_email = contact_email,
       landing_page = landing_page,
-      issued = to_POSIXct(issued),
-      start_date = to_POSIXct(start_date),
-      end_date = to_POSIXct(end_date),
-      modified = to_POSIXct(modified),
-      modified_next = to_POSIXct(modified_next),
       keyword_ids = to_list(convert_keywords_to_id(keyword_ids)),
       zh_web_catalogs = to_list(convert_zh_web_catalog_to_id(zh_web_catalogs)),
+      start_date = to_date(start_date),
+      end_date = to_date(end_date),
+      modified_next = to_date(modified_next),
       relation_ids = to_list(relation_ids),
       see_also_ids = to_list(convert_datasets_to_id(see_also_ids)),
       theme_ids = to_list(convert_themes_to_id(theme_ids)),

@@ -21,17 +21,16 @@ test_that("dataset object is correctly created by the create_dataset function", 
     "Hello Dataset 1",
     organisation_id = 14,
     description = "Such insights, much wow!",
-    issued = "2025-03-31",
     theme_ids = c("Energie", "Gesundheit"),
-    test = TRUE
   )
+    preview = TRUE)
 
   ds_test <- Dataset(
     title = "Hello Dataset 1",
     organisation_id = 14,
     description = "Such insights, much wow!",
     theme_ids = c("Energie", "Gesundheit"),
-    issued = "2025-03-31",
+
   )
 
   expect_equal(ds, ds_test)
@@ -63,8 +62,7 @@ test_that("an error is returned if no title is set", {
     organisation_id = 14,
     description = "Such insights, much wow!",
     theme_ids = c("Energie", "Gesundheit"),
-    issued = "2025-03-31",
-    test = TRUE
+    preview = TRUE
   ),
   "`title` ist erforderlich"
   )

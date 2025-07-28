@@ -130,6 +130,27 @@ Distribution <- S7::new_class(
       media_type_id = S7::class_missing,
       periodicity_id = S7::class_missing,
       file_upload_id = S7::class_missing) {
+
+    # set defaults to surpass validation
+    if (identical(id, S7::class_missing))               id             <- NA_real_
+    if (identical(title, S7::class_missing))            title          <- NA_character_
+    if (identical(dataset_id, S7::class_missing))       dataset_id     <- NA_real_
+    if (identical(stat_server_flag, S7::class_missing)) stat_server_flag <- NA
+    if (identical(zh_web_flag, S7::class_missing))      zh_web_flag    <- NA
+    if (identical(ogd_flag, S7::class_missing))         ogd_flag       <- NA
+    if (identical(sort_order, S7::class_missing))       sort_order     <- NA_real_
+    if (identical(description, S7::class_missing))      description    <- NA_character_
+    if (identical(access_url, S7::class_missing))       access_url     <- NA_character_
+    if (identical(right, S7::class_missing))            right          <- NA_character_
+    if (identical(byte_size, S7::class_missing))        byte_size      <- NA_real_
+    if (identical(status_id, S7::class_missing))        status_id      <- NA_real_
+    if (identical(license_id, S7::class_missing))       license_id     <- NA_real_
+    if (identical(format_id, S7::class_missing))        format_id      <- NA_real_
+    if (identical(media_type_id, S7::class_missing))    media_type_id  <- NA_real_
+    if (identical(periodicity_id, S7::class_missing))   periodicity_id <- NA_real_
+    if (identical(file_upload_id, S7::class_missing))   file_upload_id <- NA_character_
+
+
     S7::new_object(S7::S7_object(),
       id = id,
       title = title,

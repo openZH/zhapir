@@ -1,14 +1,14 @@
-prop_posixct <- function(default = NULL) {
+#’ Date-only property (YYYY-MM-DD)
+#’
+#’ @param default  A Date or NULL
+#’ @param validator A function like validate_date()
+prop_date <- function(default = NULL, validator = NULL) {
   S7::new_property(
-    class = S7::class_POSIXct,
-    default = if (is.null(default)) {
-      as.POSIXct(NA)
-    } else {
-      default
-    }
+    class     = S7::class_Date,
+    default   = if (is.null(default)) as.Date(NA) else default,
+    validator = validator
   )
 }
-
 
 prop_string <- function(default = NULL, validator = NULL, ...) {
   S7::new_property(

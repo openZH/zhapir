@@ -13,7 +13,8 @@ object_to_payload(object)
 A named list suitable for httr2::req_body_json()
 }
 \description{
-This helper extracts all properties, formats dates, flattens simple lists,
-and removes empty or missing values.
+This helper extracts all properties, formats dates, and removes empty
+or missing values (including single-element lists of NA), but does not
+flatten length-1 lists so that they remain JSON arrays.
 }
 \keyword{internal}

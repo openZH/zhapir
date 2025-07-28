@@ -11,10 +11,8 @@ Dataset(
   description = S7::class_missing,
   contact_email = S7::class_missing,
   landing_page = S7::class_missing,
-  issued = S7::class_missing,
   start_date = S7::class_missing,
   end_date = S7::class_missing,
-  modified = S7::class_missing,
   modified_next = S7::class_missing,
   keyword_ids = S7::class_missing,
   zh_web_catalogs = S7::class_missing,
@@ -37,15 +35,12 @@ Dataset(
 
 \item{landing_page}{character; landing page URL (optional, must start with http:// or https://)}
 
-\item{issued}{POSIXct or ISO datetime string; publication date (optional)}
-
 \item{start_date}{POSIXct or ISO datetime string; start of timeseries (optional)}
 
 \item{end_date}{POSIXct or ISO datetime string; end of timeseries (optional)}
 
-\item{modified}{POSIXct or ISO datetime string; next modification timestamp (optional)}
 
-\item{modified_next}{POSIXct or acter vector; web catalog IDs (optional)}
+\item{modified_next}{POSIXct or ISO datetime string; next modification timestamp (optional)}
 
 \item{keyword_ids}{character vector; keyword IDs (optional)}
 

@@ -5,10 +5,8 @@
 #' @param description       Optional description string
 #' @param contact_email     Optional contact email
 #' @param landing_page      Optional landing page URL
-#' @param issued            Optional ISO datetime string or POSIXct
 #' @param start_date        Optional ISO datetime string or POSIXct
 #' @param end_date          Optional ISO datetime string or POSIXct
-#' @param modified          Optional ISO datetime string or POSIXct
 #' @param modified_next     Optional ISO datetime string or POSIXct
 #' @param keyword_ids       Optional character vector
 #' @param zh_web_catalogs Optional character vector
@@ -18,7 +16,8 @@
 #' @param see_also_ids      Optional integer vector
 #' @param api_key           API key (optional; falls back to env var)
 #' @param use_dev           Logical; use development base URL
-#' @param test              Defines if it is a test run. If TRUE, the
+#' @param verbosity Integer; verbosity level passed to httr2::req_perform() (default: 0).
+#' @param preview           Defines if it is a test run. If TRUE, the
 #'                          dataset-object is returned into the environment.
 #'                          Default = FALSE
 #'
@@ -43,10 +42,8 @@ create_dataset <- function(
     description = NULL,
     contact_email = NULL,
     landing_page = NULL,
-    issued = NULL,
     start_date = NULL,
     end_date = NULL,
-    modified = NULL,
     modified_next = NULL,
     keyword_ids = NULL,
     zh_web_catalogs = NULL,
@@ -56,7 +53,8 @@ create_dataset <- function(
     see_also_ids = NULL,
     api_key = NULL,
     use_dev = TRUE,
-    test = FALSE) {
+    verbosity = 0,
+    preview = FALSE) {
 
   # Extract or prompt for API key
   api_key <- get_api_key(api_key)
@@ -69,14 +67,14 @@ create_dataset <- function(
   # Capture arguments of function call and construct a Dataset-Object
   args <- as.list(match.call())
   args <- args[2:length(args)]
-  args <- args[!grepl("api_key|use_dev|test", names(args))]
+  args <- args[!grepl("api_key|use_dev|preview|verbosity", names(args))]
 
   ds <- do.call(Dataset, args)
 
 
   # Dispatch create method
-  if (!test) {
-    create(ds, api_key, use_dev)
+  if (!preview) {
+    create(ds, api_key, use_dev, verbosity = verbosity)
   } else {
     return(ds)
   }

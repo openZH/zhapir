@@ -31,6 +31,8 @@ create_dataset(
 
 
 
+update_dataset(id = 6829, organisation_id = 14, title = "Pony 1 - updated")
+
 
 create_distribution(
   title = "Hund Distribution XY123",
@@ -45,11 +47,13 @@ create_distribution(
   byte_size = 0,
   periodicity_id = "jährlich",
   status_id = "Entwurf"
+
   #status_id = 1
 )
 
-update_distribution(id = 5810, dataset_id = 6809, title = "Hund Distribution - updated 2", status_id = 2)
+update_distribution(id = 5871, dataset_id = 6831, file_path = "test_dist.csv")
 
+# getter user facting functions
 api_request(method = "GET",
             endpoint = "/api/v1/organisation-units",
             api_key =  get_api_key())
@@ -62,3 +66,15 @@ api_request_wrapper(method = "GET",
 df <- get_keywords()
 
 
+
+
+# create and delete a dummy csv file
+dummy_data <- data.frame(
+  id = 1:3,
+  name = c("Gemeinde", "Anzahl Kühe", "Beliebtester Kuhname"),
+  value = c("User", 999, "Anneliseli")
+)
+write.csv(dummy_data, "test_dist.csv", row.names = FALSE)
+
+# Delete the file
+file.remove("test_dist.csv")
