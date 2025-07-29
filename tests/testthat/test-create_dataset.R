@@ -22,15 +22,15 @@ test_that("dataset object is correctly created by the create_dataset function", 
     organisation_id = 14,
     description = "Such insights, much wow!",
     theme_ids = c("Energie", "Gesundheit"),
+    preview = TRUE
   )
-    preview = TRUE)
 
+  # since convert_themes_to_id() is mocked to return c(42,43), build ds_test with numeric IDs:
   ds_test <- Dataset(
-    title = "Hello Dataset 1",
+    title           = "Hello Dataset 1",
     organisation_id = 14,
-    description = "Such insights, much wow!",
-    theme_ids = c("Energie", "Gesundheit"),
-
+    description     = "Such insights, much wow!",
+    theme_ids       = c(42, 43)
   )
 
   expect_equal(ds, ds_test)
