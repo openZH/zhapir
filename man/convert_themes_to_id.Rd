@@ -2,23 +2,12 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_themes_to_id}
 \alias{convert_themes_to_id}
-\title{Retrieve Themes ID by Name}
+\title{Convert theme names to IDs}
 \usage{
 convert_themes_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the theme(s).}
-}
-\value{
-An integer value or vector representing the ID(s) of the theme(s).
-}
 \description{
-This function returns the ID associated with a theme by first retrieving a
-data frame of themes and then matching the provided name to its
-corresponding ID.
+Convert theme names to IDs
 }
-\examples{
-\dontrun{
-convert_themes_to_id("Wirtschaft und Finanzen")
-}
-}
+\keyword{internal}
+\keyword{keywords}

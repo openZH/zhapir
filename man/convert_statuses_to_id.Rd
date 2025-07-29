@@ -2,25 +2,11 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_statuses_to_id}
 \alias{convert_statuses_to_id}
-\title{Retrieve Status ID by Name}
+\title{Convert status names to IDs}
 \usage{
 convert_statuses_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the status
-(or statuses).}
-}
-\value{
-An integer value or vector representing the ID(s) of the status
-(or statuses).
-}
 \description{
-This function returns the ID associated with a status name by first retrieving
-a data frame of statuses and then matching the provided name to its
-corresponding ID.
+Convert status names to IDs
 }
-\examples{
-\dontrun{
-convert_statuses_to_id("Entwurf")
-}
-}
+\keyword{internal}

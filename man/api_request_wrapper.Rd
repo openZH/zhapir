@@ -30,12 +30,12 @@ api_request_wrapper(
 \item{object_label}{Human-readable label for the object (used in CLI messages).}
 }
 \value{
-Invisibly returns the parsed API response as a list. Returns \code{NULL} if the request fails.
+Invisibly returns either the raw \code{httr2_response} (for HTTP errors) or the parsed response as a list.
 }
 \description{
 Sends an HTTP request to the API for a given S7 object and provides contextual
 CLI feedback based on the object type and HTTP method.
-The request body is automatically encoded as JSON or multipart/form-data
+The request body is automatically encoded as JSON or multipart/form-data.
 
 On success, a confirmation message is shown via the CLI. On failure, a formatted error message is printed.
 }

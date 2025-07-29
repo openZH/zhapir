@@ -2,23 +2,17 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_keywords_to_id}
 \alias{convert_keywords_to_id}
-\title{Retrieve Keyword ID by Name}
+\title{Convert keyword names to IDs}
 \usage{
 convert_keywords_to_id(name)
 }
 \arguments{
-\item{name}{A character string or vector specifying the name(s) of the keyword(s).}
+\item{name}{Character vector of keyword names.}
 }
 \value{
-An integer value or vector representing the ID(s) of the keyword(s).
+Numeric vector of IDs.
 }
 \description{
-This function returns the ID associated with a keyword by first retrieving a
-data frame of keywords and then matching the provided name to its
-corresponding ID.
+Convert keyword names to IDs
 }
-\examples{
-\dontrun{
-convert_keywords_to_id("abfall")
-}
-}
+\keyword{internal}

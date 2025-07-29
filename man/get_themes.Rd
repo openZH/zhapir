@@ -7,26 +7,27 @@
 get_themes(input = NULL)
 }
 \arguments{
-\item{input}{Optional. A character string, numeric value, or a vector of either.
-Used to filter themes dataset. If NULL (default), returns the full dataset.}
+\item{input}{Optional character vector of theme names or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for theme names and one for
-their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{theme} (character): the theme label
+\item \code{id} (numeric): the theme ID
+}
 }
 \description{
-Retrieves a data frame containing all available themes along with their
-associated IDs. This function is typically used to look up valid theme
-options for other functions.
+Retrieves a tibble of all themes and their IDs. Optionally filters by name or ID.
 }
 \examples{
 \dontrun{
-df_themes <- get_themes()
-head(df_themes)
+  # All themes
+  get_themes()
 
-get_themes("Verkehr")
+  # By name
+  get_themes("Verkehr")
 
-get_themes(41)
-
+  # By ID
+  get_themes(41)
 }
 }

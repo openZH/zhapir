@@ -2,25 +2,12 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_zh_web_catalog_to_id}
 \alias{convert_zh_web_catalog_to_id}
-\title{Retrieve zh-web-catalog keyword ID by Name}
+\title{Convert zh-web-catalog names to IDs}
 \usage{
 convert_zh_web_catalog_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the
-zh-web-catalog keyword(s).}
-}
-\value{
-An integer value or vector representing the ID(s) of the
-zh-web-catalog keyword(s)
-}
 \description{
-This function returns the ID associated with a zh-web-catalog keyword by
-first retrieving a data frame of keywords and then matching the provided name
-to its corresponding ID.
+Convert zh-web-catalog names to IDs
 }
-\examples{
-\dontrun{
-convert_zh_web_catalog_to_id("Bevölkerung")
-}
-}
+\keyword{internal}
+\keyword{keywords}

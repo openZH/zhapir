@@ -2,23 +2,11 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_licenses_to_id}
 \alias{convert_licenses_to_id}
-\title{Retrieve License ID by Name}
+\title{Convert license names to IDs}
 \usage{
 convert_licenses_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the license(s).}
-}
-\value{
-An integer value or vector representing the ID(s) of the license(s).
-}
 \description{
-This function returns the ID associated with a license name by first retrieving
-a data frame of licenses and then matching the provided name to its
-corresponding ID.
+Convert license names to IDs
 }
-\examples{
-\dontrun{
-convert_licenses_to_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
-}
-}
+\keyword{internal}

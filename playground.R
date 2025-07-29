@@ -16,19 +16,32 @@ create_dataset(
   description = "Such insights, much wow!",
   contact_email = "test.test@blabla.com",
   landing_page = "https://test.ch",
-  issued = "2025-03-31",
   start_date = "2023-03-31",
   end_date = "2025-03-31",
-  modified = "2025-03-31",
   #modified_next = "2026-03-31",
   keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
   zh_web_catalogs = c("Bevölkerung", "Wahlarchiv"),
-
   relation_ids = NULL,
   theme_ids = c("Energie", "Gesundheit"),
   periodicity_id = "Jährlich",
-  see_also_ids = NULL)
+  see_also_ids = NULL,
+  verbosity = 3)
 
+
+create_dataset(
+  title = "test bla bla bla 2",
+  organisation_id = 14,
+  description = "Such insights, much wow!",
+  contact_email = "test.test@blabla.com",
+  landing_page = "https://test.ch",
+  start_date = "2023-03-31",
+  end_date = "2025-03-31",
+  #modified_next = "2026-03-31",
+  relation_ids = NULL,
+  see_also_ids = NULL,
+  verbosity = 3)
+
+# FIXME: Get requests sauber lösen (object in api request function mit default versehen und neue get route einführen --> skipped object_to_payload)
 
 
 update_dataset(id = 6829, organisation_id = 14, title = "Pony 1 - updated")

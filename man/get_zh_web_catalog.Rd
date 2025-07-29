@@ -2,31 +2,32 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{get_zh_web_catalog}
 \alias{get_zh_web_catalog}
-\title{Get All zh-web-catalog keywords and Their IDs}
+\title{Get All zh-web-catalog Keywords and Their IDs}
 \usage{
 get_zh_web_catalog(input = NULL)
 }
 \arguments{
-\item{input}{Optional. A character string, numeric value, or a vector of either.
-Used to filter the zh-web-catalog dataset. If NULL (default), returns the full
-dataset.}
+\item{input}{Optional character vector of catalog labels or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for zh-web-catalog keyword names
-and one for their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{zh_web_catalog} (character): the catalog label
+\item \code{id} (numeric): the catalog ID
+}
 }
 \description{
-Retrieves a data frame containing all available zh-web-catalog keywords along
-with their associated IDs. This function is typically used to look up valid
-keyword options for other functions.
+Retrieves a tibble of all zh-web-catalog entries and their IDs. Optionally filters by label or ID.
 }
 \examples{
 \dontrun{
-df_zh_web_catalog <- get_zh_web_catalog()
-head(df_zh_web_catalog)
+  # All catalog entries
+  get_zh_web_catalog()
 
-get_zh_web_catalog("Wasserdaten")
+  # By label
+  get_zh_web_catalog("Bevölkerung")
 
-get_zh_web_catalog(13)
+  # By ID
+  get_zh_web_catalog(13)
 }
 }

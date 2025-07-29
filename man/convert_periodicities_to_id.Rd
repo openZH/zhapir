@@ -2,25 +2,11 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_periodicities_to_id}
 \alias{convert_periodicities_to_id}
-\title{Retrieve Periodicity ID by Name}
+\title{Convert periodicity names to IDs}
 \usage{
 convert_periodicities_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the
-periodicity (or periodicities).}
-}
-\value{
-An integer value or vector representing the ID(s) of the periodicity
-(or periodicities).
-}
 \description{
-This function returns the ID associated with a periodicity name by first
-retrieving a data frame of periodicities and then matching the provided name
-to its corresponding ID.
+Convert periodicity names to IDs
 }
-\examples{
-\dontrun{
-convert_periodicities_to_id("Jährlich")
-}
-}
+\keyword{internal}

@@ -6,26 +6,7 @@
 \usage{
 get_formats(input = NULL)
 }
-\arguments{
-\item{input}{Optional. A character string, numeric value, or a vector of either.
-Used to filter formats dataset. If NULL (default), returns the full dataset.}
-}
-\value{
-A data frame with two columns: one for format names and one for
-their corresponding IDs.
-}
 \description{
-Retrieves a data frame containing all available formats along with their
-associated IDs. This function is typically used to look up valid format
-options for other functions.
+Get All Formats and Their IDs
 }
-\examples{
-\dontrun{
-df_format <- get_formats()
-head(df_format)
-
-get_formats("xlsx")
-
-get_formats(3)
-}
-}
+\keyword{internal}

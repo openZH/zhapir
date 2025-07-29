@@ -7,25 +7,27 @@
 get_periodicities(input = NULL)
 }
 \arguments{
-\item{input}{Optional. A character string, numeric value, or a vector of either.
-Used to filter periodicity dataset. If NULL (default), returns the full dataset.}
+\item{input}{Optional character vector of periodicity names or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for periodicity names and one for
-their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{periodicity} (character): the periodicity label
+\item \code{id} (numeric): the periodicity ID
+}
 }
 \description{
-Retrieves a data frame containing all available periodicities along with their
-associated IDs. This function is typically used to look up valid periodicity
-options for other functions.
+Retrieves a tibble of all periodicities and their IDs. Optionally filters by name or ID.
 }
 \examples{
 \dontrun{
-df_periocidities <- get_periodicities()
-head(df_periocidities)
+  # All periodicities
+  get_periodicities()
 
-get_periodicities("Jährlich")
+  # By name
+  get_periodicities("Jährlich")
 
-get_periodicities(42)
+  # By ID
+  get_periodicities(42)
 }
 }

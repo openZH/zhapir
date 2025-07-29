@@ -2,23 +2,11 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{convert_formats_to_id}
 \alias{convert_formats_to_id}
-\title{Retrieve Format ID by Name}
+\title{Convert format names to IDs}
 \usage{
 convert_formats_to_id(name)
 }
-\arguments{
-\item{name}{A character string or vector specifying the name(s) of the format(s).}
-}
-\value{
-An integer value or vector representing the ID(s) of the format(s).
-}
 \description{
-This function returns the ID associated with a format name by first retrieving
-a data frame of formats and then matching the provided name to its
-corresponding ID.
+Convert format names to IDs
 }
-\examples{
-\dontrun{
-convert_formats_to_id("CSV")
-}
-}
+\keyword{internal}

@@ -39,7 +39,6 @@ Dataset(
 
 \item{end_date}{POSIXct or ISO datetime string; end of timeseries (optional)}
 
-
 \item{modified_next}{POSIXct or ISO datetime string; next modification timestamp (optional)}
 
 \item{keyword_ids}{character vector; keyword IDs (optional)}

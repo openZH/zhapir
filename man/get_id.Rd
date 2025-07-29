@@ -2,43 +2,11 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{get_id}
 \alias{get_id}
-\title{Get the ID(s) of Entries for Given Variable from a Data Frame}
+\title{Get the ID(s) of Entries for Given Variable}
 \usage{
 get_id(df, name, internal)
 }
-\arguments{
-\item{df}{A data frame containing at least one name column and an "id" column.}
-
-\item{name}{A character vector of one or more names to look up.}
-
-\item{internal}{TRUE if an exact match is required for internal processes.}
-}
-\value{
-A named vector of IDs corresponding to the input name(s).
-Names of the vector correspond to the matched names in the data frame.
-}
 \description{
-This function retrieves the ID(s) corresponding to one or more given name(s)
-from a data frame that contains at least one non-ID column representing names
-and an "id" column. It matches names exactly or partially and handles errors
-if no or multiple matches are found.
+Get the ID(s) of Entries for Given Variable
 }
-\details{
-The function expects the data frame to have one column for names
-(e.g., "keyword", "themes", etc.)  and an "id" column. It uses the name
-column to filter and find the corresponding ID(s).
-\itemize{
-\item If an exact match is found, its ID is returned.
-\item If multiple partial matches are found, an error is raised listing the possible matches.
-\item If no match is found, an error is raised suggesting a function to explore valid names.
-}
-}
-\examples{
-\dontrun{
-df_formats <- get_formats()
-
-get_id(df_formats, "CSV")
-# example of handling of invalid names
-get_id(df_formats, c("CSV", "blabla"))
-}
-}
+\keyword{internal}

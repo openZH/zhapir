@@ -48,16 +48,15 @@ create_distribution(
 
 \item{byte_size}{Optional file size in bytes (must be a positive number).}
 
+\item{status_id}{Optional character; status ID (will be set via follow-up PATCH)}
 
-\item{status_id}{Optional status ID (applied via PATCH after creation).}
-
-\item{license_id}{Optional license ID.}
+\item{license_id}{Optional integer; license ID}
 
 \item{format_id}{Optional file format ID.}
 
 \item{media_type_id}{Optional media type ID.}
 
-\item{periodicity_id}{Optional update frequency ID.}
+\item{periodicity_id}{Optional character periodicity ID}
 
 \item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
@@ -76,8 +75,11 @@ Invisibly returns the parsed API response as a list.
 Create a new distribution via API
 }
 \details{
-If \code{status_id} is provided, it will be applied via a follow-up API PATCH request after creation.
+If \code{file_path} is provided, the file will be uploaded via a separate API call prior to creating the distribution.
+The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the distribution payload.
 
+If \code{status_id} is specified, it will be applied via a follow-up PATCH request after the distribution is created,
+as the initial POST request does not accept a custom status.
 To assist in constructing valid queries, the following functions provide the
 set of acceptable values:
 \itemize{
@@ -88,9 +90,4 @@ set of acceptable values:
 }
 
 Use these functions to inspect the available values before making a query.
-If \code{file_path} is provided, the file will be uploaded via a separate API call prior to creating the distribution.
-The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the distribution payload.
-
-If \code{status_id} is specified, it will be applied via a follow-up PATCH request after the distribution is created,
-as the initial POST request does not accept a custom status.
 }

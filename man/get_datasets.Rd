@@ -7,26 +7,27 @@
 get_datasets(input = NULL)
 }
 \arguments{
-\item{input}{Optional. A character string, numeric value, or a vector of either.
-Used to filter the "dataset" dataset. If NULL (default), returns the full dataset.}
+\item{input}{Optional character vector of dataset titles or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for dataset titles and one for
-their corresponding IDs.
+A tibble with columns:
+\itemize{
+\item \code{dataset} (character): dataset title
+\item \code{id} (numeric): dataset ID
+}
 }
 \description{
-Retrieves a data frame containing all available datasets along with their
-associated IDs from the API. Optionally, it can filter the results based on
-an input vector.
+Retrieves a tibble of datasets (title and id), with optional filtering.
 }
 \examples{
 \dontrun{
-datasets_df <- get_datasets()
-head(datasets_df)
+  # All datasets
+  get_datasets()
 
-# With input conversion/filtering
-get_datasets(10)
+  # Filter by title
+  get_datasets("Hotels")
 
-get_datasets("Hotels")
-}#'
+  # Filter by ID
+  get_datasets(10)
+}
 }
