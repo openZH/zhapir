@@ -115,6 +115,14 @@ Dataset <- S7::new_class(
       periodicity_id = S7::class_missing) {
 
 
+    ## turn any explicit NULL into class_missing —
+    args <- as.list(environment())
+    for (nm in names(args)) {
+      if (is.null(args[[nm]])) {
+        assign(nm, S7::class_missing, envir = environment())
+      }
+    }
+
     # Replace any S7_missing with actual defaults
     if (identical(id, S7::class_missing))             id             <- NA_real_
     if (identical(description, S7::class_missing))    description    <- NA_character_
@@ -124,7 +132,7 @@ Dataset <- S7::new_class(
     if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
     if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
     if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
-    if (identical(zh_web_catalog_ids, S7::class_missing)) zh_web_catalog_ids <- list()
+    if (identical(zh_web_catalogs, S7::class_missing)) zh_web_catalogs <- list()
     if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
     if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
     if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
@@ -138,15 +146,15 @@ Dataset <- S7::new_class(
       description = description,
       contact_email = contact_email,
       landing_page = landing_page,
-      keyword_ids = to_list(convert_keywords_to_id(keyword_ids)),
-      zh_web_catalogs = to_list(convert_zh_web_catalog_to_id(zh_web_catalogs)),
+      keyword_ids = to_list(keyword_ids),
+      zh_web_catalogs = to_list(zh_web_catalogs),
       start_date = to_date(start_date),
       end_date = to_date(end_date),
       modified_next = to_date(modified_next),
       relation_ids = to_list(relation_ids),
-      see_also_ids = to_list(convert_datasets_to_id(see_also_ids)),
-      theme_ids = to_list(convert_themes_to_id(theme_ids)),
-      periodicity_id = convert_periodicities_to_id(periodicity_id)
+      see_also_ids = to_list(see_also_ids),
+      theme_ids = to_list(theme_ids),
+      periodicity_id = periodicity_id
     )
   }
 )
