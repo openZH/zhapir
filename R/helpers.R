@@ -75,10 +75,13 @@ object_to_payload <- function(object) {
   #    - POSIXct/Date → YYYY-MM-DD
   p <- purrr::map(p, function(x) {
     if (inherits(x, c("POSIXct", "Date"))) {
-      if (!is.na(x)) {
-        return(fmt_date(x))
+      # if no date at all or only NA, emit a single NA_character_
+      if (length(x) == 0L || all(is.na(x))) {
+        return(NA_character_)
       }
-      return(NA_character_)
+      # otherwise we expect exactly one non-NA date:
+      # format it and return
+      return(fmt_date(x))
     }
     x
   })
@@ -109,7 +112,7 @@ object_to_payload <- function(object) {
 #' @description
 #' Sends an HTTP request to the API for a given S7 object and provides contextual
 #' CLI feedback based on the object type and HTTP method.
-#' The request body is automatically encoded as JSON or multipart/form-data
+#' The request body is automatically encoded as JSON or multipart/form-data.
 #'
 #' On success, a confirmation message is shown via the CLI. On failure, a formatted error message is printed.
 #'
@@ -118,11 +121,10 @@ object_to_payload <- function(object) {
 #' @param endpoint      Character string; the target API endpoint.
 #' @param api_key       API key string used for authentication.
 #' @param use_dev       Logical; whether to use the development API base URL (default: `TRUE`).
-#' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
+#' @param verbosity     Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param object_label  Human-readable label for the object (used in CLI messages).
 #'
-#' @return Invisibly returns the parsed API response as a list. Returns `NULL` if the request fails.
-#'
+#' @return Invisibly returns either the raw `httr2_response` (for HTTP errors) or the parsed response as a list.
 #' @keywords internal
 api_request_wrapper <- function(
     object,
@@ -138,15 +140,28 @@ api_request_wrapper <- function(
   result <- tryCatch(
     {
       # Perform the actual API request (JSON or multipart is handled internally)
-      result <- api_request(method, endpoint, object, object_label, api_key, verbosity = verbosity, use_dev)
-      parsed_result <- httr2::resp_body_json(result)
+      raw <- api_request(
+        method, endpoint,
+        object, object_label,
+        api_key,
+        verbosity = verbosity,
+        use_dev = use_dev
+      )
+
+      # If api_request() already parsed the JSON (returns a list),
+      # skip resp_body_json; otherwise parse the httr2_response.
+      if (inherits(raw, "httr2_response")) {
+        parsed <- httr2::resp_body_json(raw)
+      } else {
+        parsed <- raw
+      }
 
       # Extract key info for CLI feedback
-      title <- parsed_result$title %||% "unknown"
-      id <- parsed_result$id %||%  "unknown"
-      parent_id <- parsed_result$dataset$id %||%  "unknown"
+      title     <- parsed$title %||% "unknown"
+      id        <- parsed$id    %||% "unknown"
+      parent_id <- parsed$dataset$id %||% "unknown"
 
-      # Method- and object-specific success messages
+      # Success messages by method/object type
       if (method == "POST" && object_label == "Dataset") {
         cli::cli_alert_success(
           "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created."
@@ -156,8 +171,8 @@ api_request_wrapper <- function(
           "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created inside Dataset ID {.val {parent_id}}."
         )
       } else if (method == "POST" && object_label == "FileUpload") {
-        file_path <- tryCatch(object@file_path, error = function(e) "unknown")
-        file_upload_id <- parsed_result$id %||% "unknown"
+        file_path     <- tryCatch(object@file_path, error = function(e) "unknown")
+        file_upload_id<- parsed$id %||% "unknown"
         cli::cli_alert_success(
           "{.strong File} {.file {file_path}} uploaded successfully (Upload ID: {.val {file_upload_id}})."
         )
@@ -171,15 +186,13 @@ api_request_wrapper <- function(
         )
       }
 
-      invisible(result)
+      invisible(raw)
     },
     error = function(e) {
-      # Extract HTTP status code and ID
       code <- if (inherits(e, "httr2_http_error")) e$response$status_code else "unknown"
-      id <- tryCatch(object@id, error = function(e) "n/a")
-      msg <- as.character(e$message)
+      id   <- tryCatch(object@id, error = function(e) "n/a")
+      msg  <- as.character(e$message)
 
-      # CLI error message
       cli::cli_alert_danger(
         "{.strong {object_label}} (ID {.val {id}}) {method}-Request failed ({code}): {msg}"
       )
@@ -219,19 +232,26 @@ api_request <- function(
     verbosity = 0,
     use_dev = TRUE
 ) {
+
+
   method <- match.arg(method)
   url <- paste0(get_base_url(use_dev), endpoint)
 
-    # Initialise request with method and headers
+      # Initialise request with method and headers
   req <- httr2::request(url) |>
     httr2::req_method(method) |>
     httr2::req_headers(
       Accept = "application/json",
-      `x-api-key` = api_key
+      `x-api-key` = api_key,
+      .redact = "x-api-key"
     )
 
+  # Handle GET requests without body/payload
+  if(method == "GET"){
+    # do nothing
+  }
   # If object is a file upload, use multipart/form-data
-  if (object_label == "FileUpload") {
+  else if(object_label == "FileUpload") {
     payload <- list(file = curl::form_file(object@file_path))
 
     # Attach file using multipart body
@@ -247,6 +267,7 @@ api_request <- function(
   resp <- req |> httr2::req_perform(verbosity = verbosity)
 
   # Return parsed JSON body
+  httr2::resp_body_json(resp)
 }
 
 
@@ -295,12 +316,12 @@ to_date <- function(x) {
   }
 }
 
-to_list <- function(vec_var){
+to_list <- function(vec_var) {
   if (!inherits(vec_var, "S7_missing")) {
+    # c(42) → list(42); c(1,2,3) → list(1,2,3)
     as.list(vec_var)
   } else {
     S7::class_missing
   }
 }
-
 
