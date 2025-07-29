@@ -1,882 +1,390 @@
-
-#' Get All Organisation and Their IDs
+#' Get All Organisations and Their IDs
 #'
-#' Retrieves a data frame containing all available organisation along with their
-#' associated IDs. This function is typically used to look up valid organisation
-#' options for other functions.
+#' Retrieves a tibble of all organisations and their IDs. Optionally includes sub-units.
 #'
-#' @param show_organisation_units If `TRUE`, organisation units are returned in
-#' addition to the organisations.
-#'
-#' @return A data frame with two columns: one for organisation names and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param show_organisation_units Logical; if TRUE, include sub-units.
+#' @return A tibble with columns:
+#'   - `organisation_id` (numeric)
+#'   - `organisation` (character)
+#'   - optionally `organisation_unit_id` (numeric) and `organisation_unit` (character)
 #' @examples
 #' \dontrun{
-#' df_organisation <- get_organisations()
-#' head(df_organisation)
+#'   # All organisations
+#'   get_organisations()
+#'
+#'   # Without sub-units
+#'   get_organisations(FALSE)
 #' }
+#' @export
 get_organisations <- function(show_organisation_units = TRUE) {
   req <- api_request(
-    method = "GET",
-    endpoint = "/api/v1/organisations",
-    api_key = get_api_key()
+    method       = "GET",
+    endpoint     = "/api/v1/organisations",
+    api_key      = get_api_key(),
+    object_label = "Organisation"
   )
 
-  # create data frame with all organisation information
-  df_organisation_info <- purrr::map_df(req, ~ {
-    x <- .x
-
-    # retrieve organisation information
-    organisation_id <- x$id
-    organisation <- x$name
-
-    # FIXME: potentially use below chunk to retrieve organisation units
-    # retrieve organisation unit information within an additional list of a
-    # given organisation
-    if (length(x$organisation_units) != 0) {
-      df_organisation_unit <- purrr::map_df(x$organisation_units, ~ {
-        orga_unit_id <- .x$id
-        orga_unit <- .x$label
-
-        data.frame(organisation_unit_id = orga_unit_id, organisation_unit = orga_unit)
-      })
-    }
-
-    # Combine organisation and organisation unit information to a data frame
-    if (exists("df_organisation_unit") & show_organisation_units == TRUE) {
-      df <- data.frame(
-        organisation_id = organisation_id,
-        organisation = organisation,
-        df_organisation_unit
+  purrr::map_df(req, function(x) {
+    base <- tibble::tibble(
+      organisation_id = x$id,
+      organisation    = x$name
+    )
+    if (show_organisation_units && length(x$organisation_units) > 0) {
+      units <- purrr::map_df(
+        x$organisation_units,
+        ~ tibble::tibble(
+          organisation_unit_id = .x$id,
+          organisation_unit    = .x$label
+        )
       )
+      dplyr::bind_cols(base, units)
     } else {
-      df <- data.frame(
-        organisation_id = organisation_id,
-        organisation = organisation
-      )
+      base
     }
   })
-
-  return(df_organisation_info)
 }
 
-
-#' Retrieve Dataset ID by Name
+#' Get All Keywords and Their IDs
 #'
-#' This function returns the ID associated with a dataset by first retrieving a
-#' data frame of dataset-names and then matching the provided name to its
-#' corresponding ID.
+#' Retrieves a tibble of all keywords and their IDs. Optionally filters by name or ID.
 #'
-#' @param name A character string or vector specifying the name(s) of the dataset(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the dataset(s).
-#' @export
-#'
+#' @param input Optional character vector of keyword names or numeric IDs.
+#' @return A tibble with two columns:
+#'   - `keyword` (character): the keyword label
+#'   - `id` (numeric): the keyword ID
 #' @examples
 #' \dontrun{
-#' convert_keywords_to_id("abfall")
+#'   # All keywords
+#'   get_keywords()
+#'
+#'   # By name
+#'   get_keywords("abwasser")
+#'
+#'   # By ID
+#'   get_keywords(578)
 #' }
-convert_datasets_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-    df_datasets <- get_datasets()
-    id <- get_id(df_datasets, name, internal = TRUE)
-
-    return(id)
-  }
+#' @export
+get_keywords <- function(input = NULL) {
+  df <- req_to_df("keywords")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
+#' Convert keyword names to IDs
+#' @param name Character vector of keyword names.
+#' @return Numeric vector of IDs.
+#' @keywords internal
+convert_keywords_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
 
-
+  df <- get_keywords()
+  get_id(df, name, internal = TRUE)
+}
 
 
 #' Get All Datasets and Their IDs
 #'
-#' Retrieves a data frame containing all available datasets along with their
-#' associated IDs from the API. Optionally, it can filter the results based on
-#' an input vector.
+#' Retrieves a tibble of datasets (title and id), with optional filtering.
 #'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter the "dataset" dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for dataset titles and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param input Optional character vector of dataset titles or numeric IDs.
+#' @return A tibble with columns:
+#'   - `dataset` (character): dataset title
+#'   - `id` (numeric): dataset ID
 #' @examples
 #' \dontrun{
-#' datasets_df <- get_datasets()
-#' head(datasets_df)
+#'   # All datasets
+#'   get_datasets()
 #'
-#' # With input conversion/filtering
-#' get_datasets(10)
+#'   # Filter by title
+#'   get_datasets("Hotels")
 #'
-#' get_datasets("Hotels")
-#' }#'
+#'   # Filter by ID
+#'   get_datasets(10)
+#' }
+#' @export
 get_datasets <- function(input = NULL) {
-
   req <- api_request(
-    method = "GET",
-    endpoint = "/api/v1/datasets",
-    api_key = get_api_key()
+    method       = "GET",
+    endpoint     = "/api/v1/datasets",
+    api_key      = get_api_key(),
+    object_label = "Dataset"
   )
-
-  df_datasets <- purrr::map_df(req$items, ~ {
-    x <- .x
-    id <- x$id
-    datasets <- x$title
-    data.frame(id = id, datasets = datasets)
+  df <- purrr::map_df(req$items, function(x) {
+    tibble::tibble(
+      dataset = x$title,
+      id      = x$id
+    )
   })
-
   if (!is.null(input)) {
-    df_datasets <- df_datasets |>
-      converter(input, internal = FALSE)
+    df <- converter(df, input, internal = FALSE)
   }
-
-  return(df_datasets)
-  }
-
-
-
-
-
-
-
-#' Retrieve Keyword ID by Name
-#'
-#' This function returns the ID associated with a keyword by first retrieving a
-#' data frame of keywords and then matching the provided name to its
-#' corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the keyword(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the keyword(s).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_keywords_to_id("abfall")
-#' }
-convert_keywords_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_keywords <- get_keywords()
-  id <- get_id(df_keywords, name, internal = TRUE)
-
-  return(id)
-  }
+  df
 }
 
-
-#' Get All Keywords and Their IDs
+#' Get All zh-web-catalog Keywords and Their IDs
 #'
-#' Retrieves a data frame containing all available keywords along with their
-#' associated IDs. This function is typically used to look up valid keyword
-#' options for other functions.
+#' Retrieves a tibble of all zh-web-catalog entries and their IDs. Optionally filters by label or ID.
 #'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter the keyword dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for keyword names and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param input Optional character vector of catalog labels or numeric IDs.
+#' @return A tibble with two columns:
+#'   - `zh_web_catalog` (character): the catalog label
+#'   - `id` (numeric): the catalog ID
 #' @examples
 #' \dontrun{
-#' df_keywords <- get_keywords()
-#' head(df_keywords)
+#'   # All catalog entries
+#'   get_zh_web_catalog()
 #'
-#' get_keywords("abwasser")
+#'   # By label
+#'   get_zh_web_catalog("Bevölkerung")
 #'
-#' get_keyords(c(578, 590))
-#'
+#'   # By ID
+#'   get_zh_web_catalog(13)
 #' }
-get_keywords <- function(input = NULL) {
-
-  df_keywords <- req_to_df("keywords")
-
-  if (!is.null(input)) {
-    df_keywords <- df_keywords |>
-      converter(input, internal = FALSE)
-  }
-
-    return(df_keywords)
-}
-
-
-
-#' Retrieve zh-web-catalog keyword ID by Name
-#'
-#' This function returns the ID associated with a zh-web-catalog keyword by
-#' first retrieving a data frame of keywords and then matching the provided name
-#' to its corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the
-#' zh-web-catalog keyword(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the
-#' zh-web-catalog keyword(s)
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_zh_web_catalog_to_id("Bevölkerung")
-#' }
-convert_zh_web_catalog_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_zh_web_catalog <- get_zh_web_catalog()
-  id <- get_id(df_zh_web_catalog, name, internal = TRUE)
-
-  return(id)
-  }
-}
-
-
-#' Get All zh-web-catalog keywords and Their IDs
-#'
-#' Retrieves a data frame containing all available zh-web-catalog keywords along
-#' with their associated IDs. This function is typically used to look up valid
-#' keyword options for other functions.
-#'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter the zh-web-catalog dataset. If NULL (default), returns the full
-#' dataset.
-#'
-#' @return A data frame with two columns: one for zh-web-catalog keyword names
-#' and one for their corresponding IDs.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' df_zh_web_catalog <- get_zh_web_catalog()
-#' head(df_zh_web_catalog)
-#'
-#' get_zh_web_catalog("Wasserdaten")
-#'
-#' get_zh_web_catalog(13)
-#' }
 get_zh_web_catalog <- function(input = NULL) {
-  df_zh_web_catalog <- req_to_df("zh-web-datacatalogs")
-
-  if (!is.null(input)) {
-    df_zh_web_catalog <- df_zh_web_catalog |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_zh_web_catalog)
+  df <- req_to_df("zh-web-datacatalogs")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
-
-
-
-#' Retrieve Themes ID by Name
-#'
-#' This function returns the ID associated with a theme by first retrieving a
-#' data frame of themes and then matching the provided name to its
-#' corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the theme(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the theme(s).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_themes_to_id("Wirtschaft und Finanzen")
-#' }
-convert_themes_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_theme <- get_themes()
-  id <- get_id(df_theme, name, internal = TRUE)
-
-  return(id)
-  }
+#' Convert zh-web-catalog names to IDs
+#' @keywords keywords internal
+convert_zh_web_catalog_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_zh_web_catalog()
+  get_id(df, name, internal = TRUE)
 }
-
-
-
 
 #' Get All Themes and Their IDs
 #'
-#' Retrieves a data frame containing all available themes along with their
-#' associated IDs. This function is typically used to look up valid theme
-#' options for other functions.
+#' Retrieves a tibble of all themes and their IDs. Optionally filters by name or ID.
 #'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter themes dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for theme names and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param input Optional character vector of theme names or numeric IDs.
+#' @return A tibble with two columns:
+#'   - `theme` (character): the theme label
+#'   - `id` (numeric): the theme ID
 #' @examples
 #' \dontrun{
-#' df_themes <- get_themes()
-#' head(df_themes)
+#'   # All themes
+#'   get_themes()
 #'
-#' get_themes("Verkehr")
+#'   # By name
+#'   get_themes("Verkehr")
 #'
-#' get_themes(41)
-#'
+#'   # By ID
+#'   get_themes(41)
 #' }
+#' @export
 get_themes <- function(input = NULL) {
-  df_themes <- req_to_df("themes")
-
-  if (!is.null(input)) {
-    df_themes <- df_themes |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_themes)
+  df <- req_to_df("themes")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
-
-
-
-#' Retrieve Periodicity ID by Name
-#'
-#' This function returns the ID associated with a periodicity name by first
-#' retrieving a data frame of periodicities and then matching the provided name
-#' to its corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the
-#' periodicity (or periodicities).
-#'
-#' @return An integer value or vector representing the ID(s) of the periodicity
-#' (or periodicities).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_periodicities_to_id("Jährlich")
-#' }
-convert_periodicities_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_periodicity <- get_periodicities()
-  id <- get_id(df_periodicity, name, internal = TRUE)
-
-  return(id)
-  }
+#' Convert theme names to IDs
+#' @keywords keywords internal
+convert_themes_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_themes()
+  get_id(df, name, internal = TRUE)
 }
-
-
-
 
 #' Get All Periodicities and Their IDs
 #'
-#' Retrieves a data frame containing all available periodicities along with their
-#' associated IDs. This function is typically used to look up valid periodicity
-#' options for other functions.
+#' Retrieves a tibble of all periodicities and their IDs. Optionally filters by name or ID.
 #'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter periodicity dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for periodicity names and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param input Optional character vector of periodicity names or numeric IDs.
+#' @return A tibble with two columns:
+#'   - `periodicity` (character): the periodicity label
+#'   - `id` (numeric): the periodicity ID
 #' @examples
 #' \dontrun{
-#' df_periocidities <- get_periodicities()
-#' head(df_periocidities)
+#'   # All periodicities
+#'   get_periodicities()
 #'
-#' get_periodicities("Jährlich")
+#'   # By name
+#'   get_periodicities("Jährlich")
 #'
-#' get_periodicities(42)
+#'   # By ID
+#'   get_periodicities(42)
 #' }
+#' @export
 get_periodicities <- function(input = NULL) {
-  df_periocidity <- req_to_df("periodicities")
-
-  if (!is.null(input)) {
-    df_periocidity <- df_periocidity |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_periocidity)
+  df <- req_to_df("periodicities")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
-
-
-
-#' Retrieve Status ID by Name
-#'
-#' This function returns the ID associated with a status name by first retrieving
-#' a data frame of statuses and then matching the provided name to its
-#' corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the status
-#' (or statuses).
-#'
-#' @return An integer value or vector representing the ID(s) of the status
-#' (or statuses).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_statuses_to_id("Entwurf")
-#' }
-convert_statuses_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_status <- get_statuses()
-  id <- get_id(df_status, name, internal = TRUE)
-
-  return(id)
-  }
+#' Convert periodicity names to IDs
+#' @keywords internal
+convert_periodicities_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_periodicities()
+  get_id(df, name, internal = TRUE)
 }
-
-
 
 
 #' Get All Statuses and Their IDs
 #'
-#' Retrieves a data frame containing all available statuses along with their
-#' associated IDs. This function is typically used to look up valid status
-#' options for other functions.
+#' Retrieves a tibble of all statuses and their IDs. Optionally filters by name or ID.
 #'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter statuses dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for status names and one for
-#' their corresponding IDs.
-#' @export
-#'
+#' @param input Optional character vector of status names or numeric IDs.
+#' @return A tibble with two columns:
+#'   - `status` (character): the status label
+#'   - `id` (numeric): the status ID
 #' @examples
 #' \dontrun{
-#' df_status <- get_statuses()
-#' head(df_status)
+#'   # All statuses
+#'   get_statuses()
 #'
-#' get_statuses("verworfen")
+#'   # By name
+#'   get_statuses("Entwurf")
 #'
-#' get_statuses(3)
+#'   # By ID
+#'   get_statuses(3)
 #' }
+#' @export
 get_statuses <- function(input = NULL) {
-  df_status <- req_to_df("statuses")
-
-  if (!is.null(input)) {
-    df_status <- df_status |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_status)
+  df <- req_to_df("statuses")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
-
-
-#' Retrieve License ID by Name
-#'
-#' This function returns the ID associated with a license name by first retrieving
-#' a data frame of licenses and then matching the provided name to its
-#' corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the license(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the license(s).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_licenses_to_id("NonCommercialAllowed-CommercialAllowed-ReferenceRequired")
-#' }
-convert_licenses_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-  df_license <- get_licenses()
-  id <- get_id(df_license, name, internal = TRUE)
-
-  return(id)
-  }
+#' Convert status names to IDs
+#' @keywords internal
+convert_statuses_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_statuses()
+  get_id(df, name, internal = TRUE)
 }
-
-
 
 #' Get All Licenses and Their IDs
-#'
-#' Retrieves a data frame containing all available licenses along with their
-#' associated IDs. This function is typically used to look up valid license
-#' options for other functions.
-#'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter licenses dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for license names and one for
-#' their corresponding IDs.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' df_license <- get_licenses()
-#' head(df_license)
-#'
-#' get_licenses(1)
-#'
-#' }
+#' @keywords internal
 get_licenses <- function(input = NULL) {
-  df_license <- req_to_df("licenses")
-
-  if (!is.null(input)) {
-    df_license <- df_license |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_license)
+  df <- req_to_df("licenses")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
-
-
-
-#' Retrieve Format ID by Name
-#'
-#' This function returns the ID associated with a format name by first retrieving
-#' a data frame of formats and then matching the provided name to its
-#' corresponding ID.
-#'
-#' @param name A character string or vector specifying the name(s) of the format(s).
-#'
-#' @return An integer value or vector representing the ID(s) of the format(s).
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' convert_formats_to_id("CSV")
-#' }
-convert_formats_to_id <- function(name) {
-  if(inherits(name, "S7_missing")){
-    S7::class_missing
-  } else {
-    df_format <- get_formats()
-    id <- get_id(df_format, name, internal = TRUE)
-
-    return(id)
-  }
+#' Convert license names to IDs
+#' @keywords internal
+convert_licenses_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_licenses()
+  get_id(df, name, internal = TRUE)
 }
-
-  # df_format <- get_formats()
-  # id <- get_id(df_format, name, internal = TRUE)
-  #
-  # return(id)
 
 #' Get All Formats and Their IDs
-#'
-#' Retrieves a data frame containing all available formats along with their
-#' associated IDs. This function is typically used to look up valid format
-#' options for other functions.
-#'
-#' @param input Optional. A character string, numeric value, or a vector of either.
-#' Used to filter formats dataset. If NULL (default), returns the full dataset.
-#'
-#' @return A data frame with two columns: one for format names and one for
-#' their corresponding IDs.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' df_format <- get_formats()
-#' head(df_format)
-#'
-#' get_formats("xlsx")
-#'
-#' get_formats(3)
-#' }
+#' @keywords internal
 get_formats <- function(input = NULL) {
-  df_format <- req_to_df("file-formats")
-
-  if (!is.null(input)) {
-    df_format <- df_format |>
-      converter(input, internal = FALSE)
-  }
-
-  return(df_format)
+  df <- req_to_df("file-formats")
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
+  df
 }
 
+#' Convert format names to IDs
+#' @keywords internal
+convert_formats_to_id <- function(name) {
+  if (inherits(name, "S7_missing")) return(S7::class_missing)
+  df <- get_formats()
+  get_id(df, name, internal = TRUE)
+}
 
-
-
-#' Retrieve a Data Frame from API Endpoint Request
+#' Retrieve a Data Frame from API Endpoint
 #'
-#' For a given Endpoint, this function retrieves the ID's and corresponding
-#' Endpoint's entries and returns it as a data frame.
+#' Generic helper to fetch <endpoint> entries with labels and ids.
 #'
-#' @param endpoint A character string of a Kosmos API endpoint.
+#' @param endpoint One of: "keywords", "themes", etc.
+#' @return A tibble with columns `<endpoint>` and `id`.
+#' @keywords internal
+#' Retrieve a Data Frame from API Endpoint
 #'
-#' @returns A data frame with two columns: one for endpoint entries and one for
-#' their corresponding IDs.
-#' @export
+#' Generic helper to fetch <endpoint> entries with labels and ids.
 #'
-#' @examples
-#' \dontrun{
-#' df_formats  <- req_to_df("file-formats")
-#' head(df_formats)
-#' }
+#' @param endpoint One of: "keywords", "themes", etc.
+#' @return A tibble with columns `<endpoint>` and `id`.
+#' @keywords internal
 req_to_df <- function(endpoint) {
-  req <- api_request(
-    method = "GET",
-    endpoint = paste0("/api/v1/", endpoint),
-    api_key = get_api_key()
+
+  label <- switch(
+    endpoint,
+    "keywords"            = "Keyword",
+    "zh-web-datacatalogs" = "ZhWebCatalog",
+    "themes"              = "Theme",
+    "periodicities"       = "Periodicity",
+    "statuses"            = "Status",
+    "licenses"            = "License",
+    "file-formats"        = "FileFormat",
+    stop("Unknown endpoint: ", endpoint)
   )
-
-  df <- purrr::map_df(req, ~ {
-    # retrieve keyword information
-    id <- .x$id
-    label <- .x$label
-    setNames(data.frame(label, id, stringsAsFactors = FALSE), c(endpoint, "id"))
+  req <- api_request(
+    method       = "GET",
+    endpoint     = paste0("/api/v1/", endpoint),
+    api_key      = get_api_key(),
+    object_label = label
+  )
+  purrr::map_df(req, function(x) {
+    tibble::tibble(
+      !!endpoint := x$label,
+      id          = x$id
+    )
   })
-
-  return(df)
 }
 
-
-
-
-
-#' Get the ID(s) of Entries for Given Variable from a Data Frame
-#'
-#' This function retrieves the ID(s) corresponding to one or more given name(s)
-#' from a data frame that contains at least one non-ID column representing names
-#' and an "id" column. It matches names exactly or partially and handles errors
-#' if no or multiple matches are found.
-#'
-#' The function expects the data frame to have one column for names
-#' (e.g., "keyword", "themes", etc.)  and an "id" column. It uses the name
-#' column to filter and find the corresponding ID(s).
-#'
-#' @param name A character vector of one or more names to look up.
-#' @param df A data frame containing at least one name column and an "id" column.
-#' @param internal TRUE if an exact match is required for internal processes.
-#'
-#' @return A named vector of IDs corresponding to the input name(s).
-#' Names of the vector correspond to the matched names in the data frame.
-#'
-#' @details
-#' - If an exact match is found, its ID is returned.
-#' - If multiple partial matches are found, an error is raised listing the possible matches.
-#' - If no match is found, an error is raised suggesting a function to explore valid names.
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' df_formats <- get_formats()
-#'
-#' get_id(df_formats, "CSV")
-#' # example of handling of invalid names
-#' get_id(df_formats, c("CSV", "blabla"))
-#' }
+#' Get the ID(s) of Entries for Given Variable
+#' @keywords internal
 get_id <- function(df, name, internal) {
-
   label_col <- rlang::sym(names(df)[names(df) != "id"])
-  name <- tolower(name)
-
-  ids <- c()
-
-  error_noun <- label_switch(label_col)[["error_noun"]]
-  fun_name <- label_switch(label_col)[["fun_name"]]
-
-  for (i in name) {
-
-    df_filtered <- df |>
-      dplyr::mutate(filter_col_lower = tolower(!!label_col)) |>
-      dplyr::filter(grepl(i, filter_col_lower))
-
-    df_exact_match <- df |>
-      dplyr::mutate(filter_col_lower = tolower(!!label_col)) |>
-      dplyr::filter(filter_col_lower == i)
-
-
-    if (internal == TRUE) {
-      single_id <- name_to_single_id(df_filtered,
-                                   df_exact_match,
-                                   name = i,
-                                   label_col,
-                                   error_noun,
-                                   fun_name)
-
-      ids <- c(ids, single_id)
-      names(ids) <- NULL
-
+  name_lower <- tolower(name)
+  ids <- numeric(0)
+  err <- label_switch(label_col)
+  for (nm in name_lower) {
+    tmp <- df |> dplyr::mutate(filter_col = tolower(!!label_col))
+    filt <- tmp |> dplyr::filter(grepl(nm, filter_col))
+    exact <- tmp |> dplyr::filter(filter_col == nm)
+    if (internal) {
+      if (nrow(exact)==1) ids <- c(ids, exact$id)
+      else if (nrow(filt)==0) cli::cli_abort(c("!"=sprintf("%%s not valid", nm), ">"=sprintf("run %s", err["fun_name"])) )
+      else cli::cli_abort(c("!"=sprintf("no exact match for %s", nm), ">"=sprintf("run %s", err["fun_name"])) )
     } else {
-      multiple_ids <- name_to_multiple_ids(df_filtered,
-                                           name = i,
-                                           label_col,
-                                           error_noun,
-                                           fun_name)
-      ids <- c(ids, multiple_ids)
+      if (nrow(filt)==0) cli::cli_abort(c("!"=sprintf("%%s not valid", nm), ">"=sprintf("run %s", err["fun_name"])) )
+      ids <- c(ids, filt$id)
     }
   }
-
-return(ids)
+  ids
 }
 
-
-
-
-name_to_single_id <- function(df_filtered,
-                              df_exact_match,
-                              name,
-                              label_col,
-                              error_noun,
-                              fun_name) {
-
-  if (nrow(df_exact_match) != 1) {
-
-    if (nrow(df_filtered) == 0){
-      cli::cli_abort(c(
-        "!" = "{.val {name}} is not a valid {.emph {error_noun}}.",
-        ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
-      ))
-
-    } else {
-      not_exact_match <- df_filtered |>
-        dplyr::pull(!!label_col)
-
-      cli::cli_abort(c(
-        "!" = "For {.val {name}}, there is not an exact match.",
-        "i" = "The available option(s) {.emph are}: {.val {not_exact_match}}.",
-        ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
-      ))
-
-    }
-  } else {
-
-    single_id <- df_exact_match |>
-      dplyr::pull(id)
-    names(single_id) <- df_exact_match |>
-      dplyr::pull(!!label_col)
-
-  }
-
-  return(single_id)
-
+#' Convert ID(s) back to label(s)
+#' @keywords internal
+get_label <- function(df, id) {
+  label_col <- rlang::sym(names(df)[names(df)!="id"])
+  err <- label_switch(label_col)
+  vapply(id, function(i) {
+    res <- df |> dplyr::filter(id==i) |> dplyr::pull(!!label_col)
+    if (!length(res)) cli::cli_abort(c("!"=sprintf("no entry for %%s", i), ">"=sprintf("run %s", err["fun_name"])) )
+    res
+  }, character(1))
 }
 
-
-
-
-name_to_multiple_ids <- function(df_filtered,
-                                 name,
-                                 label_col,
-                                 error_noun,
-                                 fun_name) {
-
-  if (nrow(df_filtered) == 0) {
-    cli::cli_abort(c(
-      "!" = "{.val {name}} is not a valid {.emph {error_noun}}.",
-      ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
-    ))
-  } else {
-    multiple_ids <- df_filtered %>%
-      dplyr::pull(id)
-
-    names(multiple_ids) <- df_filtered %>%
-      dplyr::pull(!!label_col)
-  }
-
-  return(multiple_ids)
-
-}
-
-get_label <- function(df, id, error_noun, fun_name) {
-
-  label_col <- rlang::sym(names(df)[names(df) != "id"])
-
-  labels <- c()
-
-  error_noun <- label_switch(label_col)[["error_noun"]]
-  fun_name <- label_switch(label_col)[["fun_name"]]
-
-  for (i in id) {
-
-  single_label <- df |>
-    dplyr::filter(id == i) |>
-    dplyr::pull(!!label_col)
-
-  if (length(single_label) == 0) {
-    cli::cli_abort(c(
-      "No entry found for id: {.val {i}}",
-      ">" = "To explore all {.emph {error_noun}}, run `{fun_name}`."
-      ))
-
-  }
-
-  labels <- c(labels, single_label)
-
-  }
-
-  return(labels)
-}
-
-
-
+#' Filter a tibble by name or ID input
+#' @keywords internal
 converter <- function(df, input, internal) {
-
-  label_col <- rlang::sym(names(df)[names(df) != "id"])
-
-  if(is.character(input)) {
-    ids <- get_id(df, input, internal)
-
-    output <- df |>
-      dplyr::filter(id %in% ids)
-
-  } else {
-    labels <- get_label(df, input)
-
-    output <- df |>
-      dplyr::filter(!!label_col %in% labels)
-
-  }
-  return(output)
+  if (is.character(input)) dplyr::filter(df, id %in% get_id(df, input, internal))
+  else dplyr::filter(df, !!rlang::sym(names(df)[1]) %in% get_label(df, input))
 }
 
+#' Map a label column to error context
+#' @keywords internal
 label_switch <- function(label_col) {
-
   switch(as.character(label_col),
-       "keywords" = {
-         error_noun <- "keywords"
-         fun_name <- "get_keywords()"
-       },
-       "zh-web-datacatalogs" = {
-         error_noun <- "zh_web_catalog"
-         fun_name <- "get_zh_web_catalog()"
-       },
-       "themes" = {
-         error_noun <- "themes"
-         fun_name <- "get_themes()"
-       },
-       "periodicities" = {
-         error_noun <- "periodicities"
-         fun_name <- "get_periodicities()"
-       },
-       "statuses" = {
-         error_noun <- "statuses"
-         fun_name <- "get_statuses()"
-       },
-       "licenses" = {
-         error_noun <- "licenses"
-         fun_name <- "get_licenses()"
-       },
-       "file-formats" = {
-         error_noun <- "formats"
-         fun_name <- "get_formats()"
-       },
-       "datasets" = {
-         error_noun <- "datasets"
-         fun_name <- "get_datasets()"
-       })
-
-  return(c(error_noun = error_noun,
-           fun_name = fun_name))
-
+         "keywords"="c(error_noun='keywords', fun_name='get_keywords()')",
+         "zh-web-datacatalogs"="c(error_noun='zh-web-catalog entries', fun_name='get_zh_web_catalog()')",
+         "themes"="c(error_noun='themes', fun_name='get_themes()')",
+         "periodicities"="c(error_noun='periodicities', fun_name='get_periodicities()')",
+         "statuses"="c(error_noun='statuses', fun_name='get_statuses()')",
+         "licenses"="c(error_noun='licenses', fun_name='get_licenses()')",
+         "file-formats"="c(error_noun='file formats', fun_name='get_formats()')",
+         "datasets"="c(error_noun='datasets', fun_name='get_datasets()')",
+         stop("Unknown label column: ", label_col)
+  )
 }
-
