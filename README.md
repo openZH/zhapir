@@ -20,7 +20,7 @@ This returns you a data frame with a column for the endpoint entries and one for
 ```
 # Example for the endpoint 'keywords'
 
-get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+convert_keywords_to_id(c("abfall", "abgase", "luftqualitaet"))
 ```
 This returns you a named vector of IDs corresponding to the input name(s).
 
@@ -36,7 +36,7 @@ Example:
 create_dataset("Hello Dataset 1",
                organisation_id = 14,
                description = "Such insights, much wow!",
-               keyword_ids  = get_keywords_id(c("abfall", "abgase", "luftqualitaet"))
+               keyword_ids  = convert_keywords_to_id(c("abfall", "abgase", "luftqualitaet"))
                )
 ```
 

@@ -4,20 +4,30 @@
 \alias{get_periodicities}
 \title{Get All Periodicities and Their IDs}
 \usage{
-get_periodicities()
+get_periodicities(input = NULL)
+}
+\arguments{
+\item{input}{Optional character vector of periodicity names or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for periodicity names and one for
-their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{periodicity} (character): the periodicity label
+\item \code{id} (numeric): the periodicity ID
+}
 }
 \description{
-Retrieves a data frame containing all available periodicities along with their
-associated IDs. This function is typically used to look up valid periodicity
-options for other functions.
+Retrieves a tibble of all periodicities and their IDs. Optionally filters by name or ID.
 }
 \examples{
 \dontrun{
-df_periocidity <- get_periodicity()
-head(df_periocidity)
+  # All periodicities
+  get_periodicities()
+
+  # By name
+  get_periodicities("Jährlich")
+
+  # By ID
+  get_periodicities(42)
 }
 }

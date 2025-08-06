@@ -2,26 +2,30 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{get_organisations}
 \alias{get_organisations}
-\title{Get All Organisation and Their IDs}
+\title{Get All Organisations and Their IDs}
 \usage{
 get_organisations(show_organisation_units = TRUE)
 }
 \arguments{
-\item{show_organisation_units}{If \code{TRUE}, organisation units are returned in
-addition to the organisations.}
+\item{show_organisation_units}{Logical; if TRUE, include sub-units.}
 }
 \value{
-A data frame with two columns: one for organisation names and one for
-their corresponding IDs.
+A tibble with columns:
+\itemize{
+\item \code{organisation_id} (numeric)
+\item \code{organisation} (character)
+\item optionally \code{organisation_unit_id} (numeric) and \code{organisation_unit} (character)
+}
 }
 \description{
-Retrieves a data frame containing all available organisation along with their
-associated IDs. This function is typically used to look up valid organisation
-options for other functions.
+Retrieves a tibble of all organisations and their IDs. Optionally includes sub-units.
 }
 \examples{
 \dontrun{
-df_organisation <- get_organisations()
-head(df_organisation)
+  # All organisations
+  get_organisations()
+
+  # Without sub-units
+  get_organisations(FALSE)
 }
 }

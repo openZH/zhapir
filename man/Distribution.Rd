@@ -11,15 +11,12 @@ Distribution(
   stat_server_flag = S7::class_missing,
   zh_web_flag = S7::class_missing,
   ogd_flag = S7::class_missing,
-  sort_order = S7::class_missing,
   description = S7::class_missing,
   access_url = S7::class_missing,
-  right = S7::class_missing,
   byte_size = S7::class_missing,
   status_id = S7::class_missing,
   license_id = S7::class_missing,
-  format_id = S7::class_missing,
-  media_type_id = S7::class_missing,
+  file_format_id = S7::class_missing,
   periodicity_id = S7::class_missing,
   file_upload_id = S7::class_missing
 )
@@ -37,25 +34,19 @@ Distribution(
 
 \item{ogd_flag}{logical; visibility flag for Open Government Data (optional)}
 
-\item{sort_order}{numeric; optional sort index for ordering multiple distributions}
-
 \item{description}{character; distribution description (optional, <=4000 characters)}
 
 \item{access_url}{character; URL to access the distribution (optional, must start with http:// or https://)}
 
-\item{right}{character; optional textual statement of usage rights}
-
 \item{byte_size}{numeric; size in bytes (optional, must be a positive integer)}
 
-\item{status_id}{numeric; status ID (optional)}
+\item{status_id}{character; status ID (optional)}
 
 \item{license_id}{numeric; license ID (optional)}
 
-\item{format_id}{numeric; file format ID (optional)}
+\item{file_format_id}{character; file format ID (optional)}
 
-\item{media_type_id}{numeric; media type ID (optional)}
-
-\item{periodicity_id}{numeric; periodicity ID (optional)}
+\item{periodicity_id}{character; periodicity ID (optional)}
 
 \item{file_upload_id}{character; ID of the uploaded file (optional)}
 }

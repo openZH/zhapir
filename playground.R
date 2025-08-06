@@ -1,21 +1,66 @@
 devtools::load_all(".")
 
 # dataset user facing functions
-create_dataset("Pony 4", organisation_id = 14, description = "Such insights, much wow!")
+create_dataset("Katze Test 2", organisation_id = 14, description = "Such insights, much wow!", keywords = c("wasser"))
+
+create_dataset("maus Test 1", organisation_id = 14, description = "Such insights, much wow!",
+               keywords = c("wasser", "s-bahn"),
+               periodicity_id = "jährlich")
+
+update_dataset(id = 6809, organisation_id = 14, title = "Katze Test 1 - updated", keywords = c("Wasser", "abwasser"),
+               see_also_ids = "Hotels [Anz.]")
+
+create_dataset(
+  title = "test bla bla bla 2",
+  organisation_id = 14,
+  description = "Such insights, much wow!",
+  contact_email = "test.test@blabla.com",
+  landing_page = "https://test.ch",
+  start_date = "2023-03-31",
+  end_date = "2025-03-31",
+  #modified_next = "2026-03-31",
+  keyword_ids = c("abfall", "abfallanlagen", "volksschule"),
+  zh_web_catalogs = c("Bevölkerung", "Wahlarchiv"),
+  relation_ids = NULL,
+  theme_ids = c("Energie", "Gesundheit"),
+  periodicity_id = "Jährlich",
+  see_also_ids = NULL,
+  verbosity = 3)
+
+
+create_dataset(
+  title = "test bla bla bla 2",
+  organisation_id = 14,
+  description = "Such insights, much wow!",
+  contact_email = "test.test@blabla.com",
+  landing_page = "https://test.ch",
+  start_date = "2023-03-31",
+  end_date = "2025-03-31",
+  #modified_next = "2026-03-31",
+  relation_ids = NULL,
+  see_also_ids = NULL,
+  verbosity = 3)
+
+# FIXME: Get requests sauber lösen (object in api request function mit default versehen und neue get route einführen --> skipped object_to_payload)
+
 
 update_dataset(id = 6829, organisation_id = 14, title = "Pony 1 - updated")
 
 
-# distribution user facing functions
 create_distribution(
-  title = "Pony Distribution 3",
-  description = "description",
-  dataset_id = 6831,
+  title = "Hund Distribution XY123",
+  dataset_id = 6809,
   stat_server_flag = TRUE,
   zh_web_flag = TRUE,
   ogd_flag = TRUE,
-  file_path = "test_dist.csv"
-  #access_url = "https://link.ch",
+  sort_order = 0,
+  description = "string",
+  access_url = "https://example.com",
+  right = "string",
+  byte_size = 0,
+  periodicity_id = "jährlich",
+  status_id = "Entwurf"
+
   #status_id = 1
 )
 
@@ -26,7 +71,14 @@ api_request(method = "GET",
             endpoint = "/api/v1/organisation-units",
             api_key =  get_api_key())
 
-get_keywords()
+api_request_wrapper(method = "GET",
+                    endpoint = "/api/v1/organisation-units",
+                    api_key = get_api_key()
+                    )
+
+df <- get_keywords()
+
+
 
 
 # create and delete a dummy csv file

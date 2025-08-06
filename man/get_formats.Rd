@@ -4,20 +4,9 @@
 \alias{get_formats}
 \title{Get All Formats and Their IDs}
 \usage{
-get_formats()
-}
-\value{
-A data frame with two columns: one for format names and one for
-their corresponding IDs.
+get_formats(input = NULL)
 }
 \description{
-Retrieves a data frame containing all available formats along with their
-associated IDs. This function is typically used to look up valid format
-options for other functions.
+Get All Formats and Their IDs
 }
-\examples{
-\dontrun{
-df_format <- get_formats()
-head(df_format)
-}
-}
+\keyword{internal}

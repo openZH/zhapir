@@ -4,20 +4,30 @@
 \alias{get_keywords}
 \title{Get All Keywords and Their IDs}
 \usage{
-get_keywords()
+get_keywords(input = NULL)
+}
+\arguments{
+\item{input}{Optional character vector of keyword names or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for keyword names and one for
-their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{keyword} (character): the keyword label
+\item \code{id} (numeric): the keyword ID
+}
 }
 \description{
-Retrieves a data frame containing all available keywords along with their
-associated IDs. This function is typically used to look up valid keyword
-options for other functions.
+Retrieves a tibble of all keywords and their IDs. Optionally filters by name or ID.
 }
 \examples{
 \dontrun{
-df_keywords <- get_keywords()
-head(df_keywords)
+  # All keywords
+  get_keywords()
+
+  # By name
+  get_keywords("abwasser")
+
+  # By ID
+  get_keywords(578)
 }
 }

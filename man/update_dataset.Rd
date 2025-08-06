@@ -15,7 +15,7 @@ update_dataset(
   end_date = NULL,
   modified_next = NULL,
   keyword_ids = NULL,
-  zh_web_catalog_ids = NULL,
+  zh_web_datacatalog_ids = NULL,
   relation_ids = NULL,
   theme_ids = NULL,
   periodicity_id = NULL,
@@ -39,15 +39,15 @@ update_dataset(
 
 \item{landing_page}{character; new landing page URL (optional)}
 
-\item{start_date}{POSIXct or ISO datetime string; new start of timeseries (optional)}
+\item{start_date}{POSIXct or ISO datetime string; new start (optional)}
 
-\item{end_date}{POSIXct or ISO datetime string; new end of timeseries (optional)}
+\item{end_date}{POSIXct or ISO datetime string; new end (optional)}
 
-\item{modified_next}{POSIXct or ISO datetime string; next modification timestamp (optional)}
+\item{modified_next}{POSIXct or ISO datetime string; next mod timestamp (optional)}
 
 \item{keyword_ids}{integer vector; new keyword IDs (optional)}
 
-\item{zh_web_catalog_ids}{integer vector; new web catalog IDs (optional)}
+\item{zh_web_datacatalog_ids}{integer vector; new web catalog IDs (optional)}
 
 \item{relation_ids}{integer vector; new relation IDs (optional)}
 
@@ -61,11 +61,9 @@ update_dataset(
 
 \item{use_dev}{Logical; use development base URL (default TRUE)}
 
-\item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
+\item{verbosity}{Integer; verbosity level for httr2 (default: 0)}
 
-\item{preview}{Defines if it is a test run. If TRUE, the
-dataset-object is returned into the environment.
-Default = FALSE}
+\item{preview}{If TRUE, returns the \code{Dataset} object instead of calling API}
 }
 \value{
 Invisibly returns the parsed API response (named list) on success.

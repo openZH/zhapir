@@ -2,24 +2,36 @@
 % Please edit documentation in R/text_arguments_parser.R
 \name{req_to_df}
 \alias{req_to_df}
-\title{Retrieve a Data Frame from API Endpoint Request}
+\title{Retrieve a Data Frame from API Endpoint}
 \usage{
 req_to_df(endpoint)
 }
 \arguments{
-\item{endpoint}{A character string of a Kosmos API endpoint.}
+\item{endpoint}{One of: "keywords", "themes", etc.}
 }
 \value{
-A data frame with two columns: one for endpoint entries and one for
-their corresponding IDs.
+A tibble with columns \verb{<endpoint>} and \code{id}.
+
+A tibble with columns \verb{<endpoint>} and \code{id}.
 }
 \description{
-For a given Endpoint, this function retrieves the ID's and corresponding
-Endpoint's entries and returns it as a data frame.
+Generic helper to fetch \if{html}{\out{<endpoint>}} entries with labels and ids.
 }
-\examples{
-\dontrun{
-df_formats  <- req_to_df("formats")
-head(df_formats)
-}
-}
+\keyword{<endpoint>}
+\keyword{API}
+\keyword{Data}
+\keyword{Endpoint}
+\keyword{Frame}
+\keyword{Generic}
+\keyword{Retrieve}
+\keyword{a}
+\keyword{and}
+\keyword{entries}
+\keyword{fetch}
+\keyword{from}
+\keyword{helper}
+\keyword{ids.}
+\keyword{internal}
+\keyword{labels}
+\keyword{to}
+\keyword{with}

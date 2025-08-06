@@ -4,20 +4,30 @@
 \alias{get_statuses}
 \title{Get All Statuses and Their IDs}
 \usage{
-get_statuses()
+get_statuses(input = NULL)
+}
+\arguments{
+\item{input}{Optional character vector of status names or numeric IDs.}
 }
 \value{
-A data frame with two columns: one for status names and one for
-their corresponding IDs.
+A tibble with two columns:
+\itemize{
+\item \code{status} (character): the status label
+\item \code{id} (numeric): the status ID
+}
 }
 \description{
-Retrieves a data frame containing all available statuses along with their
-associated IDs. This function is typically used to look up valid status
-options for other functions.
+Retrieves a tibble of all statuses and their IDs. Optionally filters by name or ID.
 }
 \examples{
 \dontrun{
-df_status <- get_statuses()
-head(df_status)
+  # All statuses
+  get_statuses()
+
+  # By name
+  get_statuses("Entwurf")
+
+  # By ID
+  get_statuses(3)
 }
 }

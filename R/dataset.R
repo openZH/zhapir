@@ -10,13 +10,13 @@
 #' @param landing_page      character; landing page URL (optional, must start with http:// or https://)
 #' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
+#' @param keyword_ids       character vector; keyword IDs (optional)
+#' @param zh_web_datacatalog_ids integer vector; ('Datenkollektionen' in the UI) (optional)
 #' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
-#' @param keyword_ids       integer vector; keyword IDs (optional)
-#' @param zh_web_catalog_ids integer vector; web catalog IDs (optional)
 #' @param relation_ids      integer vector; relation IDs (optional)
 #' @param see_also_ids      integer vector; see-also IDs (optional)
-#' @param theme_ids         integer vector; theme IDs (optional)
-#' @param periodicity_id    numeric; periodicity ID (optional)
+#' @param theme_ids         character vector; theme IDs (optional)
+#' @param periodicity_id    character; periodicity ID (optional)
 #'
 #' @return An S7 `Dataset` object.
 #' @export
@@ -64,7 +64,7 @@ Dataset <- S7::new_class(
     keyword_ids = prop_list(
       validator = validate_natural_number_list
     ),
-    zh_web_catalog_ids = prop_list(
+    zh_web_datacatalog_ids = prop_list(
       validator = validate_natural_number_list
     ),
     relation_ids = prop_list(
@@ -108,12 +108,20 @@ Dataset <- S7::new_class(
       end_date = S7::class_missing,
       modified_next = S7::class_missing,
       keyword_ids = S7::class_missing,
-      zh_web_catalog_ids = S7::class_missing,
+      zh_web_datacatalog_ids = S7::class_missing,
       relation_ids = S7::class_missing,
       see_also_ids = S7::class_missing,
       theme_ids = S7::class_missing,
       periodicity_id = S7::class_missing) {
 
+
+    ## turn any explicit NULL into class_missing —
+    args <- as.list(environment())
+    for (nm in names(args)) {
+      if (is.null(args[[nm]])) {
+        assign(nm, S7::class_missing, envir = environment())
+      }
+    }
 
     # Replace any S7_missing with actual defaults
     if (identical(id, S7::class_missing))             id             <- NA_real_
@@ -124,7 +132,7 @@ Dataset <- S7::new_class(
     if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
     if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
     if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
-    if (identical(zh_web_catalog_ids, S7::class_missing)) zh_web_catalog_ids <- list()
+    if (identical(zh_web_datacatalog_ids, S7::class_missing)) zh_web_datacatalog_ids <- list()
     if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
     if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
     if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
@@ -138,11 +146,11 @@ Dataset <- S7::new_class(
       description = description,
       contact_email = contact_email,
       landing_page = landing_page,
+      keyword_ids = to_list(keyword_ids),
+      zh_web_datacatalog_ids = to_list(zh_web_datacatalog_ids),
       start_date = to_date(start_date),
       end_date = to_date(end_date),
       modified_next = to_date(modified_next),
-      keyword_ids = to_list(keyword_ids),
-      zh_web_catalog_ids = to_list(zh_web_catalog_ids),
       relation_ids = to_list(relation_ids),
       see_also_ids = to_list(see_also_ids),
       theme_ids = to_list(theme_ids),

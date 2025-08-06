@@ -26,3 +26,15 @@ create <- S7::new_generic("create", "object")
 #' @return The updated object with updated information from the API response
 #' @keywords internal
 update <- S7::new_generic("update", "object")
+
+
+#' Set the status of a Dataset or Distribution via the "/set-status" endpoint
+#'
+#' @param object   A `Dataset` or `Distribution` S7 object with `@id` and `@status_id` set
+#' @param api_key  API key string for authentication (optional)
+#' @param use_dev  Logical; use the development API endpoint (default `TRUE`)
+#' @param verbosity Integer; httr2 verbosity level (default `0`)
+#'
+#' @return Invisibly returns parsed response as a list.
+#' @keywords internal
+set_status <- S7::new_generic("set_status", "object")

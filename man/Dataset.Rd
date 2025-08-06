@@ -15,7 +15,7 @@ Dataset(
   end_date = S7::class_missing,
   modified_next = S7::class_missing,
   keyword_ids = S7::class_missing,
-  zh_web_catalog_ids = S7::class_missing,
+  zh_web_datacatalog_ids = S7::class_missing,
   relation_ids = S7::class_missing,
   see_also_ids = S7::class_missing,
   theme_ids = S7::class_missing,
@@ -41,17 +41,17 @@ Dataset(
 
 \item{modified_next}{POSIXct or ISO datetime string; next modification timestamp (optional)}
 
-\item{keyword_ids}{integer vector; keyword IDs (optional)}
+\item{keyword_ids}{character vector; keyword IDs (optional)}
 
-\item{zh_web_catalog_ids}{integer vector; web catalog IDs (optional)}
+\item{zh_web_datacatalog_ids}{integer vector; ('Datenkollektionen' in the UI) (optional)}
 
 \item{relation_ids}{integer vector; relation IDs (optional)}
 
 \item{see_also_ids}{integer vector; see-also IDs (optional)}
 
-\item{theme_ids}{integer vector; theme IDs (optional)}
+\item{theme_ids}{character vector; theme IDs (optional)}
 
-\item{periodicity_id}{numeric; periodicity ID (optional)}
+\item{periodicity_id}{character; periodicity ID (optional)}
 }
 \value{
 An S7 \code{Dataset} object.

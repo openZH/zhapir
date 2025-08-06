@@ -1,42 +1,35 @@
 test_that("the dataset object is correctly created", {
   expect_no_error(
     Dataset(
-      title = "Hello Dataset 1",
+      title           = "Hello Dataset 1",
       organisation_id = 14,
-      description = "Such insights, much wow!",
-      contact_email = "test.test@blabla.com",
-      landing_page = "https://test.ch",
-      start_date = "2023-03-31",
-      end_date = "2025-03-31",
-      modified_next = "2026-03-31",
-      keyword_ids = c(1, 2, 3),
-      zh_web_catalog_ids = c(1, 2, 3),
-      relation_ids = c(1, 2, 3),
-      see_also_ids = c(1, 2, 3),
-      theme_ids = c(1, 2, 3),
-      periodicity_id = 1
+      description     = "Such insights, much wow!",
+      contact_email   = "test.test@blabla.com",
+      landing_page    = "https://test.ch",
+      start_date      = "2023-03-31",
+      end_date        = "2025-03-31",
+      modified_next   = "2026-03-31",
+      keyword_ids     = c(2, 4, 11),        # numeric IDs
+      zh_web_datacatalog_ids = c(10, 11),         # numeric IDs
+      relation_ids    = c(1, 2, 3),
+      theme_ids       = c(41, 45)          # numeric IDs
     )
   )
 })
 
-
 ds_test <- Dataset(
-  title = "Hello Dataset 1",
+  title           = "Hello Dataset 1",
   organisation_id = 14,
-  description = "Such insights, much wow!",
-  theme_ids = c(1, 2, 3),
+  description     = "Such insights, much wow!",
+  theme_ids       = c(42, 43)            # numeric IDs for the later check
 )
-
 
 test_that("The the values are correctly set", {
   expect_equal(ds_test@title, "Hello Dataset 1")
   expect_equal(ds_test@organisation_id, 14)
   expect_equal(ds_test@description, "Such insights, much wow!")
-  expect_equal(ds_test@theme_ids, list(1, 2, 3))
+  expect_equal(ds_test@theme_ids, list(42, 43))
 })
-
-
-
 
 test_that("The defaults are correctly set", {
   expect_equal(ds_test@end_date, as.Date(NA))
@@ -44,7 +37,6 @@ test_that("The defaults are correctly set", {
   expect_equal(ds_test@contact_email, NA_character_)
   expect_equal(ds_test@periodicity_id, NA_real_)
 })
-
 
 test_that("The values are correctly validated", {
   # if type is correctly checked
@@ -71,22 +63,10 @@ test_that("The values are correctly validated", {
     Dataset(
       title = "Hello Dataset 1",
       organisation_id = 14,
-      theme_ids = c(1, 2, "1")
+      theme_ids = c(42, "foo", 43)
     ),
-    "@theme_ids all elements must be numeric"
+    "all elements must be numeric"
   )
-
-
-  # return error when a list entry contains non positive numbers
-  expect_error(
-    Dataset(
-      title = "Hello Dataset 1",
-      organisation_id = 14,
-      theme_ids = c(1, 2, -1)
-    ),
-    "@theme_ids all elements must be positive integers"
-  )
-
 
   # return error when a url is not correctly written
   expect_error(
@@ -97,7 +77,6 @@ test_that("The values are correctly validated", {
     ),
     "@landing_page must start with http:// or https://"
   )
-
 
   # return error when an id is not correctly set
   expect_error(
