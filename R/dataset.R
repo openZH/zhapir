@@ -11,7 +11,7 @@
 #' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
 #' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
 #' @param keyword_ids       character vector; keyword IDs (optional)
-#' @param zh_web_catalogs charISO datetime string; last modification timestamp (optional)
+#' @param zh_web_datacatalog_ids integer vector; ('Datenkollektionen' in the UI) (optional)
 #' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
 #' @param relation_ids      integer vector; relation IDs (optional)
 #' @param see_also_ids      integer vector; see-also IDs (optional)
@@ -64,7 +64,7 @@ Dataset <- S7::new_class(
     keyword_ids = prop_list(
       validator = validate_natural_number_list
     ),
-    zh_web_catalogs = prop_list(
+    zh_web_datacatalog_ids = prop_list(
       validator = validate_natural_number_list
     ),
     relation_ids = prop_list(
@@ -108,7 +108,7 @@ Dataset <- S7::new_class(
       end_date = S7::class_missing,
       modified_next = S7::class_missing,
       keyword_ids = S7::class_missing,
-      zh_web_catalogs = S7::class_missing,
+      zh_web_datacatalog_ids = S7::class_missing,
       relation_ids = S7::class_missing,
       see_also_ids = S7::class_missing,
       theme_ids = S7::class_missing,
@@ -132,7 +132,7 @@ Dataset <- S7::new_class(
     if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
     if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
     if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
-    if (identical(zh_web_catalogs, S7::class_missing)) zh_web_catalogs <- list()
+    if (identical(zh_web_datacatalog_ids, S7::class_missing)) zh_web_datacatalog_ids <- list()
     if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
     if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
     if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
@@ -147,7 +147,7 @@ Dataset <- S7::new_class(
       contact_email = contact_email,
       landing_page = landing_page,
       keyword_ids = to_list(keyword_ids),
-      zh_web_catalogs = to_list(zh_web_catalogs),
+      zh_web_datacatalog_ids = to_list(zh_web_datacatalog_ids),
       start_date = to_date(start_date),
       end_date = to_date(end_date),
       modified_next = to_date(modified_next),
