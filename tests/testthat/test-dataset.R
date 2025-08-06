@@ -10,7 +10,7 @@ test_that("the dataset object is correctly created", {
       end_date        = "2025-03-31",
       modified_next   = "2026-03-31",
       keyword_ids     = c(2, 4, 11),        # numeric IDs
-      zh_web_catalogs = c(10, 11),         # numeric IDs
+      zh_web_datacatalog_ids = c(10, 11),         # numeric IDs
       relation_ids    = c(1, 2, 3),
       theme_ids       = c(41, 45)          # numeric IDs
     )
