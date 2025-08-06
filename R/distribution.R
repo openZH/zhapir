@@ -8,15 +8,12 @@
 #' @param stat_server_flag  logical; visibility flag for statistical server (optional)
 #' @param zh_web_flag       logical; visibility flag for zh web portal (optional)
 #' @param ogd_flag          logical; visibility flag for Open Government Data (optional)
-#' @param sort_order        numeric; optional sort index for ordering multiple distributions
 #' @param description       character; distribution description (optional, <=4000 characters)
 #' @param access_url        character; URL to access the distribution (optional, must start with http:// or https://)
-#' @param right             character; optional textual statement of usage rights
 #' @param byte_size         numeric; size in bytes (optional, must be a positive integer)
 #' @param status_id         character; status ID (optional)
 #' @param license_id        numeric; license ID (optional)
-#' @param format_id         character; file format ID (optional)
-#' @param media_type_id     numeric; media type ID (optional)
+#' @param file_format_id    character; file format ID (optional)
 #' @param periodicity_id    character; periodicity ID (optional)
 #' @param file_upload_id    character; ID of the uploaded file (optional)
 #'
@@ -49,12 +46,6 @@ Distribution <- S7::new_class(
     zh_web_flag = prop_logical(),
     ogd_flag = prop_logical(),
 
-    # Sort order (optional)
-    sort_order = prop_numeric(
-      validator = validate_id,
-      allow_na = TRUE
-    ),
-
     # Description (optional)
     description = prop_string(
       validator = validate_text,
@@ -66,10 +57,6 @@ Distribution <- S7::new_class(
       validator = validate_url
     ),
 
-    # Right (optional)
-    right = prop_string(
-      validator = validate_text
-    ),
 
     # Byte size (optional)
     byte_size = prop_numeric(
@@ -90,13 +77,7 @@ Distribution <- S7::new_class(
     ),
 
     # Format ID (optional)
-    format_id = prop_numeric(
-      validator = validate_id,
-      allow_na = TRUE
-    ),
-
-    # Media Type ID (optional)
-    media_type_id = prop_numeric(
+    file_format_id = prop_numeric(
       validator = validate_id,
       allow_na = TRUE
     ),
@@ -108,8 +89,8 @@ Distribution <- S7::new_class(
     ),
 
     # File Upload ID (optional)
-    file_upload_id = prop_string(
-      validator = validate_text
+    file_upload_id = prop_numeric(
+      validator = validate_id
     )
   ),
   constructor = function(
@@ -119,17 +100,24 @@ Distribution <- S7::new_class(
       stat_server_flag = S7::class_missing,
       zh_web_flag = S7::class_missing,
       ogd_flag = S7::class_missing,
-      sort_order = S7::class_missing,
       description = S7::class_missing,
       access_url = S7::class_missing,
-      right = S7::class_missing,
       byte_size = S7::class_missing,
       status_id = S7::class_missing,
       license_id = S7::class_missing,
-      format_id = S7::class_missing,
-      media_type_id = S7::class_missing,
+      file_format_id = S7::class_missing,
       periodicity_id = S7::class_missing,
       file_upload_id = S7::class_missing) {
+
+
+
+    ## turn any explicit NULL into class_missing —
+    args <- as.list(environment())
+    for (nm in names(args)) {
+      if (is.null(args[[nm]])) {
+        assign(nm, S7::class_missing, envir = environment())
+      }
+    }
 
     # set defaults to surpass validation
     if (identical(id, S7::class_missing))               id             <- NA_real_
@@ -138,17 +126,14 @@ Distribution <- S7::new_class(
     if (identical(stat_server_flag, S7::class_missing)) stat_server_flag <- NA
     if (identical(zh_web_flag, S7::class_missing))      zh_web_flag    <- NA
     if (identical(ogd_flag, S7::class_missing))         ogd_flag       <- NA
-    if (identical(sort_order, S7::class_missing))       sort_order     <- NA_real_
     if (identical(description, S7::class_missing))      description    <- NA_character_
     if (identical(access_url, S7::class_missing))       access_url     <- NA_character_
-    if (identical(right, S7::class_missing))            right          <- NA_character_
     if (identical(byte_size, S7::class_missing))        byte_size      <- NA_real_
     if (identical(status_id, S7::class_missing))        status_id      <- NA_real_
     if (identical(license_id, S7::class_missing))       license_id     <- NA_real_
-    if (identical(format_id, S7::class_missing))        format_id      <- NA_real_
-    if (identical(media_type_id, S7::class_missing))    media_type_id  <- NA_real_
+    if (identical(file_format_id, S7::class_missing))   file_format_id <- NA_real_
     if (identical(periodicity_id, S7::class_missing))   periodicity_id <- NA_real_
-    if (identical(file_upload_id, S7::class_missing))   file_upload_id <- NA_character_
+    if (identical(file_upload_id, S7::class_missing))   file_upload_id <- NA_real_
 
 
     S7::new_object(S7::S7_object(),
@@ -158,18 +143,13 @@ Distribution <- S7::new_class(
       stat_server_flag = stat_server_flag,
       zh_web_flag = zh_web_flag,
       ogd_flag = ogd_flag,
-      sort_order = sort_order,
       description = description,
       access_url = access_url,
-      right = right,
       byte_size = byte_size,
-      status_id = convert_statuses_to_id(status_id),
+      status_id = status_id,
       license_id = license_id,
-      format_id = convert_formats_to_id(format_id),
-      media_type_id = media_type_id,
-      periodicity_id = convert_periodicities_to_id(periodicity_id)
-
-      ,
+      file_format_id = file_format_id,
+      periodicity_id = periodicity_id,
       file_upload_id = file_upload_id
     )
   }
