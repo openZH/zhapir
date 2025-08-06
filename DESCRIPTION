@@ -21,6 +21,7 @@ Imports:
     curl,
     tibble
 Collate:
+    'api-helpers.R'
     'helpers.R'
     'validators.R'
     'properties.R'
@@ -28,6 +29,7 @@ Collate:
     'dataset.R'
     'distribution.R'
     'generics.R'
+    'set_status.R'
     'create.R'
     'update.R'
     'create_file.R'
