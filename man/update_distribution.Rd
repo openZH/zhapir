@@ -11,18 +11,16 @@ update_distribution(
   stat_server_flag = NULL,
   zh_web_flag = NULL,
   ogd_flag = NULL,
-  sort_order = NULL,
   access_url = NULL,
-  right = NULL,
   byte_size = NULL,
   status_id = NULL,
   license_id = NULL,
-  format_id = NULL,
+  file_format_id = NULL,
   dataset_id = NULL,
-  media_type_id = NULL,
   periodicity_id = NULL,
   file_path = NULL,
-  file_upload_id = NULL,
+  start_date = NULL,
+  end_date = NULL,
   api_key = NULL,
   verbosity = 0,
   use_dev = TRUE
@@ -41,11 +39,7 @@ update_distribution(
 
 \item{ogd_flag}{Logical; should the distribution be published on the OGD portal? (optional).}
 
-\item{sort_order}{Integer; optional custom sorting index.}
-
 \item{access_url}{Optional URL to access the distribution (must start with http:// or https://).}
-
-\item{right}{Optional usage rights description.}
 
 \item{byte_size}{Optional file size in bytes (must be a positive number).}
 
@@ -53,17 +47,17 @@ update_distribution(
 
 \item{license_id}{Optional license ID.}
 
-\item{format_id}{Optional file format ID.}
+\item{file_format_id}{Optional file format ID.}
 
 \item{dataset_id}{ID of the dataset to which this distribution belongs (optional).}
-
-\item{media_type_id}{Optional media type ID.}
 
 \item{periodicity_id}{Optional update frequency ID.}
 
 \item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
-\item{file_upload_id}{Optional ID of a previously uploaded file (overridden if file_path is used).}
+\item{start_date}{POSIXct or ISO datetime string; new start (optional)}
+
+\item{end_date}{POSIXct or ISO datetime string; new end (optional)}
 
 \item{api_key}{Optional API key; if not provided, the default environment variable is used.}
 
@@ -79,7 +73,9 @@ Update an existing distribution via API
 }
 \details{
 If \code{file_path} is provided, the file will be uploaded via a separate API call prior to updating the distribution.
-The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the update payload.
+The resulting \code{file_upload_id} and \code{file_format_id} will be automatically extracted and included in the update payload.
 
 If \code{status_id} is specified, it will be applied via a separate PATCH request after the distribution is updated.
+
+If \code{start_date} or \code{end_date} are provided, the dataset's overall timespan will be updated via \code{update_dataset()}.
 }

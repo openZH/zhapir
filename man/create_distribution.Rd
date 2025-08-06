@@ -10,18 +10,16 @@ create_distribution(
   stat_server_flag = NULL,
   zh_web_flag = NULL,
   ogd_flag = NULL,
-  sort_order = NULL,
   description = NULL,
   access_url = NULL,
-  right = NULL,
   byte_size = NULL,
   status_id = NULL,
   license_id = NULL,
-  format_id = NULL,
-  media_type_id = NULL,
+  file_format_id = NULL,
   periodicity_id = NULL,
   file_path = NULL,
-  file_upload_id = NULL,
+  start_date = NULL,
+  end_date = NULL,
   api_key = NULL,
   verbosity = 0,
   use_dev = TRUE
@@ -38,29 +36,25 @@ create_distribution(
 
 \item{ogd_flag}{Logical; should the distribution be published on the OGD portal? (optional).}
 
-\item{sort_order}{Integer; optional custom sorting index.}
-
 \item{description}{Optional free-text description.}
 
 \item{access_url}{Optional URL to access the distribution (must start with http:// or https://).}
 
-\item{right}{Optional usage rights description.}
-
 \item{byte_size}{Optional file size in bytes (must be a positive number).}
 
-\item{status_id}{Optional character; status ID (will be set via follow-up PATCH)}
+\item{status_id}{Optional character; status ID (will be set via follow-up PATCH).}
 
-\item{license_id}{Optional integer; license ID}
+\item{license_id}{Optional integer; license ID.}
 
-\item{format_id}{Optional file format ID.}
+\item{file_format_id}{Optional file format ID.}
 
-\item{media_type_id}{Optional media type ID.}
-
-\item{periodicity_id}{Optional character periodicity ID}
+\item{periodicity_id}{Optional character periodicity ID.}
 
 \item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
-\item{file_upload_id}{Optional ID of a previously uploaded file (overridden if file_path is used).}
+\item{start_date}{POSIXct or ISO datetime string; new start (optional)}
+
+\item{end_date}{POSIXct or ISO datetime string; new end (optional)}
 
 \item{api_key}{Optional API key; if not provided, the default environment variable is used.}
 
@@ -76,16 +70,19 @@ Create a new distribution via API
 }
 \details{
 If \code{file_path} is provided, the file will be uploaded via a separate API call prior to creating the distribution.
-The resulting \code{file_upload_id}, \code{format_id}, and \code{media_type_id} will be automatically extracted and included in the distribution payload.
+The resulting \code{file_upload_id} and \code{file_format_id} will be automatically extracted and included in the distribution payload.
 
 If \code{status_id} is specified, it will be applied via a follow-up PATCH request after the distribution is created,
 as the initial POST request does not accept a custom status.
+
+If \code{start_date} or \code{end_date} are provided, the dataset's overall timespan will be updated via \code{update_dataset()}.
+
 To assist in constructing valid queries, the following functions provide the
 set of acceptable values:
 \itemize{
 \item \code{get_statuses()}
-\item \verb{get_licenses())}
-\item \code{get_formates()}
+\item \code{get_licenses()}
+\item \code{get_formats()}
 \item \code{get_periodicities()}
 }
 
