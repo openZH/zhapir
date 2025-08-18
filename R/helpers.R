@@ -39,12 +39,11 @@ get_api_key <- function(key = NULL) {
   }
 
   # 3. Interactive prompt (last resort)
+  prompt_key <- ""  # create empty
   if (interactive()) {
-      prompt_key <- askpass::askpass("Please enter your ZHAPIR_API_KEY key")
-    }
-    if (nzchar(prompt_key)) {
-      return(prompt_key)
-    }
+    prompt_key <- askpass::askpass("Please enter your ZHAPIR_API_KEY key")
+  }
+  if (nzchar(prompt_key)) return(prompt_key)
 
   stop(
     "No API key found. Supply via argument or set ZHAPIR_API_KEY environment variable.",
