@@ -4,17 +4,21 @@ test_that("get_base_url returns correct endpoints", {
 })
 
 test_that("get_api_key uses explicit argument over env var", {
+  skip_if_not_e2e()
+
   withr::local_envvar(c(ZHAPIR_API_KEY = "FROM_ENV"))
   expect_equal(get_api_key("FROM_ARG"), "FROM_ARG")
 })
 
 test_that("get_api_key falls back to env var", {
+  skip_if_not_e2e()
+
   withr::local_envvar(c(ZHAPIR_API_KEY = "FROM_ENV"))
   expect_equal(get_api_key(NULL), "FROM_ENV")
 })
 
 test_that("get_api_key errors when neither arg nor env nor prompt are available", {
-  skip_if(interactive(), "This test is only reliable in non-interactive runs (CI).")
+  skip_if_not_e2e()
 
   withr::local_envvar(c(ZHAPIR_API_KEY = ""))
 
