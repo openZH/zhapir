@@ -18,6 +18,9 @@
 #' @param api_key           Optional API key; if not provided, the default environment variable is used.
 #' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev           Logical; whether to use the development API endpoint (default: TRUE).
+#' @param preview           Defines if it is a test run. If TRUE, the
+#'                          dataset-object is returned into the environment.
+#'                          Default = FALSE
 #'
 #' @details
 #' If `file_path` is provided, the file will be uploaded via a separate API call prior to creating the distribution.
@@ -58,7 +61,8 @@ create_distribution <- function(
     end_date         = NULL,
     api_key          = NULL,
     verbosity        = 0,
-    use_dev          = TRUE
+    use_dev          = TRUE,
+    preview          = FALSE
 ) {
   # Retrieve API key
   api_key <- get_api_key(api_key)
@@ -74,7 +78,7 @@ create_distribution <- function(
   }
 
   # If a file_path is provided, upload the file and extract IDs
-  if (!is.null(file_path)) {
+  if (!is.null(file_path) && preview == FALSE) {
     f <- create_file(file_path, api_key = api_key, use_dev = use_dev)
     file_upload_id <- f$id
     file_format_id <- f$file_format$id
@@ -104,6 +108,12 @@ create_distribution <- function(
     file_format_id   = file_format_id_api,
     periodicity_id   = periodicity_id_api
   )
+
+  # return early in a test run (preview = TRUE)
+  if (preview) {
+    return(dist)
+  }
+
   # Dispatch POST
   result <- create(dist, api_key, use_dev, verbosity = verbosity)
   # If a custom status was requested, apply it via follow-up PATCH
