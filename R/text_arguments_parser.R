@@ -101,7 +101,7 @@ convert_keywords_to_id <- function(name) {
 #'   # Filter by ID
 #'   get_datasets(10)
 #' }
-#' @export
+#'
 get_datasets <- function(input = NULL) {
   req <- api_request(
     method       = "GET",
@@ -401,6 +401,8 @@ label_switch <- function(label_col) {
     "licenses"            = c(error_noun = "licenses",            fun_name = "get_licenses()"),
     "file-formats"        = c(error_noun = "file formats",        fun_name = "get_formats()"),
     "datasets"            = c(error_noun = "datasets",            fun_name = "get_datasets()"),
+    "dataset"             = c(error_noun = "datasets",            fun_name = "get_datasets()"),  # ← add this
+
     stop("Unknown label column: ", label_col)
   )
 }
