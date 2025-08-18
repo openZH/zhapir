@@ -23,7 +23,8 @@ update_distribution(
   end_date = NULL,
   api_key = NULL,
   verbosity = 0,
-  use_dev = TRUE
+  use_dev = TRUE,
+  preview = FALSE
 )
 }
 \arguments{
@@ -64,6 +65,10 @@ update_distribution(
 \item{verbosity}{Integer; verbosity level passed to httr2::req_perform() (default: 0).}
 
 \item{use_dev}{Logical; whether to use the development API endpoint (default: TRUE).}
+
+\item{preview}{Defines if it is a test run. If TRUE, the
+dataset-object is returned into the environment.
+Default = FALSE}
 }
 \value{
 Invisibly returns the parsed API response as a list.
