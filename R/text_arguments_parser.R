@@ -338,16 +338,27 @@ get_id <- function(df, name, internal) {
   name_lower <- tolower(name)
   ids <- numeric(0)
   err <- label_switch(label_col)
+
   for (nm in name_lower) {
     tmp <- df |> dplyr::mutate(filter_col = tolower(!!label_col))
     filt <- tmp |> dplyr::filter(grepl(nm, filter_col))
     exact <- tmp |> dplyr::filter(filter_col == nm)
+
     if (internal) {
-      if (nrow(exact)==1) ids <- c(ids, exact$id)
-      else if (nrow(filt)==0) cli::cli_abort(c("!"=sprintf("%%s not valid", nm), ">"=sprintf("run %s", err["fun_name"])) )
-      else cli::cli_abort(c("!"=sprintf("no exact match for %s", nm), ">"=sprintf("run %s", err["fun_name"])) )
+      if (nrow(exact) == 1) {
+        ids <- c(ids, exact$id)
+      } else if (nrow(filt) == 0) {
+        cli::cli_abort(c("!" = sprintf("%s not valid", nm),
+                         ">" = sprintf("run %s", err["fun_name"])))
+      } else {
+        cli::cli_abort(c("!" = sprintf("no exact match for %s", nm),
+                         ">" = sprintf("run %s", err["fun_name"])))
+      }
     } else {
-      if (nrow(filt)==0) cli::cli_abort(c("!"=sprintf("%%s not valid", nm), ">"=sprintf("run %s", err["fun_name"])) )
+      if (nrow(filt) == 0) {
+        cli::cli_abort(c("!" = sprintf("%s not valid", nm),
+                         ">" = sprintf("run %s", err["fun_name"])))
+      }
       ids <- c(ids, filt$id)
     }
   }
@@ -357,11 +368,15 @@ get_id <- function(df, name, internal) {
 #' Convert ID(s) back to label(s)
 #' @keywords internal
 get_label <- function(df, id) {
-  label_col <- rlang::sym(names(df)[names(df)!="id"])
+  label_col <- rlang::sym(names(df)[names(df) != "id"])
   err <- label_switch(label_col)
+
   vapply(id, function(i) {
-    res <- df |> dplyr::filter(id==i) |> dplyr::pull(!!label_col)
-    if (!length(res)) cli::cli_abort(c("!"=sprintf("no entry for %%s", i), ">"=sprintf("run %s", err["fun_name"])) )
+    res <- df |> dplyr::filter(id == i) |> dplyr::pull(!!label_col)
+    if (!length(res)) {
+      cli::cli_abort(c("!" = sprintf("no entry for %s", i),
+                       ">" = sprintf("run %s", err["fun_name"])))
+    }
     res
   }, character(1))
 }
@@ -376,15 +391,16 @@ converter <- function(df, input, internal) {
 #' Map a label column to error context
 #' @keywords internal
 label_switch <- function(label_col) {
-  switch(as.character(label_col),
-         "keywords"="c(error_noun='keywords', fun_name='get_keywords()')",
-         "zh-web-datacatalogs"="c(error_noun='zh-web-catalog entries', fun_name='get_zh_web_catalog()')",
-         "themes"="c(error_noun='themes', fun_name='get_themes()')",
-         "periodicities"="c(error_noun='periodicities', fun_name='get_periodicities()')",
-         "statuses"="c(error_noun='statuses', fun_name='get_statuses()')",
-         "licenses"="c(error_noun='licenses', fun_name='get_licenses()')",
-         "file-formats"="c(error_noun='file formats', fun_name='get_formats()')",
-         "datasets"="c(error_noun='datasets', fun_name='get_datasets()')",
-         stop("Unknown label column: ", label_col)
+  switch(
+    as.character(label_col),
+    "keywords"            = c(error_noun = "keywords",            fun_name = "get_keywords()"),
+    "zh-web-datacatalogs" = c(error_noun = "zh-web-catalog entries", fun_name = "get_zh_web_catalog()"),
+    "themes"              = c(error_noun = "themes",              fun_name = "get_themes()"),
+    "periodicities"       = c(error_noun = "periodicities",       fun_name = "get_periodicities()"),
+    "statuses"            = c(error_noun = "statuses",            fun_name = "get_statuses()"),
+    "licenses"            = c(error_noun = "licenses",            fun_name = "get_licenses()"),
+    "file-formats"        = c(error_noun = "file formats",        fun_name = "get_formats()"),
+    "datasets"            = c(error_noun = "datasets",            fun_name = "get_datasets()"),
+    stop("Unknown label column: ", label_col)
   )
 }
