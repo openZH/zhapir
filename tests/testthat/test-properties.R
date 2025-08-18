@@ -1,63 +1,119 @@
-# test_that("the POSIXct property is correctly created", {
-#   posixct_property <- prop_posixct()
-#
-#   expect_equal(class(posixct_property), "S7_property")
-#   expect_equal(posixct_property$class$class, "POSIXct")
-#   expect_equal(posixct_property$default, as.POSIXct(NA))
-#
-#   posixct_property <- prop_posixct(default = as.POSIXct("2025-03-31", tz = "UTC"))
-#
-#   expect_equal(posixct_property$default, as.POSIXct("2025-03-31", tz = "UTC"))
-# })
-#
-#
-# test_that("the string property is correctly created", {
-#   string_property <- prop_string()
-#
-#   expect_equal(class(string_property), "S7_property")
-#   expect_equal(string_property$class$class, "character")
-#   expect_equal(string_property$default, NA_character_)
-#
-#   string_property <- prop_string(default = "test", validator = validate_email)
-#
-#   expect_equal(string_property$default, "test")
-#
-#   expect_true(!is.null(environment(string_property[["validator"]])[["validator"]]))
-# })
-#
-# test_that("the numeric property is correctly created", {
-#   numeric_property <- prop_numeric()
-#
-#   expect_equal(class(numeric_property), "S7_property")
-#   expect_equal(numeric_property$class$classes[[1]]$class, "integer")
-#   expect_equal(numeric_property$default, NA_real_)
-#
-#   numeric_property <- prop_numeric(default = 1, validator = validate_id)
-#
-#   expect_equal(numeric_property$default, 1)
-#   expect_true(!is.null(environment(numeric_property[["validator"]])[["validator"]]))
-# })
-#
-# test_that("the list property is correctly created", {
-#   list_property <- prop_list()
-#
-#   expect_equal(class(list_property), "S7_property")
-#   expect_equal(list_property$class$class, "list")
-#   expect_equal(list_property$default, list())
-#
-#   list_property <- prop_list(default = as.list(c(1,2,3)), validator = validate_natural_number_list)
-#
-#   expect_equal(list_property$default, as.list(c(1,2,3)))
-#   expect_true(!is.null(environment(list_property[["validator"]])[["validator"]]))
-# })
-#
-# test_that("the logical property is correctly created", {
-#   logical_property <- prop_logical()
-#
-#   expect_equal(class(logical_property), "S7_property")
-#   expect_equal(logical_property$class$class, "logical")
-#
-#   logical_property <- prop_logical(default = TRUE)
-#
-#   expect_equal(logical_property$default, TRUE)
-# })
+testthat::test_that("prop_date: type and defaults", {
+  p <- prop_date()
+  testthat::expect_s3_class(p, "S7_property")
+  testthat::expect_identical(p$class, S7::class_Date)
+
+  # default value is NA Date
+  testthat::expect_true(inherits(p$default, "Date"))
+  testthat::expect_true(is.na(p$default))
+
+  # custom default
+  d <- as.Date("2024-01-02")
+  p2 <- prop_date(default = d)
+  testthat::expect_identical(p2$default, d)
+
+  # validator is called (must return NULL on success)
+  calls <- 0L
+  validate_date_noop <- function(value) { calls <<- calls + 1L; NULL }
+  p3 <- prop_date(validator = validate_date_noop)
+
+  K <- S7::new_class("KDate", properties = list(x = p3))
+  k <- K()
+
+  # validator likely called once here for the default value
+  before <- calls
+
+  k@x <- as.Date("2024-02-29")
+  testthat::expect_identical(calls, before + 1L)
+})
+
+testthat::test_that("prop_string: type, defaults, validator with ...", {
+  p <- prop_string()
+  testthat::expect_s3_class(p, "S7_property")
+  testthat::expect_identical(p$class, S7::class_character)
+  testthat::expect_identical(p$default, NA_character_)
+
+  p2 <- prop_string(default = "abc")
+  testthat::expect_identical(p2$default, "abc")
+
+  # validator with ...: return NULL if ok, or a character message if invalid
+  min_len_validator <- function(value, min_nchar) {
+    if (!is.na(value) && nchar(value) < min_nchar) {
+      return("too short")
+    }
+    NULL
+  }
+  p3 <- prop_string(validator = min_len_validator, min_nchar = 3)
+
+  K <- S7::new_class("KStr", properties = list(x = p3))
+  k <- K()
+
+  k@x <- "hey"  # ok
+  testthat::expect_identical(k@x, "hey")
+
+  testthat::expect_error({ k@x <- "hi" }, "too short")
+})
+
+testthat::test_that("prop_numeric: type, defaults, validator with ...", {
+  p <- prop_numeric()
+  testthat::expect_s3_class(p, "S7_property")
+  testthat::expect_identical(p$class, S7::class_numeric)
+  testthat::expect_true(is.na(p$default))  # NA_real_
+
+  p2 <- prop_numeric(default = 1.5)
+  testthat::expect_identical(p2$default, 1.5)
+
+  range_validator <- function(value, min = -Inf, max = Inf) {
+    if (!is.na(value) && (value < min || value > max)) {
+      return("out of range")
+    }
+    NULL
+  }
+  p3 <- prop_numeric(validator = range_validator, min = 0, max = 10)
+
+  K <- S7::new_class("KNum", properties = list(x = p3))
+  k <- K()
+
+  k@x <- 3
+  testthat::expect_identical(k@x, 3)
+
+  testthat::expect_error({ k@x <- -1 }, "out of range")
+  testthat::expect_error({ k@x <- 11 }, "out of range")
+})
+
+testthat::test_that("prop_list: type, defaults, validator", {
+  p <- prop_list()
+  testthat::expect_s3_class(p, "S7_property")
+  testthat::expect_identical(p$class, S7::class_list)
+  testthat::expect_identical(p$default, list())
+
+  p2 <- prop_list(default = list(a = 1))
+  testthat::expect_identical(p2$default, list(a = 1))
+
+  list_len_validator <- function(value) {
+    if (length(value) < 2) return("list too short")
+    NULL
+  }
+
+  # ✅ Make the default pass the validator
+  p3 <- prop_list(default = list(1, 2), validator = list_len_validator)
+
+  K <- S7::new_class("KList", properties = list(x = p3))
+  k <- K()
+
+  # Now we can test failing assignment and passing assignment
+  testthat::expect_error({ k@x <- list(1) }, "list too short")
+  k@x <- list(1, 2)
+  testthat::expect_identical(k@x, list(1, 2))
+})
+
+testthat::test_that("prop_logical: type and defaults", {
+  p <- prop_logical()
+  testthat::expect_s3_class(p, "S7_property")
+  testthat::expect_identical(p$class, S7::class_logical)
+  testthat::expect_true(is.na(p$default))
+
+  p2 <- prop_logical(default = TRUE)
+  testthat::expect_identical(p2$default, TRUE)
+})
+
