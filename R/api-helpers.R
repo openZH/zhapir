@@ -108,13 +108,20 @@ api_request_wrapper <- function(
         # parse the JSON body
         body <- tryCatch(httr2::resp_body_json(e$resp), error = function(e2) NULL)
         if (!is.null(body$errors)) {
-          # concatenate all "detail" fields
-          details <- vapply(body$errors, `[[`, "", "detail")
+          details <- vapply(body$errors, function(err) {
+            det  <- err$detail %||% ""
+            attr <- err$attr   %||% NULL
+            if (!is.null(attr) && nzchar(attr)) {
+              sprintf("%s [attr: %s]", det, attr)
+            } else {
+              det
+            }
+          }, character(1))
           detailed <- paste(details, collapse = "; ")
         }
       }
 
-      cli::cli_alert_danger(
+      cli::cli_abort(
         "{.strong {object_label}} (ID {.val {id}}) {method}-Request failed ({code}): {detailed}"
       )
 
