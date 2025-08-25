@@ -20,6 +20,7 @@ create_distribution(
   file_path = NULL,
   start_date = NULL,
   end_date = NULL,
+  modified_next = NULL,
   api_key = NULL,
   verbosity = 0,
   use_dev = TRUE,
@@ -56,6 +57,8 @@ create_distribution(
 \item{start_date}{POSIXct or ISO datetime string; new start (optional)}
 
 \item{end_date}{POSIXct or ISO datetime string; new end (optional)}
+
+\item{modified_next}{POSIXct or ISO datetime string; new next update of Dataset (optional)}
 
 \item{api_key}{Optional API key; if not provided, the default environment variable is used.}
 
