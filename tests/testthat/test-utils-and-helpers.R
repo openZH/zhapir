@@ -1,6 +1,6 @@
 test_that("get_base_url returns correct endpoints", {
-  expect_equal(get_base_url(TRUE),  "https://mdv-dev.nebula.statzh.ch")
-  expect_equal(get_base_url(FALSE), "https://mdv.nebula.statzh.ch")
+  expect_equal(get_base_url(TRUE),  "https://mdv-dev.nebula.statzh.ch/ogd/datenkatalog-verwaltung")
+  expect_equal(get_base_url(FALSE), "https://mdv.nebula.statzh.ch/ogd/datenkatalog-verwaltung")
 })
 
 test_that("get_api_key uses explicit argument over env var", {
