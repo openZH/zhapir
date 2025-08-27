@@ -184,6 +184,19 @@ B.:
 x befölkerung not valid
 • run get_themes()
 ```
+Folgende Argumente akzeptieren Labels und IDs:
+- keywords_ids
+- zh_web_datacatalog_ids
+- theme_ids
+- periodicity_id
+- status_id
+- license_id
+- file_format_id
+
+Folgende Argumente akzeptieren ausschliesslich IDs:
+
+Mit get_[...] 
+
 
 ## 🚫 Einschränkungen
 
