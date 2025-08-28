@@ -85,7 +85,7 @@ ds <- zhapir::create_dataset(
   organisation_id = 14,
   description     = "Automatisiert erstellt mit zhapir",
   contact_email   = "team@example.org",
-  theme_ids       = c("Energie", "Wirtschaft und Finanzen"),
+  theme_ids       = c("Bevölkerung"),
   periodicity_id  = "Jährlich",
   use_dev         = FALSE
 )
@@ -164,7 +164,7 @@ Viele Argumente akzeptieren **Labels** (z. B. `"Bevölkerung"`) oder
 ds1 <- zhapir::create_dataset(
   title           = "Per Label",
   organisation_id = 14,
-  theme_ids       = "Energie",
+  theme_ids       = "Bevölkerung",
   use_dev         = FALSE
 )
 
@@ -172,7 +172,7 @@ ds1 <- zhapir::create_dataset(
 ds2 <- zhapir::create_dataset(
   title           = "Per ID",
   organisation_id = 14,
-  theme_ids       = 42,
+  theme_ids       = 41,
   use_dev         = FALSE
 )
 ```
@@ -183,6 +183,35 @@ B.:
 ``` r
 x befölkerung not valid
 • run get_themes()
+```
+
+Folgende Argumente akzeptieren **Labels** und **IDs**:
+
+- `keyword_ids`
+- `zh_web_datacatalog_ids`
+- `theme_ids`
+- `periodicity_id`
+- `status_id`
+- `file_format_id`
+
+Folgende Argumente akzeptieren ausschliesslich IDs:
+
+- `organisation_id`
+- `dataset_id`
+- `license_id`
+
+Mit den `get_[Argument]`-Funktionen können die verfügbaren Labels sowie
+die dazugehörigen IDs aufgerufen werden, z.B. für `themes`:
+
+``` r
+# Finde alle `themes`
+zhapir::get_themes()
+
+# Finde alle `themes`, welche den den String "Verkehr" enthalten (können auch mehrere Strings sein)
+zhapir::get_themes("Verkehr")
+
+# Finde alle `themes`, welche die ID 41 enthalten (können auch mehrere IDs sein)
+zhapir::get_themes(41)
 ```
 
 ## 🚫 Einschränkungen
