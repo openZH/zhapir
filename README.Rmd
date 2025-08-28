@@ -206,6 +206,8 @@ zhapir::get_themes("Verkehr")
 zhapir::get_themes(41)
 ```
 
+> **Wichtig**: `get_organisations()` gibt ausschliesslich alle Organisationen zurück und erlaubt keine Strings oder ID als Input.
+
 
 ## 🚫 Einschränkungen
 
