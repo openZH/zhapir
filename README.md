@@ -184,6 +184,31 @@ B.:
 x befölkerung not valid
 • run get_themes()
 ```
+Folgende Argumente akzeptieren **Labels** und **IDs**:
+- `keywords_ids`
+- `zh_web_datacatalog_ids`
+- `theme_ids`
+- `periodicity_id`
+- `status_id`
+- `license_id`
+- `file_format_id`
+
+Folgende Argumente akzeptieren ausschliesslich IDs:
+- `organisation_id`
+- `dataset_id`
+
+Mit den `get_[Argument]`-Funktionen können die verfügbaren Labels sowie die dazugehörigen IDs aufgerufen werden, z.B. für `themes`:
+```r
+# Finde alle `themes`
+get_themes()
+
+# Finde alle `themes`, welche den den String "Verkehr" enthalten (können auch mehrere Strings sein)
+get_themes("Verkehr")
+
+# Finde alle `themes`, welche die ID 41 enthalten (können auch mehrere IDs sein)
+get_themes(41)
+```
+
 
 Folgende Argumente akzeptieren **Labels** und **IDs**:
 
