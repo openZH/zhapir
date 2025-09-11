@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 📦 zhapir
+# 📦 zhapir <a href="https://github.com/openZH/zhapir"><img src="man/figures/zhapir_hex.png" align="right" height="138" alt="zhapir Hex-Sticker" /></a>
 
 <!-- badges: start -->
 
@@ -16,6 +16,9 @@ kantonalen *Metadatenverwaltung (MDV)*.
 Damit können Inhalte für [zh.ch/opendata](https://zh.ch/opendata) und
 [opendata.swiss](https://opendata.swiss) effizient gepflegt werden.
 
+👉 Für detaillierte Workflows siehe die Vignette:  
+
+`vignette("best_practices", package = "zhapir")`
 
 ## 🚀 Installation
 
