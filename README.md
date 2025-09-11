@@ -16,10 +16,6 @@ kantonalen *Metadatenverwaltung (MDV)*.
 Damit können Inhalte für [zh.ch/opendata](https://zh.ch/opendata) und
 [opendata.swiss](https://opendata.swiss) effizient gepflegt werden.
 
-👉 Für detaillierte Workflows siehe die Vignette:  
-
-`vignette("best_practices", package = "zhapir")`
-
 ## 🚀 Installation
 
 Das Paket wird über GitHub installiert:
