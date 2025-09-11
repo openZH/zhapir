@@ -1,10 +1,11 @@
-test_that("E2E: status change fails when ogd_flag is missing", {
+test_that("E2E: distribution cannot exceed dataset status", {
   skip_if_not_e2e()
 
-  ds <- create_dataset(
-    title           = paste0("E2E DS no OGD ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+  # Datensatz anlegen (bleibt im Default-Status, z. B. 'Entwurf')
+  ds <- zhapir::create_dataset(
+    title           = paste0("E2E DS baseline ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
     organisation_id = 14,
-    description     = "Intentionally missing ogd_flag for dist status test",
+    description     = "Negative test: distribution status > dataset status",
     contact_email   = "team@example.org",
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
@@ -12,20 +13,24 @@ test_that("E2E: status change fails when ogd_flag is missing", {
   )
   ds_id <- ds$id
 
+  # Datei vorbereiten
   tf <- tempfile(fileext = ".csv")
   on.exit(unlink(tf, force = TRUE), add = TRUE)
-  write.csv(data.frame(a = 1:3), tf, row.names = FALSE)
+  utils::write.csv(data.frame(a = 1:3), tf, row.names = FALSE)
 
-  expect_error(
-    create_distribution(
-      title          = paste0("Dist no OGD ", format(Sys.time(), "%H:%M:%S")),
-      dataset_id     = ds$id,
+  # Distribution sofort höher einstufen (z. B. 'Publiziert' = 2),
+  # obwohl der Datensatz niedriger ist -> MUSS fehlschlagen.
+  testthat::expect_error(
+    zhapir::create_distribution(
+      title          = paste0("E2E Dist > DS ", format(Sys.time(), "%H:%M:%S")),
+      dataset_id     = ds_id,
       file_path      = tf,
       license_id     = 1,
       file_format_id = "CSV",
-      status_id      = 2   # triggers set_status() internally
+      status_id      = 2
     ),
-    regexp = "(?i)Request failed \\(400\\).*ogd_flag|zwingend erforderlich|required"
+    # Gruppiert, case-insensitive. Deckt alte und neue Backend-Message ab.
+    regexp = "(?i)(Request failed \\(400\\).*(ogd_flag|zwingend erforderlich|required|Status der Distribution darf nicht .* gesetzt werden als ihr Datensatz))"
   )
 })
 

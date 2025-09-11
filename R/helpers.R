@@ -6,9 +6,9 @@
 #' @keywords internal
 get_base_url <- function(use_dev = FALSE) {
   if (use_dev) {
-    return("https://mdv-dev.nebula.statzh.ch")
+    return("https://mdv-dev.nebula.statzh.ch/ogd/datenkatalog-verwaltung")
   } else {
-    return("https://mdv.nebula.statzh.ch")
+    return("https://mdv.nebula.statzh.ch/ogd/datenkatalog-verwaltung")
   }
 }
 

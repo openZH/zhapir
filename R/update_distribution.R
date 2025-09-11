@@ -14,8 +14,9 @@
 #' @param file_format_id    Optional file format ID.
 #' @param periodicity_id    Optional update frequency ID.
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.
-#' @param start_date        POSIXct or ISO datetime string; new start (optional)
-#' @param end_date          POSIXct or ISO datetime string; new end (optional)
+#' @param start_date        POSIXct or ISO datetime string; new start of Dataset(optional)
+#' @param end_date          POSIXct or ISO datetime string; new end of Dataset (optional)
+#' @param modified_next     POSIXct or ISO datetime string; new next update of Dataset (optional)
 #' @param api_key           Optional API key; if not provided, the default environment variable is used.
 #' @param verbosity         Integer; verbosity level passed to httr2::req_perform() (default: 0).
 #' @param use_dev           Logical; whether to use the development API endpoint (default: TRUE).
@@ -51,6 +52,7 @@ update_distribution <- function(
     file_path         = NULL,
     start_date        = NULL,
     end_date          = NULL,
+    modified_next     = NULL,
     api_key           = NULL,
     verbosity         = 0,
     use_dev           = TRUE,
@@ -112,13 +114,13 @@ update_distribution <- function(
       verbosity = verbosity
     )
   }
-
-  # If a new start / end date is supplied, apply it via follow-up PATCH to the Dataset
-  if (!is.null(start_date) || !is.null(end_date)) {
+  # If a new start / end date / modified next is supplied, apply it via follow-up PATCH to the Dataset
+  if (!is.null(start_date) || !is.null(end_date) || !is.null(modified_next)) {
     update_dataset(
-      id         = dataset_id,
+      id         = result$dataset$id,
       start_date = start_date,
       end_date   = end_date,
+      modified_next = modified_next,
       api_key    = api_key,
       use_dev    = use_dev,
       verbosity  = verbosity
