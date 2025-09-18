@@ -1,20 +1,52 @@
 Package: zhapir
-Title: Wrapper around the API of the Datacatalogue of the cantonal administration.
-Version: 0.0.0.9000
-Authors@R: 
-    person("Philipp", "Bosch", , "philipp.bosch@zh.ch", role = c("aut", "cre")
+Title: Wrapper around the API of the Datacatalogue of the cantonal administration
+Version: 0.9.0.0
+Authors@R: c(
+    person("Philipp", "Bosch", , "philipp.bosch@statistik.ji.zh.ch", role = c("aut", "cre")),
+    person("Tabea", "Eggler", , "tabea.eggler@statistik.ji.zh.ch", role = "aut"),
+    person("Thomas", "Knecht", , "thomas.knecht@statistik.ji.zh.ch", role = "aut")
+    )
 Description: Interact with the API of the Datacatalogue of the cantonal administration.
     Allows the creation and updates of Datasets & Distributions as well as the upload of 
     files to distributions.
-License: MIT + file LICENSE
+License: MIT
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
     S7,
     httr2,
-    jsonlite,
     askpass,
-    rlang (>= 1.0.0),
     purrr,
-    cli
+    cli,
+    dplyr,
+    rlang,
+    curl,
+    tibble
+Collate:
+    'api-helpers.R'
+    'helpers.R'
+    'validators.R'
+    'properties.R'
+    'file_upload.R'
+    'dataset.R'
+    'distribution.R'
+    'generics.R'
+    'set_status.R'
+    'create.R'
+    'update.R'
+    'create_file.R'
+    'create_dataset.R'
+    'create_distribution.R'
+    'rrexport-rlang.R'
+    'text_arguments_parser.R'
+    'update_dataset.R'
+    'update_distribution.R'
+    'zzz.R'
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    withr
+Config/testthat/edition: 3
+VignetteBuilder: knitr

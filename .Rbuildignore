@@ -1,3 +1,8 @@
 ^zhapir\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^\.github$
+playground.R
+^README\.Rmd$
+^doc$
+^Meta$

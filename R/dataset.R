@@ -1,0 +1,163 @@
+#' Dataset
+#'
+#' Create a new Dataset object for the MDV data catalog (DCAT standard).
+#'
+#' @param id                numeric; the dataset ID (server-generated; use `NA_real_` when creating)
+#' @param title             character; dataset title (required on create, <=1000 characters)
+#' @param organisation_id   numeric; organisation ID (required)
+#' @param description       character; dataset description (optional)
+#' @param contact_email     character; contact email (optional, must be a valid email)
+#' @param landing_page      character; landing page URL (optional, must start with http:// or https://)
+#' @param start_date        POSIXct or ISO datetime string; start of timeseries (optional)
+#' @param end_date          POSIXct or ISO datetime string; end of timeseries (optional)
+#' @param keyword_ids       character vector; keyword IDs (optional)
+#' @param zh_web_datacatalog_ids integer vector; ('Datenkollektionen' in the UI) (optional)
+#' @param modified_next     POSIXct or ISO datetime string; next modification timestamp (optional)
+#' @param relation_ids      integer vector; relation IDs (optional)
+#' @param see_also_ids      integer vector; see-also IDs (optional)
+#' @param theme_ids         character vector; theme IDs (optional)
+#' @param periodicity_id    character; periodicity ID (optional)
+#'
+#' @return An S7 `Dataset` object.
+#' @export
+Dataset <- S7::new_class(
+  "Dataset",
+  package = "zhapir",
+  properties = list(
+    # ID des Datasets (wird serverseitig generiert)
+    id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
+    ),
+
+    # Titel optional (wird nur bei Erstellung geprüft)
+    title = prop_string(
+      validator = validate_text
+    ),
+
+    # Organisation ID (required)
+    organisation_id = prop_numeric(
+      validator = validate_id,
+      allow_na = FALSE
+    ),
+
+    # Optionale Beschreibung und Kontakt
+    description = prop_string(
+      validator = validate_text,
+      max_length = 10000L
+    ),
+    contact_email = prop_string(
+      validator = validate_email
+    ),
+
+    # Weblink
+    landing_page = prop_string(
+      validator = validate_url
+    ),
+
+    # Zeitpunkte
+    start_date = prop_date(),
+    end_date = prop_date(),
+    modified_next = prop_date(),
+
+    # Relations- und Katalog-IDs
+    keyword_ids = prop_list(
+      validator = validate_natural_number_list
+    ),
+    zh_web_datacatalog_ids = prop_list(
+      validator = validate_natural_number_list
+    ),
+    relation_ids = prop_list(
+      validator = validate_natural_number_list
+    ),
+    see_also_ids = prop_list(
+      validator = validate_natural_number_list
+    ),
+    theme_ids = prop_list(
+      validator = validate_natural_number_list
+    ),
+
+    # Periodizität
+    periodicity_id = prop_numeric(
+      validator = validate_id,
+      allow_na = TRUE
+    )
+  ),
+  # Klasseneigene Validierung für Datum-Logik
+  validator = function(self) {
+    sd <- self@start_date
+    ed <- self@end_date
+    if (!is.na(sd) && !is.na(ed)) {
+      if (as.Date(sd) > as.Date(ed)) {
+        return(sprintf(
+          "end_date (%s) muss gleich oder nach start_date (%s) sein",
+          as.Date(ed),
+          as.Date(sd)
+        ))
+      }
+    }
+  },
+  constructor = function(
+      id = S7::class_missing,
+      title = S7::class_missing,
+      organisation_id = S7::class_missing,
+      description = S7::class_missing,
+      contact_email = S7::class_missing,
+      landing_page = S7::class_missing,
+      start_date = S7::class_missing,
+      end_date = S7::class_missing,
+      modified_next = S7::class_missing,
+      keyword_ids = S7::class_missing,
+      zh_web_datacatalog_ids = S7::class_missing,
+      relation_ids = S7::class_missing,
+      see_also_ids = S7::class_missing,
+      theme_ids = S7::class_missing,
+      periodicity_id = S7::class_missing) {
+
+
+    ## turn any explicit NULL into class_missing —
+    args <- as.list(environment())
+    for (nm in names(args)) {
+      if (is.null(args[[nm]])) {
+        assign(nm, S7::class_missing, envir = environment())
+      }
+    }
+
+    # Replace any S7_missing with actual defaults
+    if (identical(id, S7::class_missing))             id             <- NA_real_
+    if (identical(description, S7::class_missing))    description    <- NA_character_
+    if (identical(contact_email, S7::class_missing))  contact_email  <- NA_character_
+    if (identical(landing_page, S7::class_missing))   landing_page   <- NA_character_
+    if (identical(start_date, S7::class_missing))     start_date     <- as.Date(NA)
+    if (identical(end_date, S7::class_missing))       end_date       <- as.Date(NA)
+    if (identical(modified_next, S7::class_missing))  modified_next  <- as.Date(NA)
+    if (identical(keyword_ids, S7::class_missing))    keyword_ids    <- list()
+    if (identical(zh_web_datacatalog_ids, S7::class_missing)) zh_web_datacatalog_ids <- list()
+    if (identical(relation_ids, S7::class_missing))   relation_ids   <- list()
+    if (identical(see_also_ids, S7::class_missing))   see_also_ids   <- list()
+    if (identical(theme_ids, S7::class_missing))      theme_ids      <- list()
+    if (identical(periodicity_id, S7::class_missing)) periodicity_id <- NA_real_
+
+
+    S7::new_object(S7::S7_object(),
+      id = id,
+      title = title,
+      organisation_id = organisation_id,
+      description = description,
+      contact_email = contact_email,
+      landing_page = landing_page,
+      keyword_ids = to_list(keyword_ids),
+      zh_web_datacatalog_ids = to_list(zh_web_datacatalog_ids),
+      start_date = to_date(start_date),
+      end_date = to_date(end_date),
+      modified_next = to_date(modified_next),
+      relation_ids = to_list(relation_ids),
+      see_also_ids = to_list(see_also_ids),
+      theme_ids = to_list(theme_ids),
+      periodicity_id = periodicity_id
+    )
+  }
+)
+
+
+
