@@ -22,7 +22,7 @@ Das Paket wird über GitHub installiert:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("statistikZH/zhapir")
+remotes::install_github("openZH/zhapir")
 ```
 
 ## 🔑 API Key einrichten
