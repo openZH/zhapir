@@ -1,8 +1,11 @@
 Package: zhapir
 Title: Wrapper around the API of the Datacatalogue of the cantonal administration
-Version: 0.0.0.9000
-Authors@R: 
-    person("Philipp", "Bosch", , "philipp.bosch@zh.ch", role = c("aut", "cre"))
+Version: 0.9.0.0
+Authors@R: c(
+    person("Philipp", "Bosch", , "philipp.bosch@statistik.ji.zh.ch", role = c("aut", "cre")),
+    person("Tabea", "Eggler", , "tabea.eggler@statistik.ji.zh.ch", role = "aut"),
+    person("Thomas", "Knecht", , "thomas.knecht@statistik.ji.zh.ch", role = "aut")
+    )
 Description: Interact with the API of the Datacatalogue of the cantonal administration.
     Allows the creation and updates of Datasets & Distributions as well as the upload of 
     files to distributions.
