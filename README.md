@@ -81,7 +81,7 @@ ds <- zhapir::create_dataset(
   organisation_id = 14,
   description     = "Automatisiert erstellt mit zhapir",
   contact_email   = "team@example.org",
-  theme_ids       = c("Bevölkerung"),
+  theme_ids       = c("Verkehr"),
   periodicity_id  = "Jährlich",
   use_dev         = FALSE
 )
@@ -160,7 +160,7 @@ Viele Argumente akzeptieren **Labels** (z. B. `"Bevölkerung"`) oder
 ds1 <- zhapir::create_dataset(
   title           = "Per Label",
   organisation_id = 14,
-  theme_ids       = "Bevölkerung",
+  theme_ids       = "Verkehr",
   use_dev         = FALSE
 )
 
@@ -203,8 +203,8 @@ die dazugehörigen IDs aufgerufen werden, z.B. für `themes`:
 # Finde alle `themes`
 zhapir::get_themes()
 
-# Finde alle `themes`, welche den den String "Verkehr" enthalten (können auch mehrere Strings sein)
-zhapir::get_themes("Verkehr")
+# Finde alle `themes`, welche den den String "Bevölkerung" enthalten (können auch mehrere Strings sein)
+zhapir::get_themes("Bevölkerung")
 
 # Finde alle `themes`, welche die ID 41 enthalten (können auch mehrere IDs sein)
 zhapir::get_themes(41)
