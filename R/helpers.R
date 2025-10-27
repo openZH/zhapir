@@ -71,7 +71,7 @@ object_to_payload <- function(object) {
   fmt_date <- function(d) format(d, "%Y-%m-%d")
 
   # 2. Transform properties:
-  #    - POSIXct/Date → YYYY-MM-DD
+  #    - POSIXct/Date -> YYYY-MM-DD
   p <- purrr::map(p, function(x) {
     if (inherits(x, c("POSIXct", "Date"))) {
       # if no date at all or only NA, emit a single NA_character_
@@ -155,7 +155,7 @@ to_date <- function(x) {
 
 to_list <- function(vec_var) {
   if (!inherits(vec_var, "S7_missing")) {
-    # c(42) → list(42); c(1,2,3) → list(1,2,3)
+    # c(42) -> list(42); c(1,2,3) -> list(1,2,3)
     as.list(vec_var)
   } else {
     S7::class_missing
@@ -199,9 +199,9 @@ dataset_is_valid_for_status <- function(
   errs <- resp$errors %||% list()
 
   if (is_valid) {
-    cli::cli_alert_success("Dataset ID {.val {id}} ist {cli::col_green('valid')} für den nächsten Status.")
+    cli::cli_alert_success("Dataset ID {.val {id}} ist {cli::col_green('valid')} fuer den naechsten Status.")
   } else {
-    cli::cli_alert_warning("Dataset ID {.val {id}} ist {cli::col_yellow('nicht valid')} für den nächsten Status. Das Dataset wurde angelegt, kann aber so nicht veröffentlicht werden.")
+    cli::cli_alert_warning("Dataset ID {.val {id}} ist {cli::col_yellow('nicht valid')} fuer den naechsten Status. Das Dataset wurde angelegt, kann aber so nicht veroeffentlicht werden.")
 
     if (length(errs) > 0) {
       cli::cli_h2("Fehlerdetails:")
@@ -226,7 +226,7 @@ dataset_is_valid_for_status <- function(
     }
 
     if (isTRUE(fail_on_invalid)) {
-      cli::cli_abort("Servervalidierung fehlgeschlagen – Statuswechsel nicht möglich.")
+      cli::cli_abort("Servervalidierung fehlgeschlagen - Statuswechsel nicht moeglich.")
     }
   }
 
