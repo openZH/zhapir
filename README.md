@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# 📦 zhapir <a href="https://github.com/openZH/zhapir"><img src="man/figures/zhapir_hex.png" align="right" height="138" alt="zhapir Hex-Sticker" /></a>
+# 📦 zhapir <a href="https://github.com/openZH/zhapir"><img src="man/figures/zhapir_hex.png" alt="zhapir Hex-Sticker" align="right" height="138"/></a>
 
 <!-- badges: start -->
 
@@ -83,6 +83,7 @@ ds <- zhapir::create_dataset(
   contact_email   = "team@example.org",
   theme_ids       = c("Verkehr"),
   periodicity_id  = "Jährlich",
+  start_date = "2020-01-01", # 🟢 Startdatum ist für Veröffentlichung erforderlich
   use_dev         = FALSE
 )
 ```
@@ -98,6 +99,11 @@ aber vollständig über die API/R erledigen.
 hier, um mit der ID eines Datensatzes oder einer Distribution
 weiterzuarbeiten.
 
+🟢 Nach dem Erstellen oder Aktualisieren prüft `zhapir` automatisch, ob
+der Datensatz valid für den nächsten Status ist (z. B. ob Pflichtfelder
+wie `start_date` oder `keywords` gesetzt sind). Fehlende Felder werden
+im CLI mit entsprechenden Hinweisen ausgegeben.
+
 ### Distribution hinzufügen
 
 ``` r
@@ -112,9 +118,17 @@ dist <- zhapir::create_distribution(
   file_path   = tmpfile,
   ogd_flag    = TRUE,
   zh_web_flag = TRUE,
+  license_id = 1, # 🟢 Lizenz-ID (siehe unten)
   use_dev     = FALSE
 )
 ```
+
+🟢 Lizenztypen (license_id)
+
+| ID | Bedeutung | Entspricht |
+|----|----|----|
+| 1 | kommerzielle & nicht-kommerzielle Nutzung **mit Quellenangabe** | ≈ CC BY 4.0 |
+| 2 | kommerzielle & nicht-kommerzielle Nutzung **ohne Quellenangabe** | ≈ CC0 1.0 Public Domain |
 
 👉 **Kniff:** Über `update_distribution()` kannst du auch **Parameter
 auf Dataset-Ebene** anpassen, ohne separat `update_dataset()` aufzurufen

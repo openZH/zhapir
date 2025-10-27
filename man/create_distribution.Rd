@@ -46,7 +46,8 @@ create_distribution(
 
 \item{status_id}{Optional character; status ID (will be set via follow-up PATCH).}
 
-\item{license_id}{Optional integer; license ID.}
+\item{license_id}{integer; license ID.
+Use \code{1} = "CC BY 4.0 (Attribution required)" or \code{2} = "CC0 (No attribution required)".}
 
 \item{file_format_id}{Optional file format ID.}
 
