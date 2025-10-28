@@ -71,7 +71,7 @@ object_to_payload <- function(object) {
   fmt_date <- function(d) format(d, "%Y-%m-%d")
 
   # 2. Transform properties:
-  #    - POSIXct/Date → YYYY-MM-DD
+  #    - POSIXct/Date -> YYYY-MM-DD
   p <- purrr::map(p, function(x) {
     if (inherits(x, c("POSIXct", "Date"))) {
       # if no date at all or only NA, emit a single NA_character_
@@ -155,10 +155,81 @@ to_date <- function(x) {
 
 to_list <- function(vec_var) {
   if (!inherits(vec_var, "S7_missing")) {
-    # c(42) → list(42); c(1,2,3) → list(1,2,3)
+    # c(42) -> list(42); c(1,2,3) -> list(1,2,3)
     as.list(vec_var)
   } else {
     S7::class_missing
   }
+}
+
+
+
+#' Check if a dataset is valid for the next status (generic handling)
+#'
+#' @param id integer; dataset ID
+#' @param api_key API key (optional; falls back to env var)
+#' @param use_dev logical; use dev environment
+#' @param verbosity integer; passed to httr2::req_perform()
+#' @param fail_on_invalid logical; abort if server says not valid (default TRUE)
+#' @return Invisibly returns parsed response list (type, errors, is_valid, can_delete, next_status)
+#' @export
+dataset_is_valid_for_status <- function(
+    id,
+    api_key = NULL,
+    use_dev = TRUE,
+    verbosity = 0,
+    fail_on_invalid = TRUE
+) {
+  endpoint <- sprintf("/api/v1/datasets/%s/is-valid-for-status", as.integer(id))
+
+  api_key <- get_api_key(api_key)
+
+
+  resp <- api_request(
+    method = "GET",
+    endpoint = endpoint,
+    object = NULL,                 # kein Payload
+    object_label = "Dataset Validation",
+    api_key = api_key,
+    verbosity = verbosity,
+    use_dev = use_dev
+  )
+
+  is_valid <- isTRUE(resp$is_valid)
+  errs <- resp$errors %||% list()
+
+  if (is_valid) {
+    cli::cli_alert_success("Dataset ID {.val {id}} ist {cli::col_green('valid')} fuer den naechsten Status.")
+  } else {
+    cli::cli_alert_warning("Dataset ID {.val {id}} ist {cli::col_yellow('nicht valid')} fuer den naechsten Status. Das Dataset wurde angelegt, kann aber so nicht veroeffentlicht werden.")
+
+    if (length(errs) > 0) {
+      cli::cli_h2("Fehlerdetails:")
+      for (e in errs) {
+        code <- e$code   %||% ""
+        attr <- e$attr   %||% ""
+        det  <- e$detail %||% ""
+
+        # Formatting
+        if (nzchar(attr) && nzchar(code)) {
+          cli::cli_bullets(c("x" = "{det} [{cli::col_silver(code)} @ {cli::col_cyan(attr)}]"))
+        } else if (nzchar(attr)) {
+          cli::cli_bullets(c("x" = "{det} [@ {cli::col_cyan(attr)}]"))
+        } else if (nzchar(code)) {
+          cli::cli_bullets(c("x" = "{det} [{cli::col_silver(code)}]"))
+        } else {
+          cli::cli_bullets(c("x" = "{det}"))
+        }
+      }
+    } else {
+      cli::cli_bullets(c("x" = "Server lieferte keine Fehlerdetails."))
+    }
+
+    if (isTRUE(fail_on_invalid)) {
+      cli::cli_abort("Servervalidierung fehlgeschlagen - Statuswechsel nicht moeglich.")
+    }
+  }
+
+  invisible(resp)
 }
 

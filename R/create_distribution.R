@@ -9,7 +9,8 @@
 #' @param access_url        Optional URL to access the distribution (must start with http:// or https://).
 #' @param byte_size         Optional file size in bytes (must be a positive number).
 #' @param status_id         Optional character; status ID (will be set via follow-up PATCH).
-#' @param license_id        Optional integer; license ID.
+#' @param license_id        integer; license ID.
+#' Use `1` = "CC BY 4.0 (Attribution required)" or `2` = "CC0 (No attribution required)".
 #' @param file_format_id    Optional file format ID.
 #' @param periodicity_id    Optional character periodicity ID.
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.

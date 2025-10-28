@@ -94,7 +94,25 @@ update_dataset <- function(
 
   # Dispatch the update method
   if (!preview) {
-    update(ds, api_key, use_dev, verbosity = verbosity)
+
+    # collect response
+    resp <- update(ds, api_key, use_dev, verbosity = verbosity)
+
+    # extract ID from response
+    id <- resp$id
+
+    # ---- run post-create validation check ----
+    dataset_is_valid_for_status(
+      id,
+      api_key = api_key,
+      use_dev = use_dev,
+      verbosity = verbosity,
+      fail_on_invalid = FALSE
+    )
+
+  invisible(resp)
+
+
   } else {
     return(ds)
   }

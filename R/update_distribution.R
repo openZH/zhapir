@@ -11,6 +11,7 @@
 #' @param byte_size         Optional file size in bytes (must be a positive number).
 #' @param status_id         Optional status ID (applied via PATCH after update).
 #' @param license_id        Optional license ID.
+#' Use `1` = "CC BY 4.0 (Attribution required)" or `2` = "CC0 (No attribution required)".
 #' @param file_format_id    Optional file format ID.
 #' @param periodicity_id    Optional update frequency ID.
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.

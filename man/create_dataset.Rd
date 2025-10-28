@@ -36,7 +36,7 @@ create_dataset(
 
 \item{landing_page}{Optional landing page URL}
 
-\item{start_date}{Optional ISO datetime string or POSIXct}
+\item{start_date}{ISO datetime string or POSIXct}
 
 \item{end_date}{Optional ISO datetime string or POSIXct}
 
