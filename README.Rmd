@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# 📦 zhapir <a href="https://github.com/openZH/zhapir"><img src="man/figures/zhapir_hex.png" align="right" height="138" alt="zhapir Hex-Sticker" /></a>
+# 📦 zhapir <a href="https://github.com/openZH/zhapir"><img src="man/figures/zhapir_hex.png" alt="zhapir Hex-Sticker" align="right" height="138"/></a>
 
 <!-- badges: start -->
 
@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 **zhapir** ist ein R-Paket für die automatisierte Erstellung und Aktualisierung von **Datensätzen** und **Distributionen** in der kantonalen *Metadatenverwaltung (MDV)*.\
 
 Damit können Inhalte für [zh.ch/opendata](https://zh.ch/opendata) und [opendata.swiss](https://opendata.swiss) effizient gepflegt werden.
-
 
 ## 🚀 Installation
 
@@ -87,6 +86,7 @@ ds <- zhapir::create_dataset(
   contact_email   = "team@example.org",
   theme_ids       = c("Verkehr"),
   periodicity_id  = "Jährlich",
+  start_date = "2020-01-01", # 🟢 Startdatum ist für Veröffentlichung erforderlich
   use_dev         = FALSE
 )
 ```
@@ -95,6 +95,8 @@ ds <- zhapir::create_dataset(
 Eine Publikation ist nur über die grafische Oberfläche möglich und erfolgt immer erst nach der Prüfung durch die Data Guides. Neue Distributionen anlegen oder bestehende Distributionen updaten lässt sich aber vollständig über die API/R erledigen.
 
 ℹ️ Es ist nicht notwendig das Ergebnis der Funktionen (z.B. `zhapir::create_distribution()`) per `<-` zuzuweisen. Wir nutzen dies hier, um mit der ID eines Datensatzes oder einer Distribution weiterzuarbeiten.
+
+🟢 Nach dem Erstellen oder Aktualisieren prüft `zhapir` automatisch, ob der Datensatz valid für den nächsten Status ist (z. B. ob Pflichtfelder wie `start_date` oder `keywords` gesetzt sind). Fehlende Felder werden im CLI mit entsprechenden Hinweisen ausgegeben.
 
 ### Distribution hinzufügen
 
@@ -110,9 +112,17 @@ dist <- zhapir::create_distribution(
   file_path   = tmpfile,
   ogd_flag    = TRUE,
   zh_web_flag = TRUE,
+  license_id = 1, # 🟢 Lizenz-ID (siehe unten)
   use_dev     = FALSE
 )
 ```
+
+🟢 Lizenztypen (license_id)
+
+| ID | Bedeutung | Entspricht |
+|-------------|---------------------------------------------|--------------|
+| 1 | kommerzielle & nicht-kommerzielle Nutzung **mit Quellenangabe** | ≈ CC BY 4.0 |
+| 2 | kommerzielle & nicht-kommerzielle Nutzung **ohne Quellenangabe** | ≈ CC0 1.0 Public Domain |
 
 👉 **Kniff:** Über `update_distribution()` kannst du auch **Parameter auf Dataset-Ebene** anpassen, ohne separat `update_dataset()` aufzurufen – z. B. `end_date` oder `modified_next`:
 

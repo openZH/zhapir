@@ -5,7 +5,7 @@
 #' @param description         Optional description string
 #' @param contact_email       Optional contact email
 #' @param landing_page        Optional landing page URL
-#' @param start_date          Optional ISO datetime string or POSIXct
+#' @param start_date          ISO datetime string or POSIXct
 #' @param end_date            Optional ISO datetime string or POSIXct
 #' @param modified_next       Optional ISO datetime string or POSIXct
 #' @param keyword_ids         Optional character vector
@@ -94,7 +94,24 @@ create_dataset <- function(
 
   # Dispatch create method
   if (!preview) {
-    create(ds, api_key, use_dev, verbosity = verbosity)
+
+    # collect response
+    resp <- create(ds, api_key, use_dev, verbosity = verbosity)
+
+    # extract ID from response
+    id <- resp$id
+
+    # ---- run post-create validation check ----
+    dataset_is_valid_for_status(
+        id,
+        api_key = api_key,
+        use_dev = use_dev,
+        verbosity = verbosity,
+        fail_on_invalid = FALSE
+      )
+
+  invisible(resp)
+
   } else {
     return(ds)
   }
