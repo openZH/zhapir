@@ -1,3 +1,12 @@
+testthat::local_mocked_bindings(
+  get_api_key = function(key = NULL) {
+    tok <- base::Sys.getenv("MDV_DEV_API_TOKEN_TEST")
+    if (!base::nzchar(tok)) base::stop("MDV_DEV_API_TOKEN_TEST not set")
+    tok
+  },
+  .package = "zhapir"
+)
+
 test_that("E2E: distribution cannot exceed dataset status", {
   skip_if_not_e2e()
 

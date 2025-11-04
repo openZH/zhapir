@@ -9,13 +9,13 @@ skip_if_not_e2e <- function() {
   }
 
   # Require key
-  if (!nzchar(Sys.getenv("ZHAPIR_API_KEY"))) {
+  if (!nzchar(Sys.getenv("MDV_DEV_API_TOKEN_TEST"))) {
     testthat::skip("ZHAPIR_API_KEY missing; cannot run end-to-end tests.")
   }
 }
 
 
 skip_if_no_api_key <- function() {
-  if (nzchar(Sys.getenv("ZHAPIR_API_KEY")) == FALSE)
+  if (nzchar(Sys.getenv("MDV_DEV_API_TOKEN_TEST")) == FALSE)
     skip("no ZHAPIR_API_KEY; skipping integration tests")
 }
