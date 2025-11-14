@@ -67,9 +67,18 @@ ds <- zhapir::create_dataset(
   title           = "Prod Datensatz",
   organisation_id = 14,
   description     = "In PROD erstellt",
-  use_dev         = FALSE   # 👉 PROD statt DEV
+  use_dev         = FALSE   # 👉 PROD statt DEV --> zeigt auf "https://dev.mdv.statistik.zh.ch"
 )
 ```
+
+> \[!NOTE\] Wenn mit dem DEV-Umgebung des MDV gearbeitet werden soll
+> (z.B. um Änderungen zu an Dataset/Distribution zu testen), muss der
+> DEV-API Key explizit mitgegeben werden. Wenn `api_key` leer gelassen
+> wird, versucht die Funktion im Hintergrund `ZHAPIR_API_KEY` aus dem
+> `.Renviron` zu lesen. Hier empfehlen wir den API-Key für die
+> Produktivumgebung abzulegen. DEV und PROD haben unterschiedliche
+> API-Keys. Dies führt zu einem Fehler, wenn `use_dev = FALSE` und der
+> PROD API-Key angezogen wird.
 
 ## ✨ Beispiele
 
