@@ -87,37 +87,153 @@ convert_keywords_to_id <- function(name) {
 #' Retrieves a tibble of datasets (title and id), with optional filtering.
 #'
 #' @param input Optional character vector of dataset titles or numeric IDs.
+#' @param use_dev Logical; if TRUE, use the development version of MDV.
+#' @param api_key Optional API key for MDV.
+#' @param page_size Integer; number of datasets per page requested from the API.
+#'   Defaults to 100.
+#' @param max_pages Integer; maximum number of pages to fetch (mainly for testing
+#'   or safety limits). Defaults to Inf (all pages).
+#'
 #' @return A tibble with columns:
 #'   - `dataset` (character): dataset title
-#'   - `id` (numeric): dataset ID
+#'   - `id`      (numeric):   dataset ID
 #' @examples
 #' \dontrun{
 #'   # All datasets
-#'   get_datasets()
+#'   zhapir::get_datasets()
 #'
 #'   # Filter by title
-#'   get_datasets("Hotels")
+#'   zhapir::get_datasets("Hotels")
 #'
 #'   # Filter by ID
-#'   get_datasets(10)
+#'   zhapir::get_datasets(10)
 #' }
-#'
-get_datasets <- function(input = NULL) {
-  req <- api_request(
+get_datasets <- function(
+    input     = NULL,
+    use_dev   = FALSE,
+    api_key   = NULL,
+    page_size = 100L,
+    max_pages = Inf
+) {
+
+  if (is.null(api_key)) {
+    api_key <- zhapir::get_api_key()
+  }
+
+  # --- Erste Seite holen, um total und items zu kennen -----------------------
+  page      <- 1L
+  endpoint1 <- sprintf("/api/v1/datasets?page=%d&pageSize=%d", page, page_size)
+
+  first <- zhapir:::api_request(
     method       = "GET",
-    endpoint     = "/api/v1/datasets",
-    api_key      = get_api_key(),
-    object_label = "Dataset"
+    endpoint     = endpoint1,
+    object       = NULL,
+    object_label = "Dataset list",
+    api_key      = api_key,
+    use_dev      = use_dev
   )
-  df <- purrr::map_df(req$items, function(x) {
-    tibble::tibble(
+
+  # Wenn gar nichts kommt -> leeres Tibble zurück
+  if (is.null(first$items) || length(first$items) == 0L) {
+    df <- tibble::tibble(
+      dataset = character(),
+      id      = integer()
+    )
+    if (!is.null(input)) {
+      df <- converter(df, input, internal = FALSE)
+    }
+    return(df)
+  }
+
+  # total aus dem Response lesen (API-spezifisch)
+  total <- first$total
+  if (is.null(total)) {
+    # Fallback: wenn aus irgendeinem Grund total fehlt,
+    # verhalten wir uns so, als wäre nur diese eine Seite vorhanden.
+    total <- length(first$items)
+  }
+
+  # Anzahl Seiten berechnen und mit max_pages begrenzen
+  n_pages <- ceiling(total / page_size)
+  n_pages <- min(n_pages, max_pages)
+
+  # --- Progress-Bar initialisieren (nur wenn mehr als 1 Seite) --------------
+
+  pb_id <- NULL
+  if (n_pages > 1L) {
+    pb_id <- cli::cli_progress_bar(
+      name  = sprintf("Fetching datasets (%d expected)", total),
+      total = n_pages
+    )
+  }
+
+  # --- erste Seite in Liste packen ------------------------------------------
+
+  all_pages <- list()
+
+  first_df <- purrr::map_dfr(
+    first$items,
+    \(x) tibble::tibble(
       dataset = x$title,
       id      = x$id
     )
-  })
+  )
+  all_pages[[1L]] <- first_df
+
+  if (!is.null(pb_id)) {
+    cli::cli_progress_update(id = pb_id, inc = 1L)
+  }
+
+  # --- weitere Seiten (2..n_pages) holen ------------------------------------
+
+  if (n_pages >= 2L) {
+    for (page in 2L:n_pages) {
+
+      endpoint <- sprintf(
+        "/api/v1/datasets?page=%d&pageSize=%d",
+        page, page_size
+      )
+
+      req <- zhapir:::api_request(
+        method       = "GET",
+        endpoint     = endpoint,
+        object       = NULL,
+        object_label = "Dataset list",
+        api_key      = api_key,
+        use_dev      = use_dev
+      )
+
+      if (is.null(req$items) || length(req$items) == 0L) {
+        break
+      }
+
+      page_df <- purrr::map_dfr(
+        req$items,
+        \(x) tibble::tibble(
+          dataset = x$title,
+          id      = x$id
+        )
+      )
+
+      all_pages[[length(all_pages) + 1L]] <- page_df
+
+      if (!is.null(pb_id)) {
+        cli::cli_progress_update(id = pb_id, inc = 1L)
+      }
+    }
+  }
+
+  if (!is.null(pb_id)) {
+    cli::cli_progress_done(id = pb_id)
+  }
+  # --- Seiten zusammenführen -------------------------------------------------
+
+  df <- dplyr::bind_rows(all_pages)
+
   if (!is.null(input)) {
     df <- converter(df, input, internal = FALSE)
   }
+
   df
 }
 
