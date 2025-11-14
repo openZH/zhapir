@@ -1,5 +1,6 @@
 test_that("create_distribution(preview=TRUE) returns a Distribution S7 object with correct slots", {
 
+
   dist <- create_distribution(
     title            = "Preview Dist",
     dataset_id       = 42,
@@ -16,6 +17,7 @@ test_that("create_distribution(preview=TRUE) returns a Distribution S7 object wi
     file_path        = "/tmp/should/not/upload.csv",
     start_date       = "2025-08-01",
     end_date         = "2025-08-31",
+    api_key = "PREVIEW",
     preview          = TRUE
   )
 
