@@ -3,6 +3,8 @@
 #' Retrieves a tibble of all organisations and their IDs. Optionally includes sub-units.
 #'
 #' @param show_organisation_units Logical; if TRUE, include sub-units.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with columns:
 #'   - `organisation_id` (numeric)
 #'   - `organisation` (character)
@@ -16,11 +18,13 @@
 #'   get_organisations(FALSE)
 #' }
 #' @export
-get_organisations <- function(show_organisation_units = TRUE) {
+get_organisations <- function(show_organisation_units = TRUE, use_dev = FALSE, api_key = NULL) {
+  if (is.null(api_key)) api_key <- get_api_key()
   req <- api_request(
     method       = "GET",
     endpoint     = "/api/v1/organisations",
-    api_key      = get_api_key(),
+    api_key      = api_key,
+    use_dev      = use_dev,
     object_label = "Organisation"
   )
 
@@ -49,6 +53,8 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #' Retrieves a tibble of all keywords and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of keyword names or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `keyword` (character): the keyword label
 #'   - `id` (numeric): the keyword ID
@@ -64,20 +70,20 @@ get_organisations <- function(show_organisation_units = TRUE) {
 #'   get_keywords(578)
 #' }
 #' @export
-get_keywords <- function(input = NULL) {
-  df <- req_to_df("keywords")
+get_keywords <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("keywords", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
-
 #' Convert keyword names to IDs
 #' @param name Character vector of keyword names.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return Numeric vector of IDs.
 #' @keywords internal
-convert_keywords_to_id <- function(name) {
+convert_keywords_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-
-  df <- get_keywords()
+  df <- get_keywords(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
@@ -87,6 +93,8 @@ convert_keywords_to_id <- function(name) {
 #' Retrieves a tibble of datasets (title and id), with optional filtering.
 #'
 #' @param input Optional character vector of dataset titles or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with columns:
 #'   - `dataset` (character): dataset title
 #'   - `id` (numeric): dataset ID
@@ -102,22 +110,19 @@ convert_keywords_to_id <- function(name) {
 #'   get_datasets(10)
 #' }
 #'
-get_datasets <- function(input = NULL) {
+get_datasets <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  if (is.null(api_key)) api_key <- get_api_key()
   req <- api_request(
     method       = "GET",
     endpoint     = "/api/v1/datasets",
-    api_key      = get_api_key(),
+    api_key      = api_key,
+    use_dev      = use_dev,
     object_label = "Dataset"
   )
   df <- purrr::map_df(req$items, function(x) {
-    tibble::tibble(
-      dataset = x$title,
-      id      = x$id
-    )
+    tibble::tibble(dataset = x$title, id = x$id)
   })
-  if (!is.null(input)) {
-    df <- converter(df, input, internal = FALSE)
-  }
+  if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
@@ -126,6 +131,8 @@ get_datasets <- function(input = NULL) {
 #' Retrieves a tibble of all zh-web-catalog entries and their IDs. Optionally filters by label or ID.
 #'
 #' @param input Optional character vector of catalog labels or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `zh_web_catalog` (character): the catalog label
 #'   - `id` (numeric): the catalog ID
@@ -141,17 +148,19 @@ get_datasets <- function(input = NULL) {
 #'   get_zh_web_catalog(13)
 #' }
 #' @export
-get_zh_web_catalog <- function(input = NULL) {
-  df <- req_to_df("zh-web-datacatalogs")
+get_zh_web_catalog <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("zh-web-datacatalogs", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert zh-web-catalog names to IDs
 #' @keywords keywords internal
-convert_zh_web_catalog_to_id <- function(name) {
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
+convert_zh_web_catalog_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_zh_web_catalog()
+  df <- get_zh_web_catalog(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
@@ -160,6 +169,8 @@ convert_zh_web_catalog_to_id <- function(name) {
 #' Retrieves a tibble of all themes and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of theme names or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `theme` (character): the theme label
 #'   - `id` (numeric): the theme ID
@@ -175,17 +186,19 @@ convert_zh_web_catalog_to_id <- function(name) {
 #'   get_themes(41)
 #' }
 #' @export
-get_themes <- function(input = NULL) {
-  df <- req_to_df("themes")
+get_themes <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("themes", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert theme names to IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords keywords internal
-convert_themes_to_id <- function(name) {
+convert_themes_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_themes()
+  df <- get_themes(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
@@ -194,6 +207,8 @@ convert_themes_to_id <- function(name) {
 #' Retrieves a tibble of all periodicities and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of periodicity names or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `periodicity` (character): the periodicity label
 #'   - `id` (numeric): the periodicity ID
@@ -209,17 +224,19 @@ convert_themes_to_id <- function(name) {
 #'   get_periodicities(42)
 #' }
 #' @export
-get_periodicities <- function(input = NULL) {
-  df <- req_to_df("periodicities")
+get_periodicities <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("periodicities", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert periodicity names to IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-convert_periodicities_to_id <- function(name) {
+convert_periodicities_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_periodicities()
+  df <- get_periodicities(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
@@ -229,6 +246,8 @@ convert_periodicities_to_id <- function(name) {
 #' Retrieves a tibble of all statuses and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of status names or numeric IDs.
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `status` (character): the status label
 #'   - `id` (numeric): the status ID
@@ -244,68 +263,68 @@ convert_periodicities_to_id <- function(name) {
 #'   get_statuses(3)
 #' }
 #' @export
-get_statuses <- function(input = NULL) {
-  df <- req_to_df("statuses")
+get_statuses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("statuses", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert status names to IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-convert_statuses_to_id <- function(name) {
+convert_statuses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_statuses()
+  df <- get_statuses(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
 #' Get All Licenses and Their IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-get_licenses <- function(input = NULL) {
-  df <- req_to_df("licenses")
+get_licenses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("licenses", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert license names to IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-convert_licenses_to_id <- function(name) {
+convert_licenses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_licenses()
+  df <- get_licenses(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
 #' Get All Formats and Their IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-get_formats <- function(input = NULL) {
-  df <- req_to_df("file-formats")
+get_formats <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
+  df <- req_to_df("file-formats", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
   df
 }
 
 #' Convert format names to IDs
+#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param api_key optional API key for MDV
 #' @keywords internal
-convert_formats_to_id <- function(name) {
+convert_formats_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) return(S7::class_missing)
-  df <- get_formats()
+  df <- get_formats(use_dev = use_dev, api_key = api_key)
   get_id(df, name, internal = TRUE)
 }
 
 #' Retrieve a Data Frame from API Endpoint
-#'
-#' Generic helper to fetch <endpoint> entries with labels and ids.
-#'
 #' @param endpoint One of: "keywords", "themes", etc.
-#' @return A tibble with columns `<endpoint>` and `id`.
+#' @param use_dev Logical; if TRUE, use the dev API base URL (default FALSE).
+#' @param api_key Optional API key; falls back to get_api_key().
 #' @keywords internal
-#' Retrieve a Data Frame from API Endpoint
-#'
-#' Generic helper to fetch <endpoint> entries with labels and ids.
-#'
-#' @param endpoint One of: "keywords", "themes", etc.
-#' @return A tibble with columns `<endpoint>` and `id`.
-#' @keywords internal
-req_to_df <- function(endpoint) {
-
+req_to_df <- function(endpoint, use_dev = FALSE, api_key = NULL) {
   label <- switch(
     endpoint,
     "keywords"            = "Keyword",
@@ -317,12 +336,18 @@ req_to_df <- function(endpoint) {
     "file-formats"        = "FileFormat",
     stop("Unknown endpoint: ", endpoint)
   )
+
+  if (is.null(api_key)) {
+    api_key <- get_api_key()
+  }
   req <- api_request(
     method       = "GET",
     endpoint     = paste0("/api/v1/", endpoint),
-    api_key      = get_api_key(),
+    api_key      = api_key,
+    use_dev      = use_dev,
     object_label = label
   )
+
   purrr::map_df(req, function(x) {
     tibble::tibble(
       !!endpoint := x$label,

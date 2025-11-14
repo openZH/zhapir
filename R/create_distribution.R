@@ -91,10 +91,10 @@ create_distribution <- function(
   }
 
   # Resolve all lookups up front
-  status_id_api      <- if (is.character(status_id))      convert_statuses_to_id(status_id)            else status_id
-  license_id_api     <- if (is.character(license_id))     convert_licenses_to_id(license_id)           else license_id
-  file_format_id_api <- if (is.character(file_format_id)) convert_formats_to_id(file_format_id)        else file_format_id
-  periodicity_id_api <- if (is.character(periodicity_id)) convert_periodicities_to_id(periodicity_id)  else periodicity_id
+  status_id_api      <- if (is.character(status_id))      convert_statuses_to_id(status_id, use_dev = use_dev, api_key = api_key)            else status_id
+  license_id_api     <- if (is.character(license_id))     convert_licenses_to_id(license_id, use_dev = use_dev, api_key = api_key)           else license_id
+  file_format_id_api <- if (is.character(file_format_id)) convert_formats_to_id(file_format_id, use_dev = use_dev, api_key = api_key)        else file_format_id
+  periodicity_id_api <- if (is.character(periodicity_id)) convert_periodicities_to_id(periodicity_id, use_dev = use_dev, api_key = api_key)  else periodicity_id
 
   # Build pure Distribution (no HTTP here)
   dist <- Distribution(
