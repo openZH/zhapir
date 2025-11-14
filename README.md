@@ -71,10 +71,11 @@ ds <- zhapir::create_dataset(
 )
 ```
 
-> [!NOTE] Wenn mit der DEV-Umgebung des MDV gearbeitet werden soll
-> (z.B. um Änderungen an Dataset/Distribution zu testen), muss der
-> DEV-API Key explizit mitgegeben werden. Wenn `api_key` leer gelassen
-> wird, versucht die Funktion im Hintergrund `ZHAPIR_API_KEY` aus dem
+> [!NOTE]
+> Wenn mit der DEV-Umgebung des MDV gearbeitet werden soll (z.B. um
+> Änderungen an Dataset/Distribution zu testen), muss der DEV-API Key
+> explizit mitgegeben werden. Wenn `api_key` leer gelassen wird,
+> versucht die Funktion im Hintergrund `ZHAPIR_API_KEY` aus dem
 > `.Renviron` zu lesen. Hier empfehlen wir den API-Key für die
 > Produktivumgebung abzulegen. DEV und PROD haben unterschiedliche
 > API-Keys. Dies führt zu einem Fehler, wenn `use_dev = TRUE` und der
