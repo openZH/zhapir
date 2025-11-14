@@ -4,7 +4,12 @@
 \alias{convert_zh_web_catalog_to_id}
 \title{Convert zh-web-catalog names to IDs}
 \usage{
-convert_zh_web_catalog_to_id(name)
+convert_zh_web_catalog_to_id(name, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Convert zh-web-catalog names to IDs

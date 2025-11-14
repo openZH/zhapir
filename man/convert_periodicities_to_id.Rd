@@ -4,7 +4,12 @@
 \alias{convert_periodicities_to_id}
 \title{Convert periodicity names to IDs}
 \usage{
-convert_periodicities_to_id(name)
+convert_periodicities_to_id(name, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Convert periodicity names to IDs

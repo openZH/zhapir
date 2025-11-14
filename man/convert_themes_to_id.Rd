@@ -4,7 +4,12 @@
 \alias{convert_themes_to_id}
 \title{Convert theme names to IDs}
 \usage{
-convert_themes_to_id(name)
+convert_themes_to_id(name, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Convert theme names to IDs

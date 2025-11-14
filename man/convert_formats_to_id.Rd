@@ -4,7 +4,12 @@
 \alias{convert_formats_to_id}
 \title{Convert format names to IDs}
 \usage{
-convert_formats_to_id(name)
+convert_formats_to_id(name, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Convert format names to IDs

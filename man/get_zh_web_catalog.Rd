@@ -4,10 +4,14 @@
 \alias{get_zh_web_catalog}
 \title{Get All zh-web-catalog Keywords and Their IDs}
 \usage{
-get_zh_web_catalog(input = NULL)
+get_zh_web_catalog(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{input}{Optional character vector of catalog labels or numeric IDs.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 A tibble with two columns:

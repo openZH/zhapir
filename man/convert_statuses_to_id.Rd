@@ -4,7 +4,12 @@
 \alias{convert_statuses_to_id}
 \title{Convert status names to IDs}
 \usage{
-convert_statuses_to_id(name)
+convert_statuses_to_id(name, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Convert status names to IDs

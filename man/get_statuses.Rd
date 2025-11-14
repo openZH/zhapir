@@ -4,10 +4,14 @@
 \alias{get_statuses}
 \title{Get All Statuses and Their IDs}
 \usage{
-get_statuses(input = NULL)
+get_statuses(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{input}{Optional character vector of status names or numeric IDs.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 A tibble with two columns:
