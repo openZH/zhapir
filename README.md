@@ -71,7 +71,8 @@ ds <- zhapir::create_dataset(
 )
 ```
 
-> \[!NOTE\] Wenn mit dem DEV-Umgebung des MDV gearbeitet werden soll
+> [!NOTE] 
+> Wenn mit dem DEV-Umgebung des MDV gearbeitet werden soll
 > (z.B. um Änderungen zu an Dataset/Distribution zu testen), muss der
 > DEV-API Key explizit mitgegeben werden. Wenn `api_key` leer gelassen
 > wird, versucht die Funktion im Hintergrund `ZHAPIR_API_KEY` aus dem
