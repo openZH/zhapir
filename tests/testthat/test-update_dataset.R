@@ -2,7 +2,6 @@ test_that("update_dataset(preview=TRUE) preserves existing organisation_id and t
   calls <- list()
 
   testthat::local_mocked_bindings(
-    get_api_key = function(...) "DUMMY",
     get_dataset = function(id, api_key, use_dev) {
       calls$fetch <<- TRUE
       list(
@@ -12,23 +11,23 @@ test_that("update_dataset(preview=TRUE) preserves existing organisation_id and t
       )
     },
     # Avoid accidental conversions that could hit the network
-    convert_keywords_to_id       = function(x) x,
-    convert_zh_web_catalog_to_id = function(x) x,
-    convert_themes_to_id         = function(x) x,
-    convert_periodicities_to_id  = function(x) x,
+    convert_keywords_to_id       = function(x, ...) x,
+    convert_zh_web_catalog_to_id = function(x, ...) x,
+    convert_themes_to_id         = function(x, ...) x,
+    convert_periodicities_to_id  = function(x, ...) x,
     .env = asNamespace("zhapir")
   )
 
   ds <- update_dataset(
     id               = 999L,
-    # intentionally omit title and organisation_id to trigger fetch
     description      = "New description",
     theme_ids        = c(41L, 42L),
-    preview          = TRUE
+    preview          = TRUE,
+    api_key          = "DUMMY"   # <--- hier der Trick
   )
 
-  expect_true(isTRUE(calls$fetch))                  # fetch happened
-  expect_true(inherits(ds, "zhapir::Dataset"))      # S7 class check
+  expect_true(isTRUE(calls$fetch))               # fetch happened
+  expect_true(inherits(ds, "zhapir::Dataset"))   # S7 class check
   expect_equal(ds@id,               999L)
   expect_equal(ds@title,            "Existing Title")
   expect_equal(ds@organisation_id,  55L)
@@ -40,8 +39,10 @@ test_that("update_dataset(preview=TRUE) uses provided title/org if supplied (no 
   calls <- list(fetch = FALSE)
 
   testthat::local_mocked_bindings(
-    get_api_key = function(...) "DUMMY",
-    get_dataset = function(...) { calls$fetch <<- TRUE; stop("should not be called") },
+    get_dataset = function(...) {
+      calls$fetch <<- TRUE
+      stop("get_dataset should NOT be called")
+    },
     .env = asNamespace("zhapir")
   )
 
@@ -50,10 +51,11 @@ test_that("update_dataset(preview=TRUE) uses provided title/org if supplied (no 
     title            = "New Title",
     organisation_id  = 77L,
     description      = "Keep as provided",
-    preview          = TRUE
+    preview          = TRUE,
+    api_key          = "DUMMY"   # <--- wieder explizit
   )
 
-  expect_false(isTRUE(calls$fetch))                 # shouldn't have fetched
+  expect_false(isTRUE(calls$fetch))              # shouldn't have fetched
   expect_true(inherits(ds, "zhapir::Dataset"))
   expect_equal(ds@id,              1001L)
   expect_equal(ds@title,           "New Title")

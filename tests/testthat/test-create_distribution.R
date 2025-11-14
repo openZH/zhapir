@@ -1,7 +1,4 @@
 test_that("create_distribution(preview=TRUE) returns a Distribution S7 object with correct slots", {
-  testthat::local_mocked_bindings(
-    get_api_key = function(...) "DUMMY"
-  )
 
   dist <- create_distribution(
     title            = "Preview Dist",
