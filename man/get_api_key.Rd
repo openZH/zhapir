@@ -16,7 +16,7 @@ API key string.
 Attempts to fetch the API key from (in order):
 \enumerate{
 \item Provided argument
-\item Environment variable \code{MDV_API_KEY}
+\item Environment variable \code{ZHAPIR_API_KEY}
 \item Interactive prompt (RStudio or askpass)
 }
 }

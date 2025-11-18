@@ -4,10 +4,14 @@
 \alias{get_periodicities}
 \title{Get All Periodicities and Their IDs}
 \usage{
-get_periodicities(input = NULL)
+get_periodicities(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{input}{Optional character vector of periodicity names or numeric IDs.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 A tibble with two columns:

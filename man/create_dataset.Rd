@@ -50,7 +50,19 @@ create_dataset(
 
 \item{theme_ids}{Optional character vector}
 
-\item{periodicity_id}{Optional character}
+\item{periodicity_id}{Optional character
+\code{1} = "Jährlich",
+\code{21} = "Kontinuierlich",
+\code{42} = "Zweijährlich",
+\code{43} = "Halbjährlich",
+\code{45} = "Vierteljährlich",
+\code{47} = "Monatlich",
+\code{49} = "Alle zwei Wochen",
+\code{51} = "Wöchentlich",
+\code{52} = "Halbwöchentlich",
+\code{54} = "Täglich",
+\code{55} = "Unregelmässig",
+\code{56} = "Niemals"}
 
 \item{see_also_ids}{Optional integer vector}
 

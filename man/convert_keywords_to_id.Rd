@@ -4,10 +4,14 @@
 \alias{convert_keywords_to_id}
 \title{Convert keyword names to IDs}
 \usage{
-convert_keywords_to_id(name)
+convert_keywords_to_id(name, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{name}{Character vector of keyword names.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 Numeric vector of IDs.

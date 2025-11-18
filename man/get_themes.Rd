@@ -4,10 +4,14 @@
 \alias{get_themes}
 \title{Get All Themes and Their IDs}
 \usage{
-get_themes(input = NULL)
+get_themes(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{input}{Optional character vector of theme names or numeric IDs.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 A tibble with two columns:

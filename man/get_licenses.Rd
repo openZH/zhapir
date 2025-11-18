@@ -4,9 +4,15 @@
 \alias{get_licenses}
 \title{Get All Licenses and Their IDs}
 \usage{
-get_licenses(input = NULL)
+get_licenses(input = NULL, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{input}{a set of licenses to retrieve. Empty = all}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Get All Licenses and Their IDs
 }
-\keyword{internal}
