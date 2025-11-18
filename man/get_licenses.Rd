@@ -7,6 +7,8 @@
 get_licenses(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
+\item{input}{a set of licenses to retrieve. Empty = all}
+
 \item{use_dev}{boolean FALSE = developemtent version of MDV}
 
 \item{api_key}{optional API key for MDV}
@@ -14,4 +16,3 @@ get_licenses(input = NULL, use_dev = FALSE, api_key = NULL)
 \description{
 Get All Licenses and Their IDs
 }
-\keyword{internal}

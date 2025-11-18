@@ -7,6 +7,8 @@
 get_formats(input = NULL, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
+\item{input}{a set of formats to retrieve. Empty = all}
+
 \item{use_dev}{boolean FALSE = developemtent version of MDV}
 
 \item{api_key}{optional API key for MDV}
@@ -14,4 +16,3 @@ get_formats(input = NULL, use_dev = FALSE, api_key = NULL)
 \description{
 Get All Formats and Their IDs
 }
-\keyword{internal}

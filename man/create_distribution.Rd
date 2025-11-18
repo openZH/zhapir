@@ -44,14 +44,45 @@ create_distribution(
 
 \item{byte_size}{Optional file size in bytes (must be a positive number).}
 
-\item{status_id}{Optional character; status ID (will be set via follow-up PATCH).}
+\item{status_id}{Optional character; status ID (will be set via follow-up PATCH).
+\code{0} = "verworfen,
+\code{1} = "✍️ Entwurf ",
+\code{2} = "🔍 in Prüfung",
+\code{3} = "📜 publiziert",}
 
 \item{license_id}{integer; license ID.
 Use \code{1} = "CC BY 4.0 (Attribution required)" or \code{2} = "CC0 (No attribution required)".}
 
-\item{file_format_id}{Optional file format ID.}
+\item{file_format_id}{Optional file format ID.
+Häufige Formate:
+\code{3} = "CSV"
+\code{20} = "PDF"
+\code{33} = "XLSX"
+\code{12} = "JSON"
+\code{29} = "TXT"
+\code{34} = "XML"
+\code{32} = "XLS"
+\code{35} = "ZIP"
+\code{8} = "HTML"
+\code{13} = "JSONLD"
+\code{5} = "DOCX"
+\code{40} = "GPKG"
+\code{11} = "JS"
+\code{25} = "RTF"}
 
-\item{periodicity_id}{Optional character periodicity ID.}
+\item{periodicity_id}{Optional character periodicity ID.
+\code{1} = "Jährlich",
+\code{21} = "Kontinuierlich",
+\code{42} = "Zweijährlich",
+\code{43} = "Halbjährlich",
+\code{45} = "Vierteljährlich",
+\code{47} = "Monatlich",
+\code{49} = "Alle zwei Wochen",
+\code{51} = "Wöchentlich",
+\code{52} = "Halbwöchentlich",
+\code{54} = "Täglich",
+\code{55} = "Unregelmässig",
+\code{56} = "Niemals"}
 
 \item{file_path}{Optional local file path; if provided, the file will be uploaded and linked.}
 
