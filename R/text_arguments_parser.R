@@ -280,9 +280,10 @@ convert_statuses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Get All Licenses and Their IDs
+#' @param input a set of licenses to retrieve. Empty = all
 #' @param use_dev boolean FALSE = developemtent version of MDV
 #' @param api_key optional API key for MDV
-#' @keywords internal
+#' @export
 get_licenses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
   df <- req_to_df("licenses", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)
@@ -300,9 +301,10 @@ convert_licenses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Get All Formats and Their IDs
+#' @param input a set of formats to retrieve. Empty = all
 #' @param use_dev boolean FALSE = developemtent version of MDV
 #' @param api_key optional API key for MDV
-#' @keywords internal
+#' @export
 get_formats <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
   df <- req_to_df("file-formats", use_dev = use_dev, api_key = api_key)
   if (!is.null(input)) df <- converter(df, input, internal = FALSE)

@@ -18,6 +18,18 @@
 #' @param relation_ids           integer vector; new relation IDs (optional)
 #' @param theme_ids              integer vector; new theme IDs (optional)
 #' @param periodicity_id         numeric; new periodicity ID (optional)
+#' `1` = "Jährlich",
+#' `21` = "Kontinuierlich",
+#' `42` = "Zweijährlich",
+#' `43` = "Halbjährlich",
+#' `45` = "Vierteljährlich",
+#' `47` = "Monatlich",
+#' `49` = "Alle zwei Wochen",
+#' `51` = "Wöchentlich",
+#' `52` = "Halbwöchentlich",
+#' `54` = "Täglich",
+#' `55` = "Unregelmässig",
+#' `56` = "Niemals"
 #' @param see_also_ids           integer vector; new see-also IDs (optional)
 #' @param api_key                API key (optional; falls back to env var)
 #' @param use_dev                Logical; use development base URL (default TRUE)

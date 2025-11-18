@@ -9,10 +9,41 @@
 #' @param access_url        Optional URL to access the distribution (must start with http:// or https://).
 #' @param byte_size         Optional file size in bytes (must be a positive number).
 #' @param status_id         Optional character; status ID (will be set via follow-up PATCH).
+#' `0` = "verworfen,
+#' `1` = "✍️ Entwurf ",
+#' `2` = "🔍 in Prüfung",
+#' `3` = "📜 publiziert",
 #' @param license_id        integer; license ID.
 #' Use `1` = "CC BY 4.0 (Attribution required)" or `2` = "CC0 (No attribution required)".
 #' @param file_format_id    Optional file format ID.
+#' Häufige Formate:
+#' `3` = "CSV"
+#' `20` = "PDF"
+#' `33` = "XLSX"
+#' `12` = "JSON"
+#' `29` = "TXT"
+#' `34` = "XML"
+#' `32` = "XLS"
+#' `35` = "ZIP"
+#' `8` = "HTML"
+#' `13` = "JSONLD"
+#' `5` = "DOCX"
+#' `40` = "GPKG"
+#' `11` = "JS"
+#' `25` = "RTF"
 #' @param periodicity_id    Optional character periodicity ID.
+#' `1` = "Jährlich",
+#' `21` = "Kontinuierlich",
+#' `42` = "Zweijährlich",
+#' `43` = "Halbjährlich",
+#' `45` = "Vierteljährlich",
+#' `47` = "Monatlich",
+#' `49` = "Alle zwei Wochen",
+#' `51` = "Wöchentlich",
+#' `52` = "Halbwöchentlich",
+#' `54` = "Täglich",
+#' `55` = "Unregelmässig",
+#' `56` = "Niemals"
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.
 #' @param start_date        POSIXct or ISO datetime string; new start (optional)
 #' @param end_date          POSIXct or ISO datetime string; new end (optional)
