@@ -100,15 +100,17 @@ convert_keywords_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 
 #' Get All Datasets and Their IDs
 #'
-#' Retrieves a tibble of datasets (title and id), with optional filtering.
+#' Retrieves a tibble of all datasets (title and id) from the MDV data catalog.
+#' To retrieve a single dataset by ID, use `get_dataset()` instead.
 #'
-#' @param input Optional character vector of dataset titles or numeric IDs.
 #' @param use_dev Logical; if TRUE, use the development version of MDV.
 #' @param api_key Optional API key for MDV.
 #' @param page_size Integer; number of datasets per page requested from the API.
 #'   Defaults to 100.
 #' @param max_pages Integer; maximum number of pages to fetch (mainly for testing
 #'   or safety limits). Defaults to Inf (all pages).
+#' @param search_term Optional character string; passed as `searchTerm` to the
+#'   API to filter results server-side before paginating.
 #'
 #' @return A tibble with columns:
 #'   - `dataset` (character): dataset title
@@ -117,31 +119,34 @@ convert_keywords_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 #' \dontrun{
 #'   # All datasets
 #'   zhapir::get_datasets()
-#'
-#'   # Filter by title
-#'   zhapir::get_datasets("Hotels")
-#'
-#'   # Filter by ID
-#'   zhapir::get_datasets(10)
 #' }
 get_datasets <- function(
-  input = NULL,
   use_dev = FALSE,
   api_key = NULL,
   page_size = 100L,
-  max_pages = Inf
+  max_pages = Inf,
+  search_term = NULL
 ) {
   if (is.null(api_key)) {
-    api_key <- zhapir::get_api_key()
+    api_key <- get_api_key()
   }
 
-  # --- Erste Seite holen, um total und items zu kennen -----------------------
-  page <- 1L
-  endpoint1 <- sprintf("/api/v1/datasets?page=%d&pageSize=%d", page, page_size)
+  build_endpoint <- function(page) {
+    ep <- sprintf("/api/v1/datasets?page=%d&pageSize=%d", page, page_size)
+    if (!is.null(search_term)) {
+      ep <- paste0(
+        ep,
+        "&searchField=title&searchTerm=",
+        utils::URLencode(search_term, reserved = TRUE)
+      )
+    }
+    ep
+  }
 
-  first <- zhapir:::api_request(
+  # ...existing code...
+  first <- api_request(
     method = "GET",
-    endpoint = endpoint1,
+    endpoint = build_endpoint(1L),
     object = NULL,
     object_label = "Dataset list",
     api_key = api_key,
@@ -150,29 +155,19 @@ get_datasets <- function(
 
   # Wenn gar nichts kommt -> leeres Tibble zurück
   if (is.null(first$items) || length(first$items) == 0L) {
-    df <- tibble::tibble(
+    return(tibble::tibble(
       dataset = character(),
       id = integer()
-    )
-    if (!is.null(input)) {
-      df <- converter(df, input, internal = FALSE)
-    }
-    return(df)
+    ))
   }
 
-  # total aus dem Response lesen (API-spezifisch)
   total <- first$total
   if (is.null(total)) {
-    # Fallback: wenn aus irgendeinem Grund total fehlt,
-    # verhalten wir uns so, als wäre nur diese eine Seite vorhanden.
     total <- length(first$items)
   }
 
-  # Anzahl Seiten berechnen und mit max_pages begrenzen
   n_pages <- ceiling(total / page_size)
   n_pages <- min(n_pages, max_pages)
-
-  # --- Progress-Bar initialisieren (nur wenn mehr als 1 Seite) --------------
 
   pb_id <- NULL
   if (n_pages > 1L) {
@@ -182,18 +177,11 @@ get_datasets <- function(
     )
   }
 
-  # --- erste Seite in Liste packen ------------------------------------------
-
   all_pages <- list()
 
   first_df <- purrr::map_dfr(
     first$items,
-    \(x) {
-      tibble::tibble(
-        dataset = x$title,
-        id = x$id
-      )
-    }
+    \(x) tibble::tibble(dataset = x$title, id = x$id)
   )
   all_pages[[1L]] <- first_df
 
@@ -201,19 +189,11 @@ get_datasets <- function(
     cli::cli_progress_update(id = pb_id, inc = 1L)
   }
 
-  # --- weitere Seiten (2..n_pages) holen ------------------------------------
-
   if (n_pages >= 2L) {
     for (page in 2L:n_pages) {
-      endpoint <- sprintf(
-        "/api/v1/datasets?page=%d&pageSize=%d",
-        page,
-        page_size
-      )
-
-      req <- zhapir:::api_request(
+      req <- api_request(
         method = "GET",
-        endpoint = endpoint,
+        endpoint = build_endpoint(page),
         object = NULL,
         object_label = "Dataset list",
         api_key = api_key,
@@ -224,36 +204,35 @@ get_datasets <- function(
         break
       }
 
-      page_df <- purrr::map_dfr(
+      all_pages[[length(all_pages) + 1L]] <- purrr::map_dfr(
         req$items,
-        \(x) {
-          tibble::tibble(
-            dataset = x$title,
-            id = x$id
-          )
-        }
+        \(x) tibble::tibble(dataset = x$title, id = x$id)
       )
 
-      all_pages[[length(all_pages) + 1L]] <- page_df
-
-      if (!is.null(pb_id)) {
-        cli::cli_progress_update(id = pb_id, inc = 1L)
-      }
+      if (!is.null(pb_id)) cli::cli_progress_update(id = pb_id, inc = 1L)
     }
   }
 
   if (!is.null(pb_id)) {
     cli::cli_progress_done(id = pb_id)
   }
-  # --- Seiten zusammenführen -------------------------------------------------
 
-  df <- dplyr::bind_rows(all_pages)
+  dplyr::bind_rows(all_pages)
+}
 
-  if (!is.null(input)) {
-    df <- converter(df, input, internal = FALSE)
+#' Convert dataset names to IDs
+#' @param name Character vector of dataset titles or numeric IDs.
+#' @param use_dev Logical; if TRUE, use the development version of MDV.
+#' @param api_key Optional API key for MDV.
+#' @return Numeric vector of IDs.
+#' @keywords internal
+convert_datasets_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
+  if (inherits(name, "S7_missing")) {
+    return(S7::class_missing)
   }
-
-  df
+  # Use server-side search to avoid fetching the full catalogue
+  df <- get_datasets(use_dev = use_dev, api_key = api_key, search_term = name)
+  get_id(df, name, internal = TRUE)
 }
 
 #' Get All zh-web-catalog Keywords and Their IDs
@@ -483,6 +462,7 @@ convert_formats_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 #' @param endpoint One of: "keywords", "themes", etc.
 #' @param use_dev Logical; if TRUE, use the dev API base URL (default FALSE).
 #' @param api_key Optional API key; falls back to get_api_key().
+#' @importFrom rlang :=
 #' @keywords internal
 req_to_df <- function(endpoint, use_dev = FALSE, api_key = NULL) {
   label <- switch(
@@ -517,6 +497,7 @@ req_to_df <- function(endpoint, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Get the ID(s) of Entries for Given Variable
+#' @importFrom rlang .data
 #' @keywords internal
 get_id <- function(df, name, internal) {
   label_col <- rlang::sym(names(df)[names(df) != "id"])
@@ -526,8 +507,8 @@ get_id <- function(df, name, internal) {
 
   for (nm in name_lower) {
     tmp <- df |> dplyr::mutate(filter_col = tolower(!!label_col))
-    filt <- tmp |> dplyr::filter(grepl(nm, filter_col))
-    exact <- tmp |> dplyr::filter(filter_col == nm)
+    filt <- tmp |> dplyr::filter(grepl(nm, .data$filter_col))
+    exact <- tmp |> dplyr::filter(.data$filter_col == nm)
 
     if (internal) {
       if (nrow(exact) == 1) {
@@ -579,10 +560,11 @@ get_label <- function(df, id) {
 }
 
 #' Filter a tibble by name or ID input
+#' @importFrom rlang .data
 #' @keywords internal
 converter <- function(df, input, internal) {
   if (is.character(input)) {
-    dplyr::filter(df, id %in% get_id(df, input, internal))
+    dplyr::filter(df, .data$id %in% get_id(df, input, internal))
   } else {
     dplyr::filter(df, !!rlang::sym(names(df)[1]) %in% get_label(df, input))
   }
