@@ -4,34 +4,16 @@
 \alias{req_to_df}
 \title{Retrieve a Data Frame from API Endpoint}
 \usage{
-req_to_df(endpoint)
+req_to_df(endpoint, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
 \item{endpoint}{One of: "keywords", "themes", etc.}
-}
-\value{
-A tibble with columns \verb{<endpoint>} and \code{id}.
 
-A tibble with columns \verb{<endpoint>} and \code{id}.
+\item{use_dev}{Logical; if TRUE, use the dev API base URL (default FALSE).}
+
+\item{api_key}{Optional API key; falls back to get_api_key().}
 }
 \description{
-Generic helper to fetch \if{html}{\out{<endpoint>}} entries with labels and ids.
+Retrieve a Data Frame from API Endpoint
 }
-\keyword{<endpoint>}
-\keyword{API}
-\keyword{Data}
-\keyword{Endpoint}
-\keyword{Frame}
-\keyword{Generic}
-\keyword{Retrieve}
-\keyword{a}
-\keyword{and}
-\keyword{entries}
-\keyword{fetch}
-\keyword{from}
-\keyword{helper}
-\keyword{ids.}
 \keyword{internal}
-\keyword{labels}
-\keyword{to}
-\keyword{with}

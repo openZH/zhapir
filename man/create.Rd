@@ -8,10 +8,6 @@ create(object, ...)
 }
 \arguments{
 \item{object}{The object to create (Dataset or Distribution)}
-
-\item{api_key}{Authentication information from login_to_api()}
-
-\item{use_dev}{Whether to use the development environment}
 }
 \value{
 The created object with updated information from the API response

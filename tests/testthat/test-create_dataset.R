@@ -6,7 +6,7 @@ test_that("dataset object is correctly created by the create_dataset function", 
 
 
   testthat::local_mocked_bindings(
-    convert_themes_to_id = function(x) {
+    convert_themes_to_id = function(x, ...) {
       if (identical(x, c("Energie", "Gesundheit"))) {
         return(c(42, 43))
       } else {
@@ -47,7 +47,7 @@ test_that("an error is returned if no title is set", {
   )
 
   testthat::local_mocked_bindings(
-    convert_themes_to_id = function(x) {
+    convert_themes_to_id = function(x, ...) {
       if (identical(x, c("Energie", "Gesundheit"))) {
         return(c(42, 43))
       } else {

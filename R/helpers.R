@@ -20,14 +20,15 @@ get_base_url <- function(use_dev = FALSE) {
 #'
 #' Attempts to fetch the API key from (in order):
 #' 1. Provided argument
-#' 2. Environment variable `MDV_API_KEY`
+#' 2. Environment variable `ZHAPIR_API_KEY`
 #' 3. Interactive prompt (RStudio or askpass)
 #'
 #' @param key Optional plain API key.
 #' @return API key string.
 #' @export
 get_api_key <- function(key = NULL) {
-  # 1. Direct argument
+
+  # 1. Direct argument wins
   if (!is.null(key) && nzchar(key)) {
     return(key)
   }
@@ -38,19 +39,22 @@ get_api_key <- function(key = NULL) {
     return(env_key)
   }
 
-  # 3. Interactive prompt (last resort)
-  prompt_key <- ""  # create empty
+  # 3. Interactive prompt (last resort, and only if really interactive)
   if (interactive()) {
     prompt_key <- askpass::askpass("Please enter your ZHAPIR_API_KEY key")
-  }
-  if (nzchar(prompt_key)) return(prompt_key)
 
+    # askpass() kann NULL liefern (Abbruch) → robust abfangen
+    if (!is.null(prompt_key) && nzchar(prompt_key)) {
+      return(prompt_key)
+    }
+  }
+
+  # 4. Nichts gefunden → Fehler
   stop(
     "No API key found. Supply via argument or set ZHAPIR_API_KEY environment variable.",
     call. = FALSE
   )
 }
-
 
 
 #' Convert an S7 object into a JSON-ready payload list

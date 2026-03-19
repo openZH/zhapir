@@ -1,38 +1,32 @@
+
 test_that("get_base_url returns correct endpoints", {
   expect_equal(get_base_url(TRUE),  "https://dev.mdv.statistik.zh.ch")
   expect_equal(get_base_url(FALSE), "https://mdv.statistik.zh.ch")
 })
 
 test_that("get_api_key uses explicit argument over env var", {
-  skip_if_not_e2e()
 
   withr::local_envvar(c(ZHAPIR_API_KEY = "FROM_ENV"))
   expect_equal(get_api_key("FROM_ARG"), "FROM_ARG")
 })
 
 test_that("get_api_key falls back to env var", {
-  skip_if_not_e2e()
 
   withr::local_envvar(c(ZHAPIR_API_KEY = "FROM_ENV"))
   expect_equal(get_api_key(NULL), "FROM_ENV")
 })
 
 test_that("get_api_key errors when neither arg nor env nor prompt are available", {
-  skip_if_not_e2e()
 
   withr::local_envvar(c(ZHAPIR_API_KEY = ""))
 
   expect_error(
     get_api_key(NULL),
-    "No API key found\\. Supply via argument or set ZHAPIR_API_KEY environment variable\\.",
-    fixed = FALSE
+    "No API key found\\. Supply via argument or set ZHAPIR_API_KEY environment variable\\."
   )
 })
 
 test_that("object_to_payload formats dates and drops empty fields", {
-  testthat::local_mocked_bindings(
-    get_api_key = function(...) "DUMMY"
-  )
 
   # Build a Dataset with a mix of values
   ds <- Dataset(

@@ -13,6 +13,18 @@
 #' @param relation_ids        Optional integer vector
 #' @param theme_ids           Optional character vector
 #' @param periodicity_id      Optional character
+#' `1` = "Jährlich",
+#' `21` = "Kontinuierlich",
+#' `42` = "Zweijährlich",
+#' `43` = "Halbjährlich",
+#' `45` = "Vierteljährlich",
+#' `47` = "Monatlich",
+#' `49` = "Alle zwei Wochen",
+#' `51` = "Wöchentlich",
+#' `52` = "Halbwöchentlich",
+#' `54` = "Täglich",
+#' `55` = "Unregelmässig",
+#' `56` = "Niemals"
 #' @param see_also_ids        Optional integer vector
 #' @param api_key             API key (optional; falls back to env var)
 #' @param use_dev             Logical; use development base URL
@@ -66,11 +78,11 @@ create_dataset <- function(
 
 
   # resolve all lookups up front
-  keyword_ids_api         <- if (is.character(keyword_ids))         convert_keywords_to_id(keyword_ids)           else keyword_ids
-  zh_web_catalog_ids_api      <- if (is.character(zh_web_datacatalog_ids)) convert_zh_web_catalog_to_id(zh_web_datacatalog_ids) else zh_web_datacatalog_ids
-  theme_ids_api           <- if (is.character(theme_ids))           convert_themes_to_id(theme_ids)               else theme_ids
-  periodicity_id_api      <- if (is.character(periodicity_id))      convert_periodicities_to_id(periodicity_id)   else periodicity_id
-  see_also_ids_api        <- if (is.character(see_also_ids))        convert_datasets_to_id(see_also_ids)          else see_also_ids
+  keyword_ids_api         <- if (is.character(keyword_ids))         convert_keywords_to_id(keyword_ids, use_dev = use_dev, api_key = api_key)           else keyword_ids
+  zh_web_catalog_ids_api      <- if (is.character(zh_web_datacatalog_ids)) convert_zh_web_catalog_to_id(zh_web_datacatalog_ids, use_dev = use_dev, api_key = api_key) else zh_web_datacatalog_ids
+  theme_ids_api           <- if (is.character(theme_ids))           convert_themes_to_id(theme_ids, use_dev = use_dev, api_key = api_key)               else theme_ids
+  periodicity_id_api      <- if (is.character(periodicity_id))      convert_periodicities_to_id(periodicity_id, use_dev = use_dev, api_key = api_key)   else periodicity_id
+  see_also_ids_api        <- if (is.character(see_also_ids))        convert_datasets_to_id(see_also_ids, use_dev = use_dev, api_key = api_key)          else see_also_ids
 
 
 

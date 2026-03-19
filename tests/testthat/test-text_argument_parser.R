@@ -34,10 +34,9 @@ testthat::test_that("req_to_df builds correct tibbles and errors on unknown endp
     )
   )
 
-  mock_api_request <- function(method, endpoint, api_key, object_label) {
+  mock_api_request <- function(method, endpoint, ...) {
     # endpoints look like "/api/v1/<endpoint>"
     ep <- sub("^/api/v1/", "", endpoint)
-    # special for datasets and organisations (tested later), otherwise return list
     if (!is.null(fake_db[[ep]])) {
       return(fake_db[[ep]])
     }
@@ -183,7 +182,7 @@ testthat::test_that("get_organisations returns base and units correctly", {
     )
   )
 
-  mock_api_request <- function(method, endpoint, api_key, object_label) {
+  mock_api_request <- function(method, endpoint, ...) {
     ep <- sub("^/api/v1/", "", endpoint)
     if (ep == "organisations") return(org_payload)
     stop("Unexpected endpoint in mock: ", ep)
@@ -243,7 +242,7 @@ testthat::test_that("req_to_df-backed getters and converters behave (with datase
     )
   )
 
-  mock_api_request <- function(method, endpoint, api_key, object_label) {
+  mock_api_request <- function(method, endpoint, ...) {
     ep <- sub("^/api/v1/", "", endpoint)
     if (ep == "datasets") return(fake_db[["datasets"]])
     if (!is.null(fake_db[[ep]])) return(fake_db[[ep]])
@@ -262,7 +261,7 @@ testthat::test_that("req_to_df-backed getters and converters behave (with datase
   testthat::expect_identical(unname(m["fun_name"]),   "get_datasets()")
 
   # keywords (passthrough)
-  all_kw <- zhapir::get_keywords()
+  all_kw <- zhapir::get_keywords(use_dev = TRUE)
   testthat::expect_identical(names(all_kw), c("keywords", "id"))
   testthat::expect_identical(nrow(all_kw), 3L)
 

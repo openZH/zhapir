@@ -4,9 +4,15 @@
 \alias{get_formats}
 \title{Get All Formats and Their IDs}
 \usage{
-get_formats(input = NULL)
+get_formats(input = NULL, use_dev = FALSE, api_key = NULL)
+}
+\arguments{
+\item{input}{a set of formats to retrieve. Empty = all}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \description{
 Get All Formats and Their IDs
 }
-\keyword{internal}

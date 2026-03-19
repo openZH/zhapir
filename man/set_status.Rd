@@ -8,12 +8,6 @@ set_status(object, ...)
 }
 \arguments{
 \item{object}{A \code{Dataset} or \code{Distribution} S7 object with \verb{@id} and \verb{@status_id} set}
-
-\item{api_key}{API key string for authentication (optional)}
-
-\item{use_dev}{Logical; use the development API endpoint (default \code{TRUE})}
-
-\item{verbosity}{Integer; httr2 verbosity level (default \code{0})}
 }
 \value{
 Invisibly returns parsed response as a list.

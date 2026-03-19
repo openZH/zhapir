@@ -9,10 +9,41 @@
 #' @param access_url        Optional URL to access the distribution (must start with http:// or https://).
 #' @param byte_size         Optional file size in bytes (must be a positive number).
 #' @param status_id         Optional character; status ID (will be set via follow-up PATCH).
+#' `0` = "verworfen,
+#' `1` = "✍️ Entwurf ",
+#' `2` = "🔍 in Prüfung",
+#' `3` = "📜 publiziert",
 #' @param license_id        integer; license ID.
 #' Use `1` = "CC BY 4.0 (Attribution required)" or `2` = "CC0 (No attribution required)".
 #' @param file_format_id    Optional file format ID.
+#' Häufige Formate:
+#' `3` = "CSV"
+#' `20` = "PDF"
+#' `33` = "XLSX"
+#' `12` = "JSON"
+#' `29` = "TXT"
+#' `34` = "XML"
+#' `32` = "XLS"
+#' `35` = "ZIP"
+#' `8` = "HTML"
+#' `13` = "JSONLD"
+#' `5` = "DOCX"
+#' `40` = "GPKG"
+#' `11` = "JS"
+#' `25` = "RTF"
 #' @param periodicity_id    Optional character periodicity ID.
+#' `1` = "Jährlich",
+#' `21` = "Kontinuierlich",
+#' `42` = "Zweijährlich",
+#' `43` = "Halbjährlich",
+#' `45` = "Vierteljährlich",
+#' `47` = "Monatlich",
+#' `49` = "Alle zwei Wochen",
+#' `51` = "Wöchentlich",
+#' `52` = "Halbwöchentlich",
+#' `54` = "Täglich",
+#' `55` = "Unregelmässig",
+#' `56` = "Niemals"
 #' @param file_path         Optional local file path; if provided, the file will be uploaded and linked.
 #' @param start_date        POSIXct or ISO datetime string; new start (optional)
 #' @param end_date          POSIXct or ISO datetime string; new end (optional)
@@ -91,10 +122,10 @@ create_distribution <- function(
   }
 
   # Resolve all lookups up front
-  status_id_api      <- if (is.character(status_id))      convert_statuses_to_id(status_id)            else status_id
-  license_id_api     <- if (is.character(license_id))     convert_licenses_to_id(license_id)           else license_id
-  file_format_id_api <- if (is.character(file_format_id)) convert_formats_to_id(file_format_id)        else file_format_id
-  periodicity_id_api <- if (is.character(periodicity_id)) convert_periodicities_to_id(periodicity_id)  else periodicity_id
+  status_id_api      <- if (is.character(status_id))      convert_statuses_to_id(status_id, use_dev = use_dev, api_key = api_key)            else status_id
+  license_id_api     <- if (is.character(license_id))     convert_licenses_to_id(license_id, use_dev = use_dev, api_key = api_key)           else license_id
+  file_format_id_api <- if (is.character(file_format_id)) convert_formats_to_id(file_format_id, use_dev = use_dev, api_key = api_key)        else file_format_id
+  periodicity_id_api <- if (is.character(periodicity_id)) convert_periodicities_to_id(periodicity_id, use_dev = use_dev, api_key = api_key)  else periodicity_id
 
   # Build pure Distribution (no HTTP here)
   dist <- Distribution(

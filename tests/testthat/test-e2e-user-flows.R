@@ -1,15 +1,9 @@
-testthat::local_mocked_bindings(
-  get_api_key = function(key = NULL) {
-    tok <- base::Sys.getenv("MDV_DEV_API_TOKEN_TEST")
-    if (!base::nzchar(tok)) base::stop("MDV_DEV_API_TOKEN_TEST not set")
-    tok
-  },
-  .package = "zhapir"
-)
-
 test_that("E2E: distribution cannot exceed dataset status", {
-  skip_if_not_e2e()
 
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
   # Datensatz anlegen (bleibt im Default-Status, z. B. 'Entwurf')
   ds <- zhapir::create_dataset(
     title           = paste0("E2E DS baseline ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
@@ -18,7 +12,8 @@ test_that("E2E: distribution cannot exceed dataset status", {
     contact_email   = "team@example.org",
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
   )
   ds_id <- ds$id
 
@@ -36,7 +31,8 @@ test_that("E2E: distribution cannot exceed dataset status", {
       file_path      = tf,
       license_id     = 1,
       file_format_id = "CSV",
-      status_id      = 2
+      status_id      = 2,
+      api_key = dev_key
     ),
     # Gruppiert, case-insensitive. Deckt alte und neue Backend-Message ab.
     regexp = "(?i)(Request failed \\(400\\).*(ogd_flag|zwingend erforderlich|required|Status der Distribution darf nicht .* gesetzt werden als ihr Datensatz))"
@@ -46,7 +42,10 @@ test_that("E2E: distribution cannot exceed dataset status", {
 
 # test if with ogd flag the status change is allowed
 test_that("E2E: status change succeeds after setting ogd_flag", {
-  skip_if_not_e2e()
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
 
   ds <- create_dataset(
     title           = paste0("E2E DS with OGD ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
@@ -55,7 +54,8 @@ test_that("E2E: status change succeeds after setting ogd_flag", {
     contact_email   = "team@example.org",
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
   )
   ds_id <- ds$id
 
@@ -69,14 +69,16 @@ test_that("E2E: status change succeeds after setting ogd_flag", {
     file_path      = tf,
     license_id     = 1,
     file_format_id = "CSV",
-    status_id      = 1
+    status_id      = 1,
+    api_key = dev_key
   )
 
   # Make the distribution eligible (set ogd_flag)
   res_upd <- update_distribution(
     id          = dist$id,
     dataset_id  = ds_id,
-    ogd_flag    = TRUE
+    ogd_flag    = TRUE,
+    api_key = dev_key
   )
   expect_true(is.list(res_upd))
 })
@@ -84,8 +86,11 @@ test_that("E2E: status change succeeds after setting ogd_flag", {
 
 # tests update + bump end_date
 test_that("E2E: update distribution, bump dataset end_date, and advance status with ogd_flag", {
-  skip_if_not_e2e()
 
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
   ds <- create_dataset(
     title           = paste0("E2E DS for Update ", format(Sys.time(), "%H:%M:%S")),
     organisation_id = 14,
@@ -93,7 +98,8 @@ test_that("E2E: update distribution, bump dataset end_date, and advance status w
     contact_email   = "update-test@example.org",
     keyword_ids     = c("agglomeration"),
     theme_ids       = c("Bevölkerung und Gesellschaft"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
   )
   ds_id <- ds$id
 
@@ -107,6 +113,7 @@ test_that("E2E: update distribution, bump dataset end_date, and advance status w
     file_path      = tf,
     license_id     = 2,
     file_format_id = "CSV",
+    api_key = dev_key
   )
   dist_id <- dist$id
   expect_true(dist_id > 0)
@@ -117,7 +124,8 @@ test_that("E2E: update distribution, bump dataset end_date, and advance status w
     dataset_id  = ds_id,
     description = "Updated description",
     end_date    = format(Sys.Date(), "%Y-%m-%d"),
-    ogd_flag    = TRUE
+    ogd_flag    = TRUE,
+    api_key = dev_key
   )
   expect_true(is.list(res_upd))
 })
@@ -127,9 +135,10 @@ test_that("E2E: update distribution, bump dataset end_date, and advance status w
 
 test_that("E2E: dataset ohne start_date ist nicht valid für nächsten Status", {
 
-  skip_if_not_e2e()
+  skip_if_ci()
+  skip_if_no_dev_token()
 
-
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
   # Minimaler Datensatz OHNE start_date (bewusst invalid für Publish)
   ds <- create_dataset(
     title           = paste0("E2E DS missing start_date ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
@@ -138,7 +147,8 @@ test_that("E2E: dataset ohne start_date ist nicht valid für nächsten Status", 
     contact_email   = "team@example.org",
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
     # start_date absichtlich weggelassen
   )
   ds_id <- ds$id
@@ -153,7 +163,8 @@ test_that("E2E: dataset ohne start_date ist nicht valid für nächsten Status", 
         id = ds_id,
         use_dev = TRUE,
         verbosity = 0,
-        fail_on_invalid = FALSE
+        fail_on_invalid = FALSE,
+        api_key = dev_key
       )
     },
     regexp = "nicht valid",  # German snippet is stable enough
@@ -167,8 +178,11 @@ test_that("E2E: dataset ohne start_date ist nicht valid für nächsten Status", 
 
 
 test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer gültigen Distribution", {
-  skip_if_not_e2e()
 
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
   # Create dataset WITH start_date
   ds <- create_dataset(
     title           = paste0("E2E DS valid path ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
@@ -178,7 +192,8 @@ test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer 
     start_date      = format(Sys.Date() - 365, "%Y-%m-%d"),
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
   )
   ds_id <- ds$id
   expect_true(ds_id > 0)
@@ -195,7 +210,8 @@ test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer 
     file_path      = tf,
     license_id     = 1,
     file_format_id = "CSV",
-    status_id      = 1
+    status_id      = 1,
+    api_key = dev_key
   )
   expect_true(is.list(dist))
   expect_true(dist$id > 0)
@@ -207,7 +223,8 @@ test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer 
         id = ds_id,
         use_dev = TRUE,
         verbosity = 0,
-        fail_on_invalid = FALSE
+        fail_on_invalid = FALSE,
+        api_key = dev_key
       )
     },
     regexp = "ist .*valid",
@@ -220,7 +237,8 @@ test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer 
       id = ds_id,
       use_dev = TRUE,
       verbosity = 0,
-      fail_on_invalid = FALSE
+      fail_on_invalid = FALSE,
+      api_key = dev_key
     )
   )
   expect_false(grepl("nicht valid", msg_ok, perl = TRUE))
@@ -228,8 +246,11 @@ test_that("E2E: dataset wird valid nach Setzen von start_date und Anlegen einer 
 
 
 test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution wird Dataset valid", {
-  skip_if_not_e2e()
 
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
   # Start invalid (no start_date)
   ds <- create_dataset(
     title           = paste0("E2E DS to fix via update ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
@@ -238,7 +259,8 @@ test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution 
     contact_email   = "team@example.org",
     keyword_ids     = c("abfall"),
     theme_ids       = c("Energie"),
-    periodicity_id  = "Jährlich"
+    periodicity_id  = "Jährlich",
+    api_key = dev_key
     # start_date intentionally omitted
   )
   ds_id <- ds$id
@@ -247,7 +269,8 @@ test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution 
   # Fix: set start_date
   upd <- update_dataset(
     id         = ds_id,
-    start_date = format(Sys.Date() - 30, "%Y-%m-%d")
+    start_date = format(Sys.Date() - 30, "%Y-%m-%d"),
+    api_key = dev_key
   )
   expect_true(is.list(upd))
 
@@ -262,7 +285,8 @@ test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution 
     file_path      = tf,
     license_id     = 1,
     file_format_id = "CSV",
-    status_id      = 1
+    status_id      = 1,
+    api_key = dev_key
   )
   expect_true(is.list(dist))
   expect_true(dist$id > 0)
@@ -274,11 +298,11 @@ test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution 
         id = ds_id,
         use_dev = TRUE,
         verbosity = 0,
-        fail_on_invalid = FALSE
+        fail_on_invalid = FALSE,
+        api_key = dev_key
       )
     },
-    regexp = "ist .*valid",
-    perl   = TRUE
-  )
+    regexp = "ist .*valid"
+    )
   expect_true(isTRUE(resp_ok2$is_valid))
 })

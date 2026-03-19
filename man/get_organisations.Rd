@@ -4,10 +4,18 @@
 \alias{get_organisations}
 \title{Get All Organisations and Their IDs}
 \usage{
-get_organisations(show_organisation_units = TRUE)
+get_organisations(
+  show_organisation_units = TRUE,
+  use_dev = FALSE,
+  api_key = NULL
+)
 }
 \arguments{
 \item{show_organisation_units}{Logical; if TRUE, include sub-units.}
+
+\item{use_dev}{boolean FALSE = developemtent version of MDV}
+
+\item{api_key}{optional API key for MDV}
 }
 \value{
 A tibble with columns:
