@@ -4,35 +4,38 @@
 \alias{get_datasets}
 \title{Get All Datasets and Their IDs}
 \usage{
-get_datasets(input = NULL, use_dev = FALSE, api_key = NULL)
+get_datasets(
+  use_dev = FALSE,
+  api_key = NULL,
+  page_size = 100L,
+  max_pages = Inf
+)
 }
 \arguments{
-\item{input}{Optional character vector of dataset titles or numeric IDs.}
+\item{use_dev}{Logical; if TRUE, use the development version of MDV.}
 
-\item{use_dev}{boolean FALSE = developemtent version of MDV}
+\item{api_key}{Optional API key for MDV.}
 
-\item{api_key}{optional API key for MDV}
+\item{page_size}{Integer; number of datasets per page requested from the API.
+Defaults to 100.}
+
+\item{max_pages}{Integer; maximum number of pages to fetch (mainly for testing
+or safety limits). Defaults to Inf (all pages).}
 }
 \value{
 A tibble with columns:
 \itemize{
 \item \code{dataset} (character): dataset title
-\item \code{id} (numeric): dataset ID
+\item \code{id}      (numeric):   dataset ID
 }
 }
 \description{
-Retrieves a tibble of datasets (title and id), with optional filtering.
+Retrieves a tibble of all datasets (title and id) from the MDV data catalog.
+To retrieve a single dataset by ID, use \code{get_dataset()} instead.
 }
 \examples{
 \dontrun{
   # All datasets
-  get_datasets()
-
-  # Filter by title
-  get_datasets("Hotels")
-
-  # Filter by ID
-  get_datasets(10)
+  zhapir::get_datasets()
 }
-
 }
