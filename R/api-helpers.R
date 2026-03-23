@@ -205,7 +205,6 @@ api_request <- function(
     httr2::req_retry(
       max_tries = 3L,
       is_transient = \(r) httr2::resp_status(r) %in% c(429L, 503L),
-      backoff = \(i) 2^i
     ) |>
     httr2::req_perform(verbosity = verbosity)
 
