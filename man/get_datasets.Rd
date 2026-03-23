@@ -8,7 +8,8 @@ get_datasets(
   use_dev = FALSE,
   api_key = NULL,
   page_size = 100L,
-  max_pages = Inf
+  max_pages = Inf,
+  search_term = NULL
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ Defaults to 100.}
 
 \item{max_pages}{Integer; maximum number of pages to fetch (mainly for testing
 or safety limits). Defaults to Inf (all pages).}
+
+\item{search_term}{Optional character string; passed as \code{searchTerm} to the
+API to filter results server-side before paginating.}
 }
 \value{
 A tibble with columns:
