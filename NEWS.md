@@ -1,3 +1,5 @@
+# zhapir 1.1.0
+
 # zhapir 1.0.1
 
 ## Minor improvements and bug fixes
