@@ -1,5 +1,10 @@
 # zhapir 1.1.0
 
+## Minor improvements and bug fixes
+
+* `get_datasets()` is paginated and can retrieve all datasets
+* API requests now have retry-logic when encountering `429` or `503` errors
+
 # zhapir 1.0.1
 
 ## Minor improvements and bug fixes
