@@ -68,3 +68,65 @@ test_that("an error is returned if no title is set", {
   )
 })
 
+testthat::test_that("create_dataset() resolves one and two see_also_ids in preview mode", {
+  seen_endpoints <- character()
+
+  mock_api_request <- function(method, endpoint, ...) {
+    testthat::expect_length(endpoint, 1L)
+    seen_endpoints <<- c(seen_endpoints, endpoint)
+
+    if (!grepl("^/api/v1/datasets\\?", endpoint)) {
+      stop("Unexpected endpoint: ", endpoint)
+    }
+
+    if (grepl("searchTerm=Dataset%20A", endpoint)) {
+      return(list(
+        total = 1L,
+        items = list(
+          list(title = "Dataset A", id = 101L)
+        )
+      ))
+    }
+
+    if (grepl("searchTerm=Dataset%20B", endpoint)) {
+      return(list(
+        total = 1L,
+        items = list(
+          list(title = "Dataset B", id = 202L)
+        )
+      ))
+    }
+
+    return(list(
+      total = 0L,
+      items = list()
+    ))
+  }
+
+  testthat::local_mocked_bindings(
+    .package = "zhapir",
+    api_request = mock_api_request,
+    get_api_key = function(api_key = NULL) "fake"
+  )
+
+  ds_one <- zhapir::create_dataset(
+    title = "My dataset",
+    organisation_id = 1,
+    see_also_ids = "Dataset A",
+    preview = TRUE
+  )
+
+  testthat::expect_identical(unlist(ds_one@see_also_ids), 101)
+
+  ds_two <- zhapir::create_dataset(
+    title = "My dataset",
+    organisation_id = 1,
+    see_also_ids = c("Dataset A", "Dataset B"),
+    preview = TRUE
+  )
+
+  testthat::expect_identical(unlist(ds_two@see_also_ids), c(101, 202))
+
+  testthat::expect_true(any(grepl("searchTerm=Dataset%20A", seen_endpoints)))
+  testthat::expect_true(any(grepl("searchTerm=Dataset%20B", seen_endpoints)))
+})
