@@ -67,15 +67,11 @@ update_dataset <- function(
     stop("`id` is required to update a dataset.", call. = FALSE)
   }
 
-  # If org not supplied, fetch existing so we can preserve it
-  if (is.null(organisation_id)) {
+  # Fetch existing dataset once if needed to preserve required fields
+  if (is.null(organisation_id) || is.null(title)) {
     existing <- get_dataset(id, api_key = api_key, use_dev = use_dev)
-    organisation_id <- existing$organisation$id
-  }
-  # If org not supplied, fetch existing so we can preserve it
-  if (is.null(title)) {
-    existing <- get_dataset(id, api_key = api_key, use_dev = use_dev)
-    title <- existing$title
+    if (is.null(organisation_id)) organisation_id <- existing$organisation$id
+    if (is.null(title)) title <- existing$title
   }
 
   # resolve all lookups up front
