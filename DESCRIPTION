@@ -1,6 +1,6 @@
 Package: zhapir
 Title: Wrapper around the API of the Datacatalogue of the cantonal administration
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: c(
     person("Philipp", "Bosch", , "philipp.bosch@statistik.ji.zh.ch", role = c("aut", "cre")),
     person("Tabea", "Eggler", , "tabea.eggler@statistik.ji.zh.ch", role = "aut"),
@@ -9,10 +9,10 @@ Authors@R: c(
 Description: Interact with the API of the Datacatalogue of the cantonal administration.
     Allows the creation and updates of Datasets & Distributions as well as the upload of 
     files to distributions.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Depends:
     R (>= 4.3.0)
 Imports: 

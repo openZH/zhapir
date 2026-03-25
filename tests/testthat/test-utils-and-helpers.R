@@ -66,3 +66,20 @@ test_that("to_list wraps vectors and preserves S7 missing", {
   expect_equal(to_list(c(1, 2)), list(1, 2))
   expect_identical(to_list(S7::class_missing), S7::class_missing)
 })
+
+
+testthat::test_that("get_datasets() errors when search_term has length > 1", {
+  testthat::expect_error(
+    zhapir:::get_datasets(
+      search_term = c("Dataset A", "Dataset B")
+    ),
+    regexp = "must be a single character string"
+  )
+
+  testthat::expect_error(
+    zhapir:::get_datasets(
+      search_term = c("Dataset A", "Dataset B")
+    ),
+    regexp = "You supplied 2 values"
+  )
+})

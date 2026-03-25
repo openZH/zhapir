@@ -1,13 +1,12 @@
 # These tests mock api_request() so nothing goes to the network.
 
 testthat::test_that("req_to_df builds correct tibbles and errors on unknown endpoint", {
-
   # Mock data per endpoint
   fake_db <- list(
     "keywords" = list(
       list(label = "Abwasser", id = 1),
-      list(label = "Abfall",   id = 2),
-      list(label = "Wasser",   id = 3)
+      list(label = "Abfall", id = 2),
+      list(label = "Wasser", id = 3)
     ),
     "themes" = list(
       list(label = "Verkehr", id = 10),
@@ -78,12 +77,14 @@ testthat::test_that("label_switch maps known labels and errors on unknown", {
   testthat::expect_identical(unname(x2["error_noun"]), "themes")
   testthat::expect_identical(unname(x2["fun_name"]), "get_themes()")
 
-  testthat::expect_error(label_switch(rlang::sym("nope")), "Unknown label column")
+  testthat::expect_error(
+    label_switch(rlang::sym("nope")),
+    "Unknown label column"
+  )
 })
 
 
 testthat::test_that("get_id works for internal and non-internal modes incl. errors", {
-
   df <- tibble::tibble(
     keywords = c("Abwasser", "Abfall", "Wasser"),
     id = c(1, 2, 3)
@@ -163,7 +164,6 @@ testthat::test_that("converter dispatches on type (character vs numeric)", {
 })
 
 
-
 testthat::test_that("get_organisations returns base and units correctly", {
   # Build a mock return for /organisations
   org_payload <- list(
@@ -184,7 +184,9 @@ testthat::test_that("get_organisations returns base and units correctly", {
 
   mock_api_request <- function(method, endpoint, ...) {
     ep <- sub("^/api/v1/", "", endpoint)
-    if (ep == "organisations") return(org_payload)
+    if (ep == "organisations") {
+      return(org_payload)
+    }
     stop("Unexpected endpoint in mock: ", ep)
   }
 
@@ -197,8 +199,12 @@ testthat::test_that("get_organisations returns base and units correctly", {
   # with units (default TRUE)
   df1 <- get_organisations()
   # Org A expands to two rows (due to units), Org B remains base only
-  testthat::expect_true(all(c("organisation_id", "organisation") %in% names(df1)))
-  testthat::expect_true(all(c("organisation_unit_id", "organisation_unit") %in% names(df1)))
+  testthat::expect_true(all(
+    c("organisation_id", "organisation") %in% names(df1)
+  ))
+  testthat::expect_true(all(
+    c("organisation_unit_id", "organisation_unit") %in% names(df1)
+  ))
   testthat::expect_identical(nrow(df1), 3L)
 
   # without units -> only base columns and 2 rows
@@ -213,52 +219,51 @@ testthat::test_that("req_to_df-backed getters and converters behave (with datase
   fake_db <- list(
     "keywords" = list(
       list(label = "Abwasser", id = 1),
-      list(label = "Abfall",   id = 2),
-      list(label = "Wasser",   id = 3)
+      list(label = "Abfall", id = 2),
+      list(label = "Wasser", id = 3)
     ),
     "themes" = list(
       list(label = "Verkehr", id = 10),
       list(label = "Energie", id = 11)
     ),
     "periodicities" = list(
-      list(label = "Jährlich",  id = 20),
+      list(label = "Jährlich", id = 20),
       list(label = "Monatlich", id = 21)
     ),
     "statuses" = list(
-      list(label = "Entwurf",    id = 30),
+      list(label = "Entwurf", id = 30),
       list(label = "Publiziert", id = 31)
     ),
     "licenses" = list(list(label = "CC BY", id = 40)),
     "file-formats" = list(list(label = "CSV", id = 50)),
     "zh-web-datacatalogs" = list(
       list(label = "Bevölkerung", id = 60)
-    ),
-    # datasets uses a different shape (has $items)
-    "datasets" = list(
-      items = list(
-        list(title = "Hotels Zürich",     id = 900),
-        list(title = "Hotels Winterthur", id = 901)
-      )
     )
   )
 
   mock_api_request <- function(method, endpoint, ...) {
     ep <- sub("^/api/v1/", "", endpoint)
-    if (ep == "datasets") return(fake_db[["datasets"]])
-    if (!is.null(fake_db[[ep]])) return(fake_db[[ep]])
+    # get_datasets uses paginated endpoint like "datasets?page=1&pageSize=100"
+    if (grepl("^datasets", ep)) {
+      return(list(
+        total = 2L,
+        items = list(
+          list(title = "Hotels Zürich", id = 900L),
+          list(title = "Hotels Winterthur", id = 901L)
+        )
+      ))
+    }
+    if (!is.null(fake_db[[ep]])) {
+      return(fake_db[[ep]])
+    }
     stop("Unexpected endpoint in mock: ", ep)
   }
 
   testthat::local_mocked_bindings(
-    .package   = "zhapir",
+    .package = "zhapir",
     api_request = mock_api_request,
     get_api_key = function() "fake"
   )
-
-  # (Lock the fix) label_switch must accept 'dataset' and map to get_datasets()
-  m <- zhapir:::label_switch(rlang::sym("dataset"))
-  testthat::expect_identical(unname(m["error_noun"]), "datasets")
-  testthat::expect_identical(unname(m["fun_name"]),   "get_datasets()")
 
   # keywords (passthrough)
   all_kw <- zhapir::get_keywords(use_dev = TRUE)
@@ -299,12 +304,45 @@ testthat::test_that("req_to_df-backed getters and converters behave (with datase
   zwc_all <- zhapir:::get_zh_web_catalog()
   testthat::expect_identical(nrow(zwc_all), 1L)
 
-  # datasets (special shape)
+  # datasets - no input filtering; just check shape and row count
   ds_all <- zhapir:::get_datasets()
   testthat::expect_identical(names(ds_all), c("dataset", "id"))
   testthat::expect_identical(nrow(ds_all), 2L)
+})
 
-  # datasets filter by title (uses converter -> label_switch('dataset') path)
-  ds_sel <- zhapir:::get_datasets("winterthur")
-  testthat::expect_identical(ds_sel$id, 901)
+
+testthat::test_that("convert_datasets_to_id resolves dataset name to ID (mocked)", {
+  mock_api_request <- function(method, endpoint, ...) {
+    if (grepl("^/api/v1/datasets", endpoint)) {
+      return(list(
+        total = 3L,
+        items = list(
+          list(title = "Hotels Zürich", id = 900L),
+          list(title = "Hotels Winterthur", id = 901L),
+          list(title = "Schulen Zürich", id = 902L)
+        )
+      ))
+    }
+    stop("Unexpected endpoint: ", endpoint)
+  }
+
+  testthat::local_mocked_bindings(
+    .package = "zhapir",
+    api_request = mock_api_request,
+    get_api_key = function() "fake"
+  )
+
+  # exact match (case-insensitive, internal = TRUE)
+  id1 <- zhapir:::convert_datasets_to_id("Hotels Zürich")
+  testthat::expect_equal(id1, 900)
+
+  # second exact match
+  id2 <- zhapir:::convert_datasets_to_id("Schulen Zürich")
+  testthat::expect_equal(id2, 902)
+
+  # no match -> error
+  testthat::expect_error(
+    zhapir:::convert_datasets_to_id("Nichtexistent"),
+    "not valid"
+  )
 })

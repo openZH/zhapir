@@ -18,24 +18,24 @@
 #' @return Invisibly returns either the raw `httr2_response` (for HTTP errors) or the parsed response as a list.
 #' @keywords internal
 api_request_wrapper <- function(
-    object,
-    method = c("POST", "PATCH", "PUT", "DELETE", "GET"),
-    endpoint = NULL,
-    api_key = NULL,
-    use_dev = TRUE,
-    verbosity = 0,
-    object_label = NULL
-)
-{
-
+  object,
+  method = c("POST", "PATCH", "PUT", "DELETE", "GET"),
+  endpoint = NULL,
+  api_key = NULL,
+  use_dev = TRUE,
+  verbosity = 0,
+  object_label = NULL
+) {
   method <- match.arg(method)
 
   result <- tryCatch(
     {
       # Perform the actual API request (JSON or multipart is handled internally)
       raw <- api_request(
-        method, endpoint,
-        object, object_label,
+        method,
+        endpoint,
+        object,
+        object_label,
         api_key,
         verbosity = verbosity,
         use_dev = use_dev
@@ -50,8 +50,8 @@ api_request_wrapper <- function(
       }
 
       # Extract key info for CLI feedback
-      title     <- parsed$title %||% "unknown"
-      id        <- parsed$id    %||% "unknown"
+      title <- parsed$title %||% "unknown"
+      id <- parsed$id %||% "unknown"
       parent_id <- parsed$dataset$id %||% "unknown"
 
       # Success messages by method/object type
@@ -64,14 +64,16 @@ api_request_wrapper <- function(
           "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully created inside Dataset ID {.val {parent_id}}."
         )
       } else if (method == "POST" && object_label == "FileUpload") {
-        file_path     <- tryCatch(object@file_path, error = function(e) "unknown")
-        file_upload_id<- parsed$id %||% "unknown"
+        file_path <- tryCatch(object@file_path, error = function(e) "unknown")
+        file_upload_id <- parsed$id %||% "unknown"
         cli::cli_alert_success(
           "{.strong File} {.file {file_path}} uploaded successfully (Upload ID: {.val {file_upload_id}})."
         )
-      } else if (method == "PATCH" && object_label %in% c("Dataset", "Distribution", "Distribution Status")) {
-
-        if (object_label == "Distribution Status"){
+      } else if (
+        method == "PATCH" &&
+          object_label %in% c("Dataset", "Distribution", "Distribution Status")
+      ) {
+        if (object_label == "Distribution Status") {
           cli::cli_alert_success(
             "{.strong Distribution {.val {title}}} (ID {.val {id}}) successfully updated to Status: {parsed$status$label}."
           )
@@ -80,8 +82,6 @@ api_request_wrapper <- function(
             "{.strong {object_label}} {.val {title}} (ID {.val {id}}) successfully updated."
           )
         }
-
-
       } else {
         cli::cli_alert_success(
           "{.strong {object_label}} {.val {title}} (ID {.val {id}}) {method}-request succeeded."
@@ -106,17 +106,23 @@ api_request_wrapper <- function(
       # If it's an httr2 HTTP error, try to extract the server‐side "detail"
       if (inherits(e, "httr2_http")) {
         # parse the JSON body
-        body <- tryCatch(httr2::resp_body_json(e$resp), error = function(e2) NULL)
+        body <- tryCatch(httr2::resp_body_json(e$resp), error = function(e2) {
+          NULL
+        })
         if (!is.null(body$errors)) {
-          details <- vapply(body$errors, function(err) {
-            det  <- err$detail %||% ""
-            attr <- err$attr   %||% NULL
-            if (!is.null(attr) && nzchar(attr)) {
-              sprintf("%s [attr: %s]", det, attr)
-            } else {
-              det
-            }
-          }, character(1))
+          details <- vapply(
+            body$errors,
+            function(err) {
+              det <- err$detail %||% ""
+              attr <- err$attr %||% NULL
+              if (!is.null(attr) && nzchar(attr)) {
+                sprintf("%s [attr: %s]", det, attr)
+              } else {
+                det
+              }
+            },
+            character(1)
+          )
           detailed <- paste(details, collapse = "; ")
         }
       }
@@ -131,7 +137,6 @@ api_request_wrapper <- function(
 
   invisible(result)
 }
-
 
 
 #' Send API Request
@@ -152,13 +157,13 @@ api_request_wrapper <- function(
 #' @return Parsed response content as a list.
 #' @keywords internal
 api_request <- function(
-    method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
-    endpoint,
-    object,
-    object_label,
-    api_key,
-    verbosity = 0,
-    use_dev = TRUE
+  method = c("GET", "POST", "PUT", "PATCH", "DELETE"),
+  endpoint,
+  object,
+  object_label,
+  api_key,
+  verbosity = 0,
+  use_dev = TRUE
 ) {
   method <- match.arg(method)
   url <- paste0(get_base_url(use_dev), endpoint)
@@ -175,25 +180,20 @@ api_request <- function(
   # Handle GET requests without body/payload
   if (method == "GET") {
     # do nothing
-  }
-  # If object is a file upload, use multipart/form-data
-  else if (object_label == "FileUpload") {
+  } else if (object_label == "FileUpload") {
+    # If object is a file upload, use multipart/form-data
     payload <- list(file = curl::form_file(object@file_path))
 
     # Attach file using multipart body
     req <- req |> httr2::req_body_multipart(!!!payload)
-  }
-  # if we want to change the status of a distribution/dataset
-  else if (grepl("/set-status$", endpoint))
-  {
+  } else if (grepl("/set-status$", endpoint)) {
+    # if we want to change the status of a distribution/dataset
     payload <- list(status_id = object@status_id)
 
     req <- req |>
       httr2::req_headers(`Content-Type` = "application/json") |>
       httr2::req_body_json(payload, null = "null")
-  }
-
-  else {
+  } else {
     # Otherwise, serialise object as JSON
     payload <- object_to_payload(object)
     req <- req |>
@@ -201,7 +201,12 @@ api_request <- function(
       httr2::req_body_json(payload, null = "null")
   }
   # Perform request
-  resp <- req |> httr2::req_perform(verbosity = verbosity)
+  resp <- req |>
+    httr2::req_retry(
+      max_tries = 3L,
+      is_transient = \(r) httr2::resp_status(r) %in% c(429L, 503L),
+    ) |>
+    httr2::req_perform(verbosity = verbosity)
 
   # Return parsed JSON body
   httr2::resp_body_json(resp)

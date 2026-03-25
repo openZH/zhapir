@@ -306,3 +306,56 @@ test_that("E2E: update_dataset setzt start_date nachträglich; mit Distribution 
     )
   expect_true(isTRUE(resp_ok2$is_valid))
 })
+
+test_that("E2E: create_dataset resolves two see_also_ids and two keyword_ids", {
+
+  skip_if_ci()
+  skip_if_no_dev_token()
+
+  dev_key <- Sys.getenv("MDV_DEV_API_TOKEN_TEST")
+
+  keyword_ids <- zhapir:::convert_keywords_to_id(
+    c("feuerwehr", "arbeitslosenversicherung"),
+    use_dev = TRUE,
+    api_key = dev_key
+  )
+
+  see_also_ids <- zhapir:::convert_datasets_to_id(
+    c(
+      "Beschäftigte der Stadt Winterthur",
+      "Stadtklimamessungen Winterthur"
+    ),
+    use_dev = TRUE,
+    api_key = dev_key
+  )
+
+  testthat::expect_length(keyword_ids, 2L)
+  testthat::expect_true(all(keyword_ids > 0))
+
+  testthat::expect_length(see_also_ids, 2L)
+  testthat::expect_true(all(see_also_ids > 0))
+
+  resp <- zhapir::create_dataset(
+    title = paste0(
+      "E2E resolve multiple ids ",
+      format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+    ),
+    organisation_id = 1,
+    description = "E2E test for resolving multiple keywords and see_also datasets",
+    contact_email = "team@example.org",
+    start_date = format(Sys.Date(), "%Y-%m-%d"),
+    theme_ids = c("Energie"),
+    periodicity_id = "Jährlich",
+    keyword_ids = c("feuerwehr", "arbeitslosenversicherung"),
+    see_also_ids = c(
+      "Beschäftigte der Stadt Winterthur",
+      "Stadtklimamessungen Winterthur"
+    ),
+    use_dev = TRUE,
+    api_key = dev_key,
+    preview = FALSE
+  )
+
+  testthat::expect_true(is.list(resp))
+  testthat::expect_true(resp$id > 0)
+})
