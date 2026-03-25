@@ -131,6 +131,13 @@ get_datasets <- function(
     api_key <- get_api_key()
   }
 
+  if (!is.null(search_term) && length(search_term) != 1L) {
+    cli::cli_abort(c(
+      "{.arg search_term} must be a single character string.",
+      "x" = "You supplied {length(search_term)} values."
+    ))
+  }
+
   build_endpoint <- function(page) {
     ep <- sprintf("/api/v1/datasets?page=%d&pageSize=%d", page, page_size)
     if (!is.null(search_term)) {
@@ -230,9 +237,31 @@ convert_datasets_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
   if (inherits(name, "S7_missing")) {
     return(S7::class_missing)
   }
-  # Use server-side search to avoid fetching the full catalogue
-  df <- get_datasets(use_dev = use_dev, api_key = api_key, search_term = name)
-  get_id(df, name, internal = TRUE)
+
+  if (is.numeric(name)) {
+    return(name)
+  }
+
+  if (!is.character(name)) {
+    stop("`name` must be character or numeric.", call. = FALSE)
+  }
+
+  if (length(name) == 0L) {
+    return(integer())
+  }
+
+  purrr::map_dbl(
+    name,
+    \(x) {
+      datasets <- get_datasets(
+        use_dev = use_dev,
+        api_key = api_key,
+        search_term = x
+      )
+
+      get_id(datasets, x, internal = TRUE)
+    }
+  )
 }
 
 #' Get All zh-web-catalog Keywords and Their IDs
