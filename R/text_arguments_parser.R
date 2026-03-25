@@ -127,9 +127,7 @@ get_datasets <- function(
   max_pages = Inf,
   search_term = NULL
 ) {
-  if (is.null(api_key)) {
-    api_key <- get_api_key()
-  }
+
 
   if (!is.null(search_term) && length(search_term) != 1L) {
     cli::cli_abort(c(
@@ -137,6 +135,12 @@ get_datasets <- function(
       "x" = "You supplied {length(search_term)} values."
     ))
   }
+
+  if (is.null(api_key)) {
+    api_key <- get_api_key()
+  }
+
+
 
   build_endpoint <- function(page) {
     ep <- sprintf("/api/v1/datasets?page=%d&pageSize=%d", page, page_size)
