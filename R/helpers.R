@@ -1,4 +1,3 @@
-
 #' Get the base URL based on environment setting
 #'
 #' @param use_dev Whether to use the development environment
@@ -13,9 +12,6 @@ get_base_url <- function(use_dev = FALSE) {
 }
 
 
-
-
-
 #' Retrieve MDV API key
 #'
 #' Attempts to fetch the API key from (in order):
@@ -27,7 +23,6 @@ get_base_url <- function(use_dev = FALSE) {
 #' @return API key string.
 #' @export
 get_api_key <- function(key = NULL) {
-
   # 1. Direct argument wins
   if (!is.null(key) && nzchar(key)) {
     return(key)
@@ -67,7 +62,6 @@ get_api_key <- function(key = NULL) {
 #' @return A named list suitable for httr2::req_body_json()
 #' @keywords internal
 object_to_payload <- function(object) {
-
   # 1. Extract raw properties
   p <- S7::props(object)
 
@@ -95,21 +89,17 @@ object_to_payload <- function(object) {
   #    - empty lists
   #    - single-element lists whose only element is NA
   p <- purrr::keep(p, function(x) {
-    !(
-      is.null(x) ||
-        (is.atomic(x) && length(x) == 1L && is.na(x)) ||
-        (is.list(x)   && length(x) == 0L) ||
-        (is.list(x)   &&
-           length(x) == 1L &&
-           is.atomic(x[[1]]) &&
-           is.na(x[[1]]))
-    )
+    !(is.null(x) ||
+      (is.atomic(x) && length(x) == 1L && is.na(x)) ||
+      (is.list(x) && length(x) == 0L) ||
+      (is.list(x) &&
+        length(x) == 1L &&
+        is.atomic(x[[1]]) &&
+        is.na(x[[1]])))
   })
 
   p
 }
-
-
 
 
 #' Retrieve a dataset by ID from the MDV API
@@ -120,17 +110,13 @@ object_to_payload <- function(object) {
 #' @return A named list parsed from the JSON response.
 #' @export
 get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
-
-  if(is.null(api_key)){
-    api_key <- get_api_key(api_key)
-  }
-
+  api_key <- get_api_key(api_key)
 
   url <- paste0(get_base_url(use_dev), "/api/v1/datasets/", id)
 
   resp <- httr2::request(url) |>
     httr2::req_headers(
-      Accept      = "application/json",
+      Accept = "application/json",
       `x-api-key` = api_key
     ) |>
     httr2::req_method("GET") |>
@@ -141,8 +127,11 @@ get_dataset <- function(id, api_key = NULL, use_dev = TRUE) {
     httr2::resp_body_json(resp)
   } else {
     stop(
-      sprintf("Failed to fetch dataset [%s]: %s", status,
-              httr2::resp_body_string(resp)),
+      sprintf(
+        "Failed to fetch dataset [%s]: %s",
+        status,
+        httr2::resp_body_string(resp)
+      ),
       call. = FALSE
     )
   }
@@ -167,7 +156,6 @@ to_list <- function(vec_var) {
 }
 
 
-
 #' Check if a dataset is valid for the next status (generic handling)
 #'
 #' @param id integer; dataset ID
@@ -178,21 +166,20 @@ to_list <- function(vec_var) {
 #' @return Invisibly returns parsed response list (type, errors, is_valid, can_delete, next_status)
 #' @export
 dataset_is_valid_for_status <- function(
-    id,
-    api_key = NULL,
-    use_dev = TRUE,
-    verbosity = 0,
-    fail_on_invalid = TRUE
+  id,
+  api_key = NULL,
+  use_dev = TRUE,
+  verbosity = 0,
+  fail_on_invalid = TRUE
 ) {
   endpoint <- sprintf("/api/v1/datasets/%s/is-valid-for-status", as.integer(id))
 
   api_key <- get_api_key(api_key)
 
-
   resp <- api_request(
     method = "GET",
     endpoint = endpoint,
-    object = NULL,                 # kein Payload
+    object = NULL, # kein Payload
     object_label = "Dataset Validation",
     api_key = api_key,
     verbosity = verbosity,
@@ -203,20 +190,26 @@ dataset_is_valid_for_status <- function(
   errs <- resp$errors %||% list()
 
   if (is_valid) {
-    cli::cli_alert_success("Dataset ID {.val {id}} ist {cli::col_green('valid')} fuer den naechsten Status.")
+    cli::cli_alert_success(
+      "Dataset ID {.val {id}} ist {cli::col_green('valid')} fuer den naechsten Status."
+    )
   } else {
-    cli::cli_alert_warning("Dataset ID {.val {id}} ist {cli::col_yellow('nicht valid')} fuer den naechsten Status. Das Dataset wurde angelegt, kann aber so nicht veroeffentlicht werden.")
+    cli::cli_alert_warning(
+      "Dataset ID {.val {id}} ist {cli::col_yellow('nicht valid')} fuer den naechsten Status. Das Dataset wurde angelegt, kann aber so nicht veroeffentlicht werden."
+    )
 
     if (length(errs) > 0) {
       cli::cli_h2("Fehlerdetails:")
       for (e in errs) {
-        code <- e$code   %||% ""
-        attr <- e$attr   %||% ""
-        det  <- e$detail %||% ""
+        code <- e$code %||% ""
+        attr <- e$attr %||% ""
+        det <- e$detail %||% ""
 
         # Formatting
         if (nzchar(attr) && nzchar(code)) {
-          cli::cli_bullets(c("x" = "{det} [{cli::col_silver(code)} @ {cli::col_cyan(attr)}]"))
+          cli::cli_bullets(c(
+            "x" = "{det} [{cli::col_silver(code)} @ {cli::col_cyan(attr)}]"
+          ))
         } else if (nzchar(attr)) {
           cli::cli_bullets(c("x" = "{det} [@ {cli::col_cyan(attr)}]"))
         } else if (nzchar(code)) {
@@ -230,10 +223,11 @@ dataset_is_valid_for_status <- function(
     }
 
     if (isTRUE(fail_on_invalid)) {
-      cli::cli_abort("Servervalidierung fehlgeschlagen - Statuswechsel nicht moeglich.")
+      cli::cli_abort(
+        "Servervalidierung fehlgeschlagen - Statuswechsel nicht moeglich."
+      )
     }
   }
 
   invisible(resp)
 }
-

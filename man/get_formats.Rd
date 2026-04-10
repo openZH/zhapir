@@ -9,7 +9,7 @@ get_formats(input = NULL, use_dev = FALSE, api_key = NULL)
 \arguments{
 \item{input}{a set of formats to retrieve. Empty = all}
 
-\item{use_dev}{boolean FALSE = developemtent version of MDV}
+\item{use_dev}{boolean FALSE = development version of MDV}
 
 \item{api_key}{optional API key for MDV}
 }

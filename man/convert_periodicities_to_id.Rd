@@ -7,7 +7,7 @@
 convert_periodicities_to_id(name, use_dev = FALSE, api_key = NULL)
 }
 \arguments{
-\item{use_dev}{boolean FALSE = developemtent version of MDV}
+\item{use_dev}{boolean FALSE = development version of MDV}
 
 \item{api_key}{optional API key for MDV}
 }

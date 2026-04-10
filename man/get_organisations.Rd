@@ -13,7 +13,7 @@ get_organisations(
 \arguments{
 \item{show_organisation_units}{Logical; if TRUE, include sub-units.}
 
-\item{use_dev}{boolean FALSE = developemtent version of MDV}
+\item{use_dev}{boolean FALSE = development version of MDV}
 
 \item{api_key}{optional API key for MDV}
 }

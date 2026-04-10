@@ -3,7 +3,7 @@
 #' Retrieves a tibble of all organisations and their IDs. Optionally includes sub-units.
 #'
 #' @param show_organisation_units Logical; if TRUE, include sub-units.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with columns:
 #'   - `organisation_id` (numeric)
@@ -59,7 +59,7 @@ get_organisations <- function(
 #' Retrieves a tibble of all keywords and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of keyword names or numeric IDs.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `keyword` (character): the keyword label
@@ -85,7 +85,7 @@ get_keywords <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 #' Convert keyword names to IDs
 #' @param name Character vector of keyword names.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return Numeric vector of IDs.
 #' @keywords internal
@@ -273,7 +273,7 @@ convert_datasets_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 #' Retrieves a tibble of all zh-web-catalog entries and their IDs. Optionally filters by label or ID.
 #'
 #' @param input Optional character vector of catalog labels or numeric IDs.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `zh_web_catalog` (character): the catalog label
@@ -300,7 +300,7 @@ get_zh_web_catalog <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 
 #' Convert zh-web-catalog names to IDs
 #' @keywords keywords internal
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 convert_zh_web_catalog_to_id <- function(
   name,
@@ -319,7 +319,7 @@ convert_zh_web_catalog_to_id <- function(
 #' Retrieves a tibble of all themes and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of theme names or numeric IDs.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `theme` (character): the theme label
@@ -345,7 +345,7 @@ get_themes <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Convert theme names to IDs
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @keywords keywords internal
 convert_themes_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
@@ -361,7 +361,7 @@ convert_themes_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 #' Retrieves a tibble of all periodicities and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of periodicity names or numeric IDs.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `periodicity` (character): the periodicity label
@@ -387,7 +387,7 @@ get_periodicities <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Convert periodicity names to IDs
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @keywords internal
 convert_periodicities_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
@@ -404,7 +404,7 @@ convert_periodicities_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 #' Retrieves a tibble of all statuses and their IDs. Optionally filters by name or ID.
 #'
 #' @param input Optional character vector of status names or numeric IDs.
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @return A tibble with two columns:
 #'   - `status` (character): the status label
@@ -430,7 +430,7 @@ get_statuses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Convert status names to IDs
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @keywords internal
 convert_statuses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
@@ -443,7 +443,7 @@ convert_statuses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 
 #' Get All Licenses and Their IDs
 #' @param input a set of licenses to retrieve. Empty = all
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @export
 get_licenses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
@@ -455,7 +455,7 @@ get_licenses <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Convert license names to IDs
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @keywords internal
 convert_licenses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
@@ -468,7 +468,7 @@ convert_licenses_to_id <- function(name, use_dev = FALSE, api_key = NULL) {
 
 #' Get All Formats and Their IDs
 #' @param input a set of formats to retrieve. Empty = all
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @export
 get_formats <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
@@ -480,7 +480,7 @@ get_formats <- function(input = NULL, use_dev = FALSE, api_key = NULL) {
 }
 
 #' Convert format names to IDs
-#' @param use_dev boolean FALSE = developemtent version of MDV
+#' @param use_dev boolean FALSE = development version of MDV
 #' @param api_key optional API key for MDV
 #' @keywords internal
 convert_formats_to_id <- function(name, use_dev = FALSE, api_key = NULL) {

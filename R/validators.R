@@ -38,10 +38,14 @@ validate_id <- function(value, allow_na = TRUE) {
   return(NULL)
 }
 
-validate_bytesize <- function(value){
+validate_bytesize <- function(value) {
   if (length(value) != 1) {
     return("must have exactly one value")
   }
+  if (!is.na(value) && value < 0) {
+    return("must be a non-negative number")
+  }
+  return(NULL)
 }
 
 
@@ -72,8 +76,8 @@ validate_text <- function(value, max_length = 1000L) {
 
 validate_url <- function(value) {
   if (!is.na(value) && nzchar(value)) {
-    if (!grepl("^https?://[[:alnum:].-]+\\.[A-Za-z]{2,}(/[[:alnum:]._~%-]*)*$", value)) {
-      return("must start with http:// or https:// and must have a valid domain")
+    if (!grepl("^https?://", value)) {
+      return("must start with http:// or https://")
     }
   }
   return(NULL)
@@ -87,6 +91,7 @@ validate_email <- function(value) {
       return("must be a valid address.")
     }
   }
+  return(NULL)
 }
 
 
@@ -94,5 +99,6 @@ validate_file_exists <- function(value) {
   if (!file.exists(value)) {
     return(paste0("File doesn't exist: ", value))
   }
+  return(NULL)
 }
 
